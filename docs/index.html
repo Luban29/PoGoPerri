@@ -654,7 +654,7 @@ function bestVs(mon, tdef, dtypes, seOnly) {
   return best;
 }
 function renderRaid() {
-  group($('coTabs'), [{ k: 'all', label: 'Vše' }, { k: 'nomega', label: 'Bez Mega' }, { k: 'plain', label: 'Jen běžní' }], function (i) { return i.k === st.co; }, function (i) { st.co = i.k; renderRaid(); });
+  group($('coTabs'), [{ k: 'all', label: 'Vše' }, { k: 'nomega', label: 'Bez Mega' }], function (i) { return i.k === st.co; }, function (i) { st.co = i.k; renderRaid(); });
   if (!BS || !PVE) { $('counters').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
   var now = new Date();
   var live = BS.raids.filter(function (b) { return new Date(b.b) > now; });
@@ -678,7 +678,6 @@ function renderRaid() {
   PVE.mons.forEach(function (m) {
     var kd = m[3];
     if (st.co === 'nomega' && (kd === 'mega' || kd === 'primal')) return;
-    if (st.co === 'plain' && kd) return;
     var r = bestVs(m, tdef, types, true) || null;
     if (r) out.push({ m: m, r: r });
   });
