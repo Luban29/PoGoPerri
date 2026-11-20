@@ -364,7 +364,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   <div class="table" id="maxAtkTable"></div>
   <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší energy gaineři</h3><p class="lead">nejrychleji nabijí Max metr</p></div>
   <div class="table" id="maxGainTable"></div>
-  <p class="note">Nabití za útok = max(1, škoda / HP bosse × 200 × M), u 1★–4★ zaokrouhleno dolů na celé, u legendárních (M = 4) a Gigantamax (M = 15) na setiny. Moveset ukazuje, jestli se vyplatí střídat rychlý útok s nabitým (nabitý pouštíš vždy, když máš energii), nebo jen klikat rychlý. Při podobné rychlosti nabíjení rozhoduje výdrž. HP legendárních a Gigantamax bossů se liší podle bosse, tady je odhad.</p>
+  <p class="note">Nabití za útok = max(1, škoda / HP bosse × 200 × M), u 1★–4★ zaokrouhleno dolů na celé, u legendárních (M = 4) a Gigantamax (M = 15) na setiny. Moveset ukazuje, jestli se vyplatí střídat rychlý útok s nabitým (nabitý pouštíš vždy, když máš energii), nebo jen klikat rychlý. Řazeno čistě podle rychlosti nabíjení, výdrž se nepočítá (tu najdeš v tabulce tanků). HP legendárních a Gigantamax bossů se liší podle bosse, tady je odhad.</p>
   <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší tanky</h3><p class="lead">vydrží nejvíc ránu od bosse</p></div>
   <div class="table" id="maxTankTable"></div>
   <p class="note">Výpočet: level 40, IV 15/15/15, Max útok na úrovni 3 (Dynamax 350, Gigantamax 450 síla, G-Max jen s rychlým útokem svého typu). Zacian (Crowned Sword), Zamazenta (Crowned Shield) a Eternatus mají pevný Max útok: Behemoth Blade, Behemoth Bash (350) a Dynamax Cannon (450). Tank skóre = obrana × HP × odolnost proti typům útoků bosse. Seznam Dynamax a Gigantamax Pokémonů podle GO Hub DB a godex.site.</p>
@@ -776,14 +776,14 @@ function renderMax() {
     });
     if (best) gain.push({ m: m, g: d[1], b: best, bulk: bulk });
   });
-  gain.sort(function (a, b) { return (Math.round(b.b.cps * 10) - Math.round(a.b.cps * 10)) || (b.bulk - a.bulk); });
-  var gm = 0; gain.slice(0, 12).forEach(function (x) { if (x.bulk > gm) gm = x.bulk; });
-  $('maxGainTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">Nabití/s</span><span>Výdrž</span></div>' +
+  gain.sort(function (a, b) { return (b.b.cps - a.b.cps) || a.m[1].localeCompare(b.m[1]); });
+  var gm = gain.length ? gain[0].b.cps : 1;
+  $('maxGainTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">Za 10 s</span><span>Nabití za sekundu</span></div>' +
     gain.slice(0, 12).map(function (x, i) {
       return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.g ? 'Gigantamax ' : (FIXED[x.m[0]] ? '' : 'Dynamax ')) + esc(x.m[1]) + '</span></div>' +
         '<div class="mv"><span>' + dot(x.b.F[1]) + esc(x.b.F[0]) + (x.b.C ? ' / ' + esc(x.b.C[0]) : ' · jen rychlý') + '</span><span class="sub">' + (x.b.C ? 'nabitý dá ' + fmt(x.b.cc, 2).replace(/,?0+$/, '') + ' nabití' : fmt(x.b.F[4], 1) + ' s na útok') + '</span></div>' +
-        '<span class="num big">' + fmt(x.b.cps, 1) + '</span>' +
-        '<div class="score"><div class="bar"><i style="width:' + Math.round(x.bulk / gm * 100) + '%;background:#1D7A35"></i></div><b>' + Math.round(x.bulk) + '</b></div></a>';
+        '<span class="num big">' + Math.min(100, Math.round(x.b.cps * 10)) + '</span>' +
+        '<div class="score"><div class="bar"><i style="width:' + Math.round(x.b.cps / gm * 100) + '%;background:#1D7A35"></i></div><b>' + fmt(x.b.cps, 2).replace(/,?0+$/, '') + '</b></div></a>';
     }).join('');
   var top = gain.slice(0, 12), withC = top.filter(function (x) { return x.b.C; }).length;
   var useC = withC >= 6;
