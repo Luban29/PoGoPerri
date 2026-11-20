@@ -50,3 +50,9 @@ Detail eventu má adresu `#udalost-<id>`. Časy jsou místní, GBL a Global Chal
 `build_pvp.py` čte i žebříčky Mega Edition (`src/gm/rank/m1500.json`, `m2500.json`, `m10000.json` z
 `.../rankings/mega/overall/rankings-<CP>.json`) a z nich bere všechny Mega a Primal formy (klíče `megagreat`, `megaultra`, `megamaster`).
 Detail: `#pvp-megagreat-sableye_mega`.
+
+## Raidy a Max Battles
+
+`cd src && python3 bosses.py` zapíše `docs/data/bosses.json`: aktuální raid bosse všech tierů (1★, 3★, 5★, Mega, Shadow 1★/3★/5★)
+s daty, Max Battle bosse a seznam Dynamax/Gigantamax Pokémonů. Countery počítá prohlížeč z `pve.json` (stejný vzorec jako `dps.py`),
+takže stačí upravit seznam bossů. Detail counteru: `#raid-<tier><bossId bez _>-<speciesId>`, např. `#raid-5darkrai-lucario_mega`.

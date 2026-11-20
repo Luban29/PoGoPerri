@@ -6,7 +6,7 @@
 <title>PoGo Kompas – tahák na Pokémon GO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   /* "Trenérský přístroj": papírový podklad v mřížce, inkoustové obrysy s tvrdým stínem, červené tělo, LCD displej */
@@ -16,7 +16,7 @@
   --lcd:#13301B; --lcd-text:#CDEBB0; --lcd-hi:#9EDB4E; --lcd-dim:#86B07A;
   --display:'Archivo Black','Arial Black',system-ui,sans-serif;
   --body:'Archivo',system-ui,sans-serif;
-  --pixel:'Pixelify Sans','Courier New',monospace;
+  --pixel:'JetBrains Mono',ui-monospace,'SFMono-Regular',Consolas,monospace;
   --shadow:4px 4px 0 var(--line);
   color-scheme:light;
 }
@@ -24,7 +24,7 @@
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{margin:0;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55}
+body{margin:0;font-variant-numeric:tabular-nums;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55}
 a{color:var(--accent);font-weight:600}a:hover{color:#A8261D}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -120,6 +120,13 @@ a.tr.link:hover{background:#FFF3D6;color:var(--text)}
 .boss-hd h3{font-size:30px;text-transform:uppercase}
 .boss-hd .chip{border-color:#fff}
 
+.tierrow{display:grid;grid-template-columns:200px minmax(0,1fr);gap:12px;align-items:center;padding-bottom:12px;border-bottom:1.5px solid var(--grid)}
+.tierrow:last-child{border-bottom:0;padding-bottom:0}
+.tierlbl{display:flex;flex-direction:column}.tierlbl b{font-family:var(--display);font-weight:400;font-size:18px;text-transform:uppercase}.tierlbl small{font-size:13px;color:var(--dim)}
+.pill small.soon{font-size:11px;font-weight:700;opacity:.75}
+@media (max-width:640px){.tierrow{grid-template-columns:1fr}}
+.tr.mx{grid-template-columns:52px minmax(0,1.6fr) minmax(0,1.6fr) 80px minmax(160px,1fr)}
+.sel{min-height:48px;padding:0 12px;border-radius:10px;border:2.5px solid var(--line);background:var(--surface2);font-size:16px;font-weight:600}
 /* damage meter */
 .controls{display:flex;flex-direction:column;gap:16px}
 .ctl-row{display:flex;flex-wrap:wrap;gap:16px;align-items:end}
@@ -239,6 +246,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
     <div class="tabs" id="nav">
       <a class="tab" href="#udalosti">Události</a>
       <a class="tab" href="#raidy">Raidy</a>
+      <a class="tab" href="#max-battles">Max Battles</a>
       <a class="tab" href="#damage-meter">Damage meter</a>
       <a class="tab" href="#pvp">PvP</a>
       <a class="tab" href="#co-delat">Co dělat</a>
@@ -284,30 +292,30 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 
 <!-- RAIDY -->
 <section class="page" id="p-raidy" aria-labelledby="h-raidy">
-  <div class="row">
-    <div style="display:flex;flex-direction:column;gap:6px">
-      <p class="eyebrow">5★ raidy · do 24. 11.</p>
-      <h2 class="h2" id="h-raidy">Raid countery</h2>
-    </div>
-    <div class="tabs" role="group" aria-label="Raid boss" id="bossTabs"></div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <p class="eyebrow">Všichni aktuální bossové</p>
+    <h2 class="h2" id="h-raidy">Raid countery</h2>
+    <p class="lead">Vyber bosse podle obtížnosti. Countery se počítají proti jeho typům a obraně, Mega+ útoky podle zvolené Mega úrovně.</p>
   </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:14px" id="bossPicker"></div>
   <div style="display:flex;flex-wrap:wrap;gap:16px">
     <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:14px">
       <div class="boss-hd">
         <h3 id="bossName"></h3>
-        <span class="chip" id="bossType"></span>
+        <span id="bossType" style="display:flex;gap:6px;flex-wrap:wrap"></span>
       </div>
+      <p style="font-weight:800" id="bossDiff"></p>
       <p style="color:var(--muted)" id="bossText"></p>
     </article>
     <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:12px">
-      <span class="label" style="text-transform:uppercase;letter-spacing:.06em;font-weight:700">Slabý na</span>
+      <span class="label">Slabý na</span>
       <div style="display:flex;flex-wrap:wrap;gap:8px" id="bossWeak"></div>
-      <span class="label" style="text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:6px">Odolává</span>
-      <p style="color:var(--muted);font-size:15px" id="bossResist"></p>
+      <span class="label" style="margin-top:6px">Odolává</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="bossResist"></div>
     </article>
   </div>
   <div class="row" style="align-items:center;margin-top:8px">
-    <h3 style="font-weight:700;font-size:24px">Top 10 counterů</h3>
+    <h3 style="font-size:24px;text-transform:uppercase">Top 12 counterů</h3>
     <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
       <div class="pills" role="group" aria-label="Mega úroveň" style="align-items:center">
         <span class="label">Mega úroveň</span>
@@ -317,7 +325,42 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
     </div>
   </div>
   <div class="table" id="counters"></div>
-  <p class="note">Výpočet: level 40, IV 15/15/15, bez počasí a bonusu přátelství, jen útoky super effective na bosse. Mega+ útoky podle zvolené Mega úrovně. Skóre kombinuje DPS a TDO. * = elite / legacy útok. Klikni na Pokémona pro detail.</p>
+  <p class="note">Výpočet: level 40, IV 15/15/15, bez počasí a bonusu přátelství. Bere se jen moveset, kde je nabitý útok proti bossovi super effective (pokud žádný není, tak nejlepší celkově). Skóre kombinuje DPS a TDO. * = elite / legacy útok. Klikni na Pokémona pro detail.</p>
+</section>
+
+<!-- MAX BATTLES -->
+<section class="page" id="p-max-battles" aria-labelledby="h-max">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <p class="eyebrow">Dynamax a Gigantamax</p>
+    <h2 class="h2" id="h-max">Max Battles</h2>
+    <p class="lead">V Max Battles bojuješ jen s Dynamax a Gigantamax Pokémony. Škodu dělá hlavně Max útok, jehož typ určuje rychlý útok, a vyplatí se mít v týmu i tanka na Max Guard.</p>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:14px">
+    <span class="label">Aktuální a nadcházející bossové</span>
+    <div class="pills" role="group" aria-label="Max Battle boss" id="maxPicker"></div>
+    <div class="ctl" style="max-width:420px">
+      <label class="label" for="maxAny">Nebo vyber libovolného Dynamax bosse</label>
+      <select id="maxAny" class="sel"></select>
+    </div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:16px">
+    <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:14px">
+      <div class="boss-hd"><h3 id="maxName"></h3><span id="maxType" style="display:flex;gap:6px;flex-wrap:wrap"></span></div>
+      <p style="font-weight:800" id="maxWhen"></p>
+      <p style="color:var(--muted)" id="maxText"></p>
+    </article>
+    <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:12px">
+      <span class="label">Max útok proti němu</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="maxWeak"></div>
+      <span class="label" style="margin-top:6px">Boss útočí typy</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="maxAtk"></div>
+    </article>
+  </div>
+  <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší útočníci</h3><p class="lead">podle síly Max útoku</p></div>
+  <div class="table" id="maxAtkTable"></div>
+  <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší tanky</h3><p class="lead">vydrží nejvíc ránu od bosse</p></div>
+  <div class="table" id="maxTankTable"></div>
+  <p class="note">Výpočet: level 40, IV 15/15/15, Max útok na úrovni 3 (Dynamax 350, Gigantamax 450 síla, G-Max jen s rychlým útokem svého typu). Tank skóre = obrana × HP × odolnost proti typům útoků bosse. Seznam Dynamax a Gigantamax Pokémonů podle GO Hub DB.</p>
 </section>
 
 <!-- DAMAGE METER -->
@@ -432,7 +475,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 'use strict';
 var TYPES = ['normal','fighting','flying','poison','ground','rock','bug','ghost','steel','fire','water','grass','electric','psychic','ice','dragon','dark','fairy'];
 var TC = { normal:'#C9C3A8', fighting:'#E0603A', flying:'#9DB7F5', poison:'#B46CD6', ground:'#D9A55B', rock:'#BFA75A', bug:'#A8C23A', ghost:'#9A86D9', steel:'#B8C2CC', fire:'#FF8A3D', water:'#4FA3F7', grass:'#6CC96C', electric:'#FFD23F', psychic:'#FF6FA3', ice:'#7FDBEA', dragon:'#7C6CF0', dark:'#8C7A6B', fairy:'#F5A3D3' };
-var PAGES = ['udalosti','raidy','damage-meter','pvp','co-delat'];
+var PAGES = ['udalosti','raidy','max-battles','damage-meter','pvp','co-delat'];
 function $(id) { return document.getElementById(id); }
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
 function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
@@ -450,9 +493,9 @@ function route() {
   var h = (location.hash || '').slice(1), detail = null;
   var m = /^pvp-((?:mega)?(?:great|ultra|master))-(.+)$/.exec(h), pd = null;
   if (m) { detail = [m[1], m[2]]; h = 'pvp'; }
-  var m2 = /^dmg-(.+)$/.exec(h), m3 = /^raid-(darkrai|cresselia)-(.+)$/.exec(h);
+  var m2 = /^dmg-(.+)$/.exec(h), m3 = /^raid-([a-z0-9_]+)-(.+)$/.exec(h);
   if (m2) { pd = ['dmg', m2[1]]; h = 'damage-meter'; }
-  if (m3) { pd = [m3[1], m3[2]]; h = 'raidy'; if (st.boss !== m3[1]) { st.boss = m3[1]; savePrefs(); renderRaid(); } }
+  if (m3) { pd = [m3[1], m3[2]]; h = 'raidy'; if (curBoss !== m3[1]) { curBoss = m3[1]; if (BS && PVE) renderRaid(); } }
   if (h === 'tento-tyden') h = 'udalosti';
   var m4 = /^udalost-(.+)$/.exec(h), evd = null;
   if (m4) { evd = m4[1]; h = 'udalosti'; }
@@ -465,7 +508,7 @@ function route() {
   curPage = h;
   pendingPve = pd; pendingEv = evd;
   if (evd) { if (EV) openEventDetail(evd); }
-  else if (pd) { if (PVE) openPveDetail(pd[0], pd[1]); }
+  else if (pd) { if (PVE && (pd[0] === 'dmg' || RB[pd[0]])) openPveDetail(pd[0], pd[1]); }
   else if (detail) {
     var dl = detail[0].replace(/^mega/, ''), df = detail[0].indexOf('mega') === 0 ? 'mega' : 'std';
     if (st.league !== dl || pst.fmt !== df) { st.league = dl; pst.fmt = df; savePrefs(); renderPvpControls(); renderPvp(); }
@@ -586,31 +629,136 @@ function openEventDetail(id) {
 }
 
 /* ---------- RAIDY ---------- */
-var BOSSES = {
-  darkrai: { name: 'Darkrai', t: 'dark', text: 'Mythical Pokémon, v 5★ raidech do 24. 11. Rychle rozdává Dark a Fighting útoky, takže křehcí útočníci (hlavně Psychic) padají rychle. Fighting countery jsou nejsilnější a nejdostupnější volba.', weak: ['fighting','bug','fairy'], resist: 'Ghost, Dark a Psychic (Psychic útoky na něj skoro nefungují).' },
-  cresselia: { name: 'Cresselia', t: 'psychic', text: 'Legendary, v 5★ raidech do 24. 11. Extrémně odolná, takže hlavně potřebuješ hodně DPS a větší skupinu. Skvělá příležitost vyzkoušet nového Kingambita s Kowtow Cleave.', weak: ['bug','ghost','dark'], resist: 'Fighting a Psychic – bojovníky na ni neber.' }
-};
-var CO = null;
+var BS = null, RB = {}, curBoss = null;
+var TIERS = [
+  ['5', '5★ raid', '3–5 hráčů', 0.79], ['s5', 'Shadow 5★', '6+ hráčů · zuřícího bosse zklidni Purified Gems', 0.79], ['mega', 'Mega raid', '3–5 hráčů', 0.79],
+  ['3', '3★ raid', 'sám nebo ve dvou', 0.73], ['s3', 'Shadow 3★', '2–3 hráči', 0.73], ['1', '1★ raid', 'zvládneš sám', 0.5974], ['s1', 'Shadow 1★', 'zvládneš sám', 0.5974]];
+var TIER = {}; TIERS.forEach(function (t) { TIER[t[0]] = t; });
+var DAT = { darkrai: 'Darkraiovi', cresselia: 'Cresselii' };
+function bossKey(b) { return b.t + b.id.replace(/_/g, '') + (/(moon)/i.test(b.n) ? 'moon' : ''); }
+function fmtShort(iso) { var d = new Date(iso); return d.getDate() + '. ' + (d.getMonth() + 1) + '.'; }
+function typeChart(types) {
+  var weak = [], res = [];
+  PVE.types.forEach(function (at) { var e = effMul(at, types); if (e > 1.01) weak.push([at, e]); else if (e < .99) res.push([at, e]); });
+  weak.sort(function (a, b) { return b[1] - a[1]; }); res.sort(function (a, b) { return a[1] - b[1]; });
+  function chips(l) { return l.length ? l.map(function (x) { return '<span class="weak" style="background:' + TC[x[0]] + '">' + cap(x[0]) + ' <small>' + fmt(x[1], 3).replace(/,?0+$/, '') + '×</small></span>'; }).join('') : '<span class="note">Nic.</span>'; }
+  return [chips(weak), chips(res)];
+}
+function bestVs(mon, tdef, dtypes, seOnly) {
+  var fast = mon[8].map(function (m) { return pveMove(m); }).filter(Boolean), ch = mon[9].map(function (m) { return pveMove(m); }).filter(Boolean), best = null;
+  if (mon[11]) ch.push(pveMove(mon[11], true));
+  fast.forEach(function (F) { ch.forEach(function (C) {
+    if (seOnly && effMul(C.t, dtypes) <= 1) return;
+    var r = pveCalc(mon, F, C, tdef, dtypes); if (r && (!best || r.score > best.r.score)) best = { F: F, C: C, r: r };
+  }); });
+  return best;
+}
 function renderRaid() {
-  var b = BOSSES[st.boss];
-  $('bossName').textContent = b.name;
-  $('bossType').innerHTML = dot(b.t) + cap(b.t);
-  $('bossText').textContent = b.text;
-  $('bossResist').textContent = b.resist;
-  $('bossWeak').innerHTML = b.weak.map(function (w) { return '<span class="weak" style="background:' + TC[w] + '">' + cap(w) + ' <small>1,6×</small></span>'; }).join('');
-  group($('bossTabs'), [{ k: 'darkrai', label: 'Darkrai' }, { k: 'cresselia', label: 'Cresselia' }], function (i) { return i.k === st.boss; }, function (i) { st.boss = i.k; savePrefs(); renderRaid(); });
   group($('coTabs'), [{ k: 'all', label: 'Vše' }, { k: 'nomega', label: 'Bez Mega' }, { k: 'plain', label: 'Jen běžní' }], function (i) { return i.k === st.co; }, function (i) { st.co = i.k; renderRaid(); });
-  if (!CO) { $('counters').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
-  var list = CO[st.boss][String(st.mlv)][st.co];
-  var max = list.length ? list[0].score : 1;
+  if (!BS || !PVE) { $('counters').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
+  var now = new Date();
+  var live = BS.raids.filter(function (b) { return new Date(b.b) > now; });
+  if (!curBoss || !RB[curBoss]) { var f = live.filter(function (b) { return new Date(b.a) <= now; })[0] || live[0]; curBoss = bossKey(f); }
+  $('bossPicker').innerHTML = TIERS.map(function (t) {
+    var l = live.filter(function (b) { return b.t === t[0]; });
+    if (!l.length) return '';
+    return '<div class="tierrow"><span class="tierlbl"><b>' + t[1] + '</b><small>' + t[2] + '</small></span><div class="pills">' + l.map(function (b) {
+      var k = bossKey(b), soon = new Date(b.a) > now;
+      return '<button type="button" class="pill" data-boss="' + k + '" aria-pressed="' + (k === curBoss) + '">' + esc(b.n) + (soon ? ' <small class="soon">od ' + fmtShort(b.a) + '</small>' : '') + '</button>';
+    }).join('') + '</div></div>';
+  }).join('');
+  var b = RB[curBoss], mon = PVEIDX[b.id], tier = TIER[b.t], types = mon[4];
+  $('bossName').textContent = b.n;
+  $('bossType').innerHTML = types.map(tchip).join('');
+  $('bossDiff').textContent = tier[1] + ' · ' + tier[2];
+  var nw = new Date(b.a) <= now;
+  $('bossText').textContent = (nw ? 'V raidech do ' + fmtShort(b.b) : 'V raidech od ' + fmtShort(b.a) + ' do ' + fmtShort(b.b)) + '.' + (b.t.charAt(0) === 's' ? ' Shadow boss má víc HP a silnější útoky, chycený Pokémon je Shadow.' : '') + (b.t === 'mega' ? ' Po výhře chytáš běžnou formu a dostaneš Mega Energy.' : '');
+  var tc = typeChart(types); $('bossWeak').innerHTML = tc[0]; $('bossResist').innerHTML = tc[1];
+  var tdef = (mon[6] + 15) * tier[3], out = [];
+  PVE.mons.forEach(function (m) {
+    var kd = m[3];
+    if (st.co === 'nomega' && (kd === 'mega' || kd === 'primal')) return;
+    if (st.co === 'plain' && kd) return;
+    var r = bestVs(m, tdef, types, true) || null;
+    if (r) out.push({ m: m, r: r });
+  });
+  if (!out.length) PVE.mons.forEach(function (m) { var r = bestVs(m, tdef, types, false); if (r) out.push({ m: m, r: r }); });
+  out.sort(function (a, c) { return c.r.r.score - a.r.r.score; });
+  out = out.slice(0, 12);
+  var max = out.length ? out[0].r.r.score : 1;
   $('counters').innerHTML = '<div class="tr head"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">DPS</span><span class="num">TDO</span><span>Skóre</span></div>' +
-    list.map(function (c, i) {
-      return '<a class="tr link" href="#raid-' + st.boss + '-' + esc(c.id) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + esc(c.name) + '</span>' + kindBadge(c.kind) + '</div>' +
-        '<div class="mv"><span>' + esc(c.fast) + '</span><span>' + dot(c.ctype) + esc(c.charged) + '</span></div>' +
-        '<span class="num big">' + c.dps.toFixed(1) + '</span><span class="num" style="color:var(--muted)">' + c.tdo + '</span>' +
-        '<div class="score"><div class="bar"><i style="width:' + Math.round(c.score / max * 100) + '%"></i></div><b>' + c.score.toFixed(1) + '</b></div></a>';
+    out.map(function (x, i) {
+      var c = x.r;
+      return '<a class="tr link" href="#raid-' + curBoss + '-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + esc(x.m[1]) + '</span>' + kindBadge(x.m[3]) + '</div>' +
+        '<div class="mv"><span>' + dot(c.F.t) + esc(c.F.n) + '</span><span>' + dot(c.C.t) + esc(c.C.n) + '</span></div>' +
+        '<span class="num big">' + fmt(c.r.dps, 1) + '</span><span class="num" style="color:var(--muted)">' + Math.round(c.r.tdo) + '</span>' +
+        '<div class="score"><div class="bar"><i style="width:' + Math.round(c.r.score / max * 100) + '%"></i></div><b>' + fmt(c.r.score, 1) + '</b></div></a>';
     }).join('');
 }
+$('bossPicker').addEventListener('click', function (e) { var b = e.target.closest('button[data-boss]'); if (b) { curBoss = b.getAttribute('data-boss'); renderRaid(); } });
+
+/* ---------- MAX BATTLES ---------- */
+var curMax = null;
+var GMAXT = { lapras: 'ice', duraludon: 'dragon' };
+function renderMax() {
+  if (!BS || !PVE) { $('maxAtkTable').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
+  var now = new Date(), feats = BS.max.filter(function (b) { return new Date(b.b) > now; });
+  if (!curMax) curMax = feats.length ? 'f:' + feats[0].id : 'd:' + BS.dmax[0][0];
+  $('maxPicker').innerHTML = feats.map(function (b) {
+    var k = 'f:' + b.id;
+    return '<button type="button" class="pill" data-max="' + k + '" aria-pressed="' + (k === curMax) + '">' + esc(b.n) + ' <small class="soon">' + (new Date(b.a) <= now ? 'teď' : 'od ' + fmtShort(b.a)) + '</small></button>';
+  }).join('');
+  var sel = $('maxAny');
+  if (!sel.options.length) {
+    sel.innerHTML = '<option value="">— vyber —</option>' + BS.dmax.map(function (d) { var m = PVEIDX[d[0]]; return m ? '<option value="d:' + d[0] + '">' + esc(m[1]) + (d[1] ? ' (G-Max)' : '') + '</option>' : ''; }).join('');
+  }
+  sel.value = curMax.indexOf('d:') === 0 ? curMax : '';
+  var id = curMax.slice(2), feat = null; feats.forEach(function (b) { if ('f:' + b.id === curMax) feat = b; });
+  var boss = PVEIDX[id]; if (!boss) return;
+  var types = boss[4];
+  $('maxName').textContent = feat ? feat.n : 'Dynamax ' + boss[1];
+  $('maxType').innerHTML = types.map(tchip).join('');
+  $('maxWhen').textContent = feat ? (feat.t + ' · ' + (new Date(feat.a) <= now ? 'teď, do ' + fmtShort(feat.b) : fmtShort(feat.a) + ' – ' + fmtShort(feat.b))) : 'Vlastní výběr bosse';
+  $('maxText').textContent = feat ? feat.note : 'Countery pro libovolného Dynamax bosse, třeba když je ve tvém okolí na Power Spotu.';
+  var bossMoveTypes = {}; boss[8].concat(boss[9]).forEach(function (mid) { var m = PVE.moves[mid]; if (m) bossMoveTypes[m[1]] = 1; });
+  var bmt = Object.keys(bossMoveTypes);
+  var tc = typeChart(types); $('maxWeak').innerHTML = tc[0];
+  $('maxAtk').innerHTML = bmt.map(function (t) { return '<span class="weak" style="background:' + TC[t] + '">' + cap(t) + '</span>'; }).join('');
+  var D = (boss[6] + 15) * 0.79, atk = [], tank = [];
+  BS.dmax.forEach(function (d) {
+    var m = PVEIDX[d[0]]; if (!m) return;
+    var A = (m[5] + 15) * 0.7903, best = null;
+    m[8].forEach(function (fid) {
+      var F = PVE.moves[fid]; if (!F) return;
+      var t = F[1], g = d[1] && t === (GMAXT[d[0]] || m[4][0]), P = g ? 450 : 350;
+      var stab = m[4].indexOf(t) !== -1 ? 1.2 : 1, e = effMul(t, types);
+      var dmg = Math.floor(0.5 * P * A / D * stab * e) + 1;
+      if (!best || dmg > best.dmg) best = { dmg: dmg, F: F, g: g, e: e };
+    });
+    if (best) atk.push({ m: m, b: best });
+    var avg = 0; bmt.forEach(function (t) { avg += effMul(t, m[4]); }); avg = bmt.length ? avg / bmt.length : 1;
+    tank.push({ m: m, g: d[1], s: (m[6] + 15) * 0.7903 * Math.floor((m[7] + 15) * 0.7903) / avg / 100, avg: avg });
+  });
+  atk.sort(function (a, b) { return b.b.dmg - a.b.dmg; }); tank.sort(function (a, b) { return b.s - a.s; });
+  var am = atk.length ? atk[0].b.dmg : 1, tm = tank.length ? tank[0].s : 1;
+  $('maxAtkTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Rychlý útok → Max útok</span><span class="num">Efekt.</span><span>Síla Max útoku</span></div>' +
+    atk.slice(0, 12).map(function (x, i) {
+      return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.b.g ? 'Gigantamax ' : 'Dynamax ') + esc(x.m[1]) + '</span>' + (x.b.g ? ' <span class="kind mega">G-MAX</span>' : '') + '</div>' +
+        '<div class="mv"><span>' + dot(x.b.F[1]) + esc(x.b.F[0]) + ' → ' + (x.b.g ? 'G-Max útok' : 'Max ' + cap(x.b.F[1])) + '</span></div>' +
+        '<span class="num big">' + fmt(x.b.e, 2).replace(/,?0+$/, '') + '×</span>' +
+        '<div class="score"><div class="bar"><i style="width:' + Math.round(x.b.dmg / am * 100) + '%"></i></div><b>' + x.b.dmg + '</b></div></a>';
+    }).join('');
+  $('maxTankTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Typy</span><span class="num">Dostává</span><span>Tank skóre</span></div>' +
+    tank.slice(0, 10).map(function (x, i) {
+      return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.g ? 'Gigantamax ' : 'Dynamax ') + esc(x.m[1]) + '</span></div>' +
+        '<div class="types" style="display:flex;gap:4px;flex-wrap:wrap">' + x.m[4].map(tchip).join('') + '</div>' +
+        '<span class="num big">' + fmt(x.avg, 2).replace(/,?0+$/, '') + '×</span>' +
+        '<div class="score"><div class="bar"><i style="width:' + Math.round(x.s / tm * 100) + '%;background:var(--sky)"></i></div><b>' + Math.round(x.s) + '</b></div></a>';
+    }).join('');
+  Array.prototype.forEach.call($('maxPicker').querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-max') === curMax); });
+}
+$('maxPicker').addEventListener('click', function (e) { var b = e.target.closest('button[data-max]'); if (b) { curMax = b.getAttribute('data-max'); renderMax(); } });
+$('maxAny').addEventListener('change', function () { if (this.value) { curMax = this.value; renderMax(); } });
 
 /* ---------- MEGA LEVEL (shared) ---------- */
 function renderMlv() {
@@ -778,7 +926,6 @@ $('pd').addEventListener('click', function (e) { if (e.target === this) closeTo(
 /* ---------- PVE DETAIL (Raidy, Damage meter) ---------- */
 var PVE = null, PVEIDX = {};
 var LVLMUL = { 1: 1.0, 2: 1.1, 3: 1.2, 4: 1.3 };
-var BOSSDEF = { darkrai: 198, cresselia: 228 };
 function effMul(at, dtypes) { var m = 1; if (!dtypes) return 1; var ai = PVE.types.indexOf(at); dtypes.forEach(function (t) { m *= PVE.chart[ai][PVE.types.indexOf(t)]; }); return m; }
 function pveMove(id, plus) {
   var m = PVE.moves[id]; if (!m) return null;
@@ -808,13 +955,14 @@ function statRow(mon, lvl, cpmv) {
 function openPveDetail(ctx, id) {
   if (!PVE) return;
   var mon = PVEIDX[id]; if (!mon) return;
-  var boss = ctx === 'dmg' ? null : ctx, dtypes = boss ? [BOSSES[boss].t] : null, tdef = boss ? (BOSSDEF[boss] + 15) * 0.79 : 160;
+  var rb = ctx === 'dmg' ? null : RB[ctx], bm = rb ? PVEIDX[rb.id] : null;
+  var boss = rb ? rb.n : null, dtypes = bm ? bm[4] : null, tdef = bm ? (bm[6] + 15) * TIER[rb.t][3] : 160;
   var types = mon[4], c1 = TC[types[0]], c2 = TC[types[1] || types[0]], elite = {};
   mon[10].forEach(function (m) { elite[m] = 1; });
   $('pdHd').style.background = 'linear-gradient(120deg,' + c1 + ' 0 55%,' + c2 + ' 55% 100%)'; $('pdHd').style.color = '';
   $('pdDex').textContent = '#' + String(mon[2]).padStart(4, '0');
   $('pdName').textContent = mon[1];
-  $('pdMeta').innerHTML = types.map(tchip).join('') + kindBadge(mon[3]) + '<span class="tchip" style="background:#fff">' + (boss ? 'Raid proti: ' + BOSSES[boss].name : 'Neutrální cíl') + (mon[11] ? ' · Mega úroveň ' + ['', 'Base', 'High', 'Max', 'Super Max'][st.mlv] : '') + '</span>';
+  $('pdMeta').innerHTML = types.map(tchip).join('') + kindBadge(mon[3]) + '<span class="tchip" style="background:#fff">' + (boss ? 'Raid proti: ' + boss : 'Neutrální cíl') + (mon[11] ? ' · Mega úroveň ' + ['', 'Base', 'High', 'Max', 'Super Max'][st.mlv] : '') + '</span>';
   var fast = mon[8].map(function (m) { return pveMove(m); }).filter(Boolean);
   var ch = mon[9].map(function (m) { return pveMove(m); }).filter(Boolean);
   if (mon[11]) ch.push(pveMove(mon[11], true));
@@ -845,13 +993,13 @@ function openPveDetail(ctx, id) {
     '<div class="card"><h3>Souhrn</h3><div class="stats">' +
       '<div class="stat"><small>Nejlepší DPS</small><b>' + (best ? fmt(best.r.dps, 2) : '–') + '</b></div><div class="stat"><small>TDO</small><b>' + (best ? Math.round(best.r.tdo) : '–') + '</b></div>' +
       '<div class="stat"><small>Skóre</small><b>' + (best ? fmt(best.r.score, 1) : '–') + '</b></div><div class="stat"><small>Base A/D/HP</small><b class="sm">' + mon[5] + '/' + mon[6] + '/' + mon[7] + '</b></div>' +
-    '</div><p class="note">' + (best ? 'Nejlepší moveset: <strong>' + esc(best.F.n) + ' · ' + esc(best.C.n) + '</strong>' + (boss ? ' proti ' + ({ darkrai: 'Darkraiovi', cresselia: 'Cresselii' }[boss] || BOSSES[boss].name) + '.' : ' proti neutrálnímu cíli.') : '') + '</p></div>' +
+    '</div><p class="note">' + (best ? 'Nejlepší moveset: <strong>' + esc(best.F.n) + ' · ' + esc(best.C.n) + '</strong>' + (boss ? ' proti bossovi ' + boss + '.' : ' proti neutrálnímu cíli.') : '') + '</p></div>' +
     '<div class="card"><h3>Staty (IV 15/15/15)</h3><div class="mscroll"><table class="mtab" style="min-width:0"><thead><tr><th>Level</th><th>CP</th><th>Útok</th><th>Obrana</th><th>HP</th></tr></thead><tbody>' +
       statRow(mon, 30, 0.7317) + statRow(mon, 40, 0.7903) + statRow(mon, 50, 0.8403) + '</tbody></table></div><p class="note">' +
       (shadow ? 'Shadow: útok ×1,2 a obrana ×0,83 jsou už v tabulce, CP je jako u běžné verze. ' : '') +
       (mega ? 'Mega/Primal: svým útokům stejného typu dává 1,3×, ostatním 1,1×, a stejný bonus dostanou i ostatní v raidu. ' : '') + 'Level 30 = max z raidu za počasí, 40 = bez XL candy, 50 = s XL candy.</p></div>' +
     '<div class="card wide"><h3>Nejlepší movesety</h3><div class="mscroll"><table class="mtab combo"><thead><tr><th>Rychlý</th><th style="text-align:left">Nabitý</th><th>DPS</th><th>TDO</th><th>Skóre</th></tr></thead><tbody>' + comboRows + '</tbody></table></div>' +
-      '<p class="note">Level 40, IV 15/15/15, bez počasí a přátelství' + (boss ? ', cíl ' + BOSSES[boss].name + ' (' + cap(BOSSES[boss].t) + ')' : ', neutrální cíl') + '. Číslo za útokem je efektivita proti bossovi.</p></div>' +
+      '<p class="note">Level 40, IV 15/15/15, bez počasí a přátelství' + (boss ? ', cíl ' + boss + ' (' + dtypes.map(cap).join('/') + ')' : ', neutrální cíl') + '. Číslo za útokem je efektivita proti bossovi.</p></div>' +
     '<div class="card wide"><h3>Rychlé útoky</h3><div class="mscroll"><table class="mtab"><thead><tr><th>Útok</th><th>Síla</th><th>Energie</th><th>Trvání</th><th>DPS</th><th>EPS</th></tr></thead><tbody>' + fastRows + '</tbody></table></div></div>' +
     '<div class="card wide"><h3>Nabité útoky</h3><div class="mscroll"><table class="mtab"><thead><tr><th>Útok</th><th>Síla</th><th>Cena</th><th>Trvání</th><th>DPS</th><th>DPE</th></tr></thead><tbody>' + chRows + '</tbody></table></div>' +
       '<p class="note">DPS a DPE samotného útoku včetně STAB. Žlutě je nejlepší moveset. ★ = STAB, * = elite / legacy' + (mon[11] ? ', MEGA+ = útok jen v Mega formě, síla podle Mega úrovně' : '') + '.</p></div>' +
@@ -887,13 +1035,14 @@ $('resetTodos').addEventListener('click', function () { done = {}; store('todos-
 /* ---------- INIT ---------- */
 renderRaid(); renderMlv(); renderDmControls(); renderPvpControls(); renderTodos(); route();
 setInterval(function () { if (EV && curPage === 'udalosti') renderEvents(); }, 60000);
-fetch('data/counters.json').then(function (r) { return r.json(); }).then(function (d) { CO = d; renderRaid(); })
+fetch('data/bosses.json').then(function (r) { return r.json(); }).then(function (d) { BS = d; d.raids.forEach(function (b) { RB[bossKey(b)] = b; }); afterData(); })
   .catch(function () { $('counters').innerHTML = '<p style="padding:24px" class="note">Data se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
+function afterData() { if (!BS || !PVE) return; renderRaid(); renderMax(); if (pendingPve && (pendingPve[0] === 'dmg' || RB[pendingPve[0]])) openPveDetail(pendingPve[0], pendingPve[1]); }
 fetch('data/pvp.json').then(function (r) { return r.json(); }).then(function (d) { PVP = d; renderPvp(); if (pendingDetail) openDetail(pendingDetail[0], pendingDetail[1]); })
   .catch(function () { $('pvpSummary').textContent = 'Žebříček se nepodařilo načíst. Zkus stránku obnovit.'; });
 fetch('data/events.json').then(function (r) { return r.json(); }).then(function (d) { EV = d; renderEvents(); if (pendingEv) openEventDetail(pendingEv); })
   .catch(function () { $('evNow').innerHTML = '<p class="note">Události se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
-fetch('data/pve.json').then(function (r) { return r.json(); }).then(function (d) { PVE = d; d.mons.forEach(function (m) { PVEIDX[m[0]] = m; }); if (pendingPve) openPveDetail(pendingPve[0], pendingPve[1]); });
+fetch('data/pve.json').then(function (r) { return r.json(); }).then(function (d) { PVE = d; d.mons.forEach(function (m) { PVEIDX[m[0]] = m; }); if (pendingPve && pendingPve[0] === 'dmg') openPveDetail(pendingPve[0], pendingPve[1]); afterData(); });
 fetch('data/dm.json').then(function (r) { return r.json(); }).then(function (d) { DM = d; renderDm(); })
   .catch(function () { $('dmSummary').textContent = 'Data se nepodařilo načíst. Zkus stránku obnovit.'; });
 })();
