@@ -6,128 +6,159 @@
 <title>PoGo Kompas – tahák na Pokémon GO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0F1020; --surface:#1A1C33; --surface2:#23264A; --line:#2A2D4D; --line2:#3A3E66;
-  --text:#F4F2EA; --text2:#D6D7EA; --muted:#C4C6DE; --dim:#A9ABC8; --faint:#6E719A;
-  --accent:#FFD23F; --sky:#5CC8FF; --ink:#15162A;
-  --display:'Bricolage Grotesque',system-ui,sans-serif;
+  /* "Trenérský přístroj": papírový podklad v mřížce, inkoustové obrysy s tvrdým stínem, červené tělo, LCD displej */
+  --bg:#ECEEE4; --grid:#DCE0D0; --surface:#FFFFFF; --surface2:#F1F2EA; --line:#17181C; --line2:#17181C;
+  --text:#17181C; --text2:#2C2E36; --muted:#3E414B; --dim:#5D606B; --faint:#8A8D96;
+  --accent:#D7352A; --accent-ink:#FFFFFF; --sky:#2F6FD6; --ink:#17181C;
+  --lcd:#13301B; --lcd-text:#CDEBB0; --lcd-hi:#9EDB4E; --lcd-dim:#86B07A;
+  --display:'Archivo Black','Arial Black',system-ui,sans-serif;
+  --body:'Archivo',system-ui,sans-serif;
+  --pixel:'Pixelify Sans','Courier New',monospace;
+  --shadow:4px 4px 0 var(--line);
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
-a{color:var(--accent)}a:hover{color:#FFE680}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55}
+a{color:var(--accent);font-weight:600}a:hover{color:#A8261D}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
 .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
-h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:-.01em;margin:0;text-wrap:balance}
 p{margin:0}
 
-/* header */
-header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;background:rgba(15,16,32,.92);backdrop-filter:blur(10px)}
-.nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 24px;max-width:1200px;margin:0 auto}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
-.logo span{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
-.logo:hover{color:var(--text)}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;background:var(--surface);border:1px solid var(--line);padding:5px;border-radius:14px}
-.tab{min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border-radius:10px;font-weight:600;font-size:15px;color:var(--text2);text-decoration:none;border:0;background:transparent}
+/* header = červené tělo přístroje */
+header{background:var(--accent);border-bottom:3px solid var(--line);position:sticky;top:0;z-index:10}
+.nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;max-width:1200px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff}
+.logo:hover{color:#fff}
+.logo span{font-family:var(--display);font-size:22px;letter-spacing:.01em;text-transform:uppercase}
+.lens{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#BFE6FF 0 18%,#3B8FE8 19% 60%,#1D4F9C 61%);border:3px solid #fff;box-shadow:0 0 0 3px var(--line)}
+.leds{display:flex;gap:5px}.leds i{width:9px;height:9px;border-radius:50%;border:2px solid var(--line)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;background:var(--surface);border:2.5px solid var(--line);padding:5px;border-radius:12px;box-shadow:var(--shadow)}
+header .tabs{box-shadow:3px 3px 0 #7A1A13}
+.tab{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:8px;font-weight:700;font-size:15px;color:var(--text2);text-decoration:none;border:0;background:transparent}
 .tab:hover{color:var(--text);background:var(--surface2)}
-.tab[aria-current="page"],.tab[aria-pressed="true"],.tab[aria-selected="true"]{background:var(--accent);color:var(--ink)}
-.season{font-size:13px;color:var(--dim);border:1px solid var(--line);padding:6px 12px;border-radius:999px}
-@media (max-width:720px){.season{display:none}.nav{padding:12px 16px}.tabs{width:100%;overflow-x:auto;flex-wrap:nowrap}.tab{white-space:nowrap;padding:0 12px}}
+.tab[aria-current="page"],.tab[aria-pressed="true"],.tab[aria-selected="true"]{background:var(--line);color:#fff}
+.season{font-family:var(--pixel);font-size:14px;color:var(--lcd-text);background:var(--lcd);border:2.5px solid var(--line);padding:6px 12px;border-radius:8px}
+@media (max-width:720px){.season,.leds{display:none}.nav{padding:10px 16px}.tabs{width:100%;overflow-x:auto;flex-wrap:nowrap}.tab{white-space:nowrap;padding:0 12px}.wrap{padding:0 16px}}
 
 main{padding-bottom:80px}
-section.page{padding:56px 0 24px;display:none;flex-direction:column;gap:24px}
+section.page{padding:48px 0 24px;display:none;flex-direction:column;gap:24px}
 section.page.on{display:flex}
-.eyebrow{font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.h2{font-weight:800;font-size:clamp(30px,4vw,40px)}
-.lead{color:var(--dim);font-size:15px;max-width:760px}
+.eyebrow{display:inline-flex;align-self:flex-start;font-family:var(--pixel);font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--line);padding:3px 10px;border-radius:6px}
+.h2{font-size:clamp(30px,4vw,42px);text-transform:uppercase}
+.lead{color:var(--muted);font-size:16px;max-width:68ch}
 .row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:16px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
-.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text2);background:var(--surface2);padding:4px 12px;border-radius:999px}
-.dot{flex:none;width:8px;height:8px;border-radius:50%;display:inline-block}
-.dot.lg{width:10px;height:10px}
-.kind{font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--ink);padding:2px 8px;border-radius:6px}
-.kind.shadow{background:#B79CFF}.kind.mega{background:var(--sky)}.kind.primal{background:#FF8A5C}
+.card{background:var(--surface);border:2.5px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);background:var(--surface2);border:2px solid var(--line);padding:3px 10px;border-radius:999px}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;display:inline-block;border:2px solid var(--line)}
+.dot.lg{width:12px;height:12px}
+.kind{font-family:var(--pixel);font-size:12px;letter-spacing:.04em;color:var(--ink);padding:1px 7px;border-radius:5px;border:2px solid var(--line);vertical-align:2px}
+.kind.shadow{background:#C9B5FF}.kind.mega{background:#8FD0FF}.kind.primal{background:#FFB08A}
 .note{font-size:13px;color:var(--dim)}
-.bar{flex:1;height:8px;background:var(--surface2);border-radius:999px;overflow:hidden}
-.bar>i{display:block;height:100%;border-radius:999px;background:var(--accent)}
-.pill{min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:0 14px;border-radius:999px;font-weight:600;font-size:14px;background:var(--bg);color:var(--text2);border:1px solid var(--line2)}
-.pill[aria-pressed="true"]{background:var(--text);color:var(--ink);border-color:var(--text)}
-.label{font-size:13px;font-weight:600;color:var(--dim)}
+.bar{flex:1;height:12px;background:var(--surface2);border:2px solid var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.pill{min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:0 14px;border-radius:999px;font-weight:700;font-size:14px;background:var(--surface);color:var(--text2);border:2px solid var(--line)}
+.pill:hover{background:var(--surface2)}
+.pill[aria-pressed="true"]{background:var(--line);color:#fff}
+.pill[aria-pressed="true"] .dot{border-color:#fff}
+.label{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 
 /* hero */
-.hero{display:flex;flex-wrap:wrap;gap:32px;align-items:stretch;padding:8px 0 24px}
+.hero{display:flex;flex-wrap:wrap;gap:32px;align-items:center;padding:8px 0 24px}
 .hero-l{flex:1 1 460px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:20px}
-.hero h1{font-weight:800;font-size:clamp(40px,6vw,72px);line-height:1.02;letter-spacing:-.03em}
-.hero-r{flex:1 1 380px;min-width:0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px}
-.btn{min-height:48px;display:inline-flex;align-items:center;padding:0 22px;border-radius:14px;font-weight:700;font-size:16px;text-decoration:none}
-.btn.primary{background:var(--accent);color:var(--ink)}.btn.primary:hover{color:var(--ink);filter:brightness(1.05)}
-.btn.ghost{color:var(--text);border:1px solid var(--line2);font-weight:600}.btn.ghost:hover{color:var(--text);background:var(--surface)}
-.badge{align-self:flex-start;font-size:13px;font-weight:700;color:var(--ink);background:var(--sky);padding:5px 12px;border-radius:999px}
-.tip{display:flex;gap:10px;align-items:center;padding:14px 16px;background:var(--surface2);border-radius:14px;font-size:14px;color:var(--muted)}
-.ev{display:flex;flex-direction:column;gap:10px}
+.hero h1{font-size:clamp(42px,6.4vw,78px);line-height:.98;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--accent)}
+/* hlavní akce = LCD displej */
+.hero-r{flex:1 1 380px;min-width:0;padding:10px;display:flex;background:#2B2D33;border-radius:18px}
+.hero-r .screen{flex:1;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:14px;background:var(--lcd);background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);border:2px solid #000;
+  --text:#E6F6D2; --text2:var(--lcd-text); --muted:var(--lcd-text); --accent:var(--lcd-hi); color:var(--lcd-text)}
+.hero-r h2{font-family:var(--pixel);font-weight:700;font-size:34px;line-height:1.05;text-transform:none;color:#E6F6D2}
+.btn{min-height:50px;display:inline-flex;align-items:center;padding:0 22px;border-radius:12px;font-weight:800;font-size:16px;text-decoration:none;border:2.5px solid var(--line);box-shadow:var(--shadow);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--line)}
+.btn.primary{background:var(--accent);color:#fff}.btn.primary:hover{color:#fff;background:#C42D23}
+.btn.ghost{background:var(--surface);color:var(--text)}.btn.ghost:hover{color:var(--text);background:var(--surface2)}
+.badge{align-self:flex-start;font-family:var(--pixel);font-size:15px;color:var(--lcd);background:var(--lcd-hi);padding:2px 10px;border-radius:4px}
+.tip{display:flex;gap:10px;align-items:center;padding:12px 14px;border:2px dashed var(--lcd-dim);border-radius:8px;font-size:14px;color:var(--lcd-text)}
+.ev{display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
 .ev .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.ev .tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.ev h3{font-weight:700;font-size:22px;line-height:1.2}
+.ev .tag{font-family:var(--pixel);font-size:14px;letter-spacing:.03em;text-transform:uppercase;color:#fff;padding:2px 8px;border-radius:5px}
+.ev .when{font-family:var(--pixel);font-size:15px;color:var(--text2)}
+.ev h3{font-size:21px;line-height:1.15}
 
-/* tables */
-.table{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow-x:auto}
-.tr{display:grid;grid-template-columns:52px minmax(0,1.6fr) minmax(0,1.9fr) 80px 80px minmax(140px,1fr);gap:16px;align-items:center;padding:12px 22px;border-bottom:1px solid var(--surface2);min-width:820px}
-.tr.head{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line)}
+/* tabulky */
+.table{background:var(--surface);border:2.5px solid var(--line);border-radius:14px;overflow-x:auto;box-shadow:var(--shadow)}
+.tr{display:grid;grid-template-columns:52px minmax(0,1.6fr) minmax(0,1.9fr) 80px 80px minmax(140px,1fr);gap:16px;align-items:center;padding:12px 22px;border-bottom:1.5px solid var(--grid);min-width:820px}
+.tr:nth-child(odd):not(.head){background:#FAFBF6}
+.tr.head{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--line);border-bottom:0}
 .tr:last-child{border-bottom:0}
-.rank{font-family:var(--display);font-weight:800;font-size:18px;color:var(--faint);font-variant-numeric:tabular-nums}
+.rank{font-family:var(--pixel);font-size:20px;color:var(--faint);font-variant-numeric:tabular-nums}
+.tr:nth-child(2) .rank,.tr:nth-child(3) .rank,.tr:nth-child(4) .rank{color:var(--accent)}
 .num{text-align:right;font-variant-numeric:tabular-nums}
-.name{font-weight:700;font-size:16px}
-.mv{display:flex;flex-direction:column;gap:2px;font-size:14px;color:var(--muted)}
+.num.big{font-family:var(--pixel);font-size:19px}
+.name{font-weight:800;font-size:16px}
+.mv{display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--muted)}
 .mv span{display:flex;align-items:center;gap:8px}
 .score{display:flex;align-items:center;gap:10px}
-.score b{min-width:40px;text-align:right;font-variant-numeric:tabular-nums}
+.score b{min-width:44px;text-align:right;font-family:var(--pixel);font-weight:500;font-size:17px;font-variant-numeric:tabular-nums}
 
 /* raid boss */
-.weak{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:700;background:var(--surface2);padding:8px 14px;border-radius:12px}
-.weak small{color:var(--dim);font-weight:500;font-size:14px}
+.weak{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--ink);padding:8px 14px;border-radius:10px;border:2px solid var(--line)}
+.weak small{font-family:var(--pixel);font-weight:500;font-size:15px}
+.boss-hd{background:var(--line);color:#fff;margin:-22px -22px 0;padding:18px 22px;border-radius:11px 11px 0 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.boss-hd h3{font-size:30px;text-transform:uppercase}
+.boss-hd .chip{border-color:#fff}
 
 /* damage meter */
 .controls{display:flex;flex-direction:column;gap:16px}
 .ctl-row{display:flex;flex-wrap:wrap;gap:16px;align-items:end}
 .ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
-input[type=search]{min-height:48px;width:100%;padding:0 16px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);font-size:16px}
-input::placeholder{color:#8A8DB0}
+input[type=search]{min-height:50px;width:100%;padding:0 16px;border-radius:10px;border:2.5px solid var(--line);background:var(--surface2);font-size:16px;font-weight:600}
+input[type=search]:focus{background:#fff}
+input::placeholder{color:#7C7F88;font-weight:500}
 .more{align-self:center}
+#dmSummary{font-family:var(--pixel);font-size:17px;color:var(--text)}
 
 /* pvp */
 .pv{display:flex;flex-direction:column;gap:10px;padding:18px 20px}
 .pv .top{display:flex;justify-content:space-between;align-items:baseline}
-.pv .bar{flex:none;height:6px}.pv .bar>i{background:var(--sky)}
+.pv .top b{font-family:var(--pixel);font-weight:500;font-size:22px;color:var(--sky)}
+.pv .bar{flex:none}.pv .bar>i{background:var(--sky)}
 
-/* todo */
+/* úkoly */
 .todo-wrap{display:flex;flex-wrap:wrap;gap:32px}
 .todo-l{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:14px}
-.todos{flex:2 1 520px;min-width:0;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.todo{width:100%;min-height:56px;display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 18px}
-.todo:hover{border-color:var(--line2)}
-.box{flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px solid #4A4E7A}
-.todo[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent)}
+.todos{flex:2 1 520px;min-width:0;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.todo{width:100%;min-height:60px;display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:2.5px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:3px 3px 0 var(--line);transition:transform .08s,box-shadow .08s}
+.todo:hover{background:#FAFBF6}
+.todo:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.box{flex:none;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;border:2.5px solid var(--line);background:var(--surface)}
+.todo[aria-pressed="true"]{background:var(--surface2);box-shadow:1px 1px 0 var(--line);transform:translate(2px,2px)}
+.todo[aria-pressed="true"] .box{background:var(--accent)}
+.todo[aria-pressed="true"] .box svg{stroke:#fff}
 .todo[aria-pressed="true"] .t{color:var(--dim);text-decoration:line-through}
-.todo .t{font-weight:600;font-size:16px}
+.todo .t{font-weight:800;font-size:16px}
 .todo .h{font-size:14px;color:var(--dim)}
+.counter-big{font-family:var(--pixel);font-size:48px;line-height:1;color:var(--lcd-hi);background:var(--lcd);border:2.5px solid var(--line);border-radius:10px;padding:10px 16px;align-self:flex-start}
 
-footer{border-top:1px solid var(--line)}
-footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px;color:var(--dim)}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+footer{background:var(--line);color:#C9CBD3}
+footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px}
+@media (prefers-reduced-motion:reduce){.btn,.todo{transition:none}}
 </style>
 </head>
 <body>
 <header>
   <nav class="nav" aria-label="Hlavní navigace">
     <a class="logo" href="#tento-tyden">
-      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true" fill="none"><circle cx="17" cy="17" r="15" stroke="#FFD23F" stroke-width="2.5"/><path d="M17 6 L21 17 L17 28 L13 17 Z" fill="#FFD23F"/><circle cx="17" cy="17" r="2.5" fill="#0F1020"/></svg>
-      <span>PoGo Kompas</span>
+      <span class="lens" aria-hidden="true"></span><span>PoGo Kompas</span><span class="leds" aria-hidden="true"><i style="background:#FF5A4E"></i><i style="background:#FFD23F"></i><i style="background:#5BD16B"></i></span>
     </a>
     <div class="tabs" id="nav">
       <a class="tab" href="#tento-tyden">Tento týden</a>
@@ -146,17 +177,17 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 <section class="page" id="p-tento-tyden" aria-labelledby="h-tyden">
   <div class="hero">
     <div class="hero-l">
-      <p class="eyebrow">Týden 16.–25. listopadu 2026</p>
-      <h1 id="h-tyden">Co tento týden<br>v Pokémon GO?</h1>
-      <p style="font-size:19px;color:var(--muted);max-width:520px">Rychlý tahák pro trenéry: co se děje, koho stavět do raidů a s kým vyrazit do GO Battle League. Bez omáčky.</p>
+      <p class="eyebrow">Týden 16.–25. 11. 2026</p>
+      <h1 id="h-tyden">Co tento týden<br>v <em>Pokémon GO?</em></h1>
+      <p style="font-size:19px;color:var(--muted);max-width:34ch">Rychlý tahák pro trenéry: co se děje, koho stavět do raidů a s kým vyrazit do GO Battle League. Bez omáčky.</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
         <a class="btn primary" href="#co-delat">Ukaž mi plán na týden</a>
         <a class="btn ghost" href="#raidy">Countery na Darkraie</a>
       </div>
     </div>
-    <div class="hero-r card">
+    <div class="hero-r"><div class="screen">
       <span class="badge">Hlavní akce víkendu</span>
-      <h2 style="font-weight:800;font-size:34px;line-height:1.1">Pawniard Community Day</h2>
+      <h2>Pawniard Community Day</h2>
       <p style="font-size:18px;font-weight:600;color:var(--accent)">Sobota 21. 11. · 14:00–17:00</p>
       <ul style="margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:8px;color:var(--text2)">
         <li>Vyvíjej Bisharp do <strong style="color:var(--text)">21:00</strong> → Kingambit dostane exkluzivní Dark útok <strong style="color:var(--text)">Kowtow Cleave</strong>.</li>
@@ -164,10 +195,10 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
         <li>Vajíčka se líhnou na 1/4 vzdálenosti.</li>
       </ul>
       <div class="tip">
-        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#5CC8FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9EDB4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
         <span>Kingambit s Kowtow Cleave patří mezi nejlepší běžné countery na Cresselii.</span>
       </div>
-    </div>
+    </div></div>
   </div>
   <div class="row" style="margin-top:16px">
     <h2 class="h2">Tento týden</h2>
@@ -187,8 +218,8 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:16px">
     <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:14px">
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <h3 style="font-weight:800;font-size:30px" id="bossName"></h3>
+      <div class="boss-hd">
+        <h3 id="bossName"></h3>
         <span class="chip" id="bossType"></span>
       </div>
       <p style="color:var(--muted)" id="bossText"></p>
@@ -271,8 +302,8 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
       <p style="color:var(--muted);font-size:17px">Odškrtávej, co máš hotovo. Nejdůležitější věci jsou nahoře. Stránka si to pamatuje v tomhle prohlížeči.</p>
       <div class="card" style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
         <span style="font-size:14px;color:var(--dim)">Hotovo</span>
-        <span style="font-family:var(--display);font-weight:800;font-size:44px;line-height:1" id="doneCount">0 / 0</span>
-        <div class="bar" style="flex:none;height:10px"><i id="doneBar" style="width:0"></i></div>
+        <span class="counter-big" id="doneCount">0 / 0</span>
+        <div class="bar" style="flex:none;height:14px"><i id="doneBar" style="width:0"></i></div>
         <button type="button" class="pill" id="resetTodos" style="align-self:flex-start;margin-top:8px">Vymazat odškrtnutí</button>
       </div>
     </div>
@@ -337,7 +368,7 @@ var EVENTS = [
   ['Brzy', 'd', 'so 28. 11.', 'Clefable Super Mega Raid Day', '14:00–17:00. Debut Mega Clefable a její Moonblast+. Šetři si raid passy.'],
   ['Konec sezóny', 'd', 'út 1. 12.', 'Twilight Trails končí', 'Dotáhni sezónní výzkumy a GBL odměny.']
 ];
-var TAGC = { a: 'var(--accent)', s: 'var(--sky)', d: 'var(--dim)' };
+var TAGC = { a: 'var(--accent)', s: 'var(--sky)', d: '#5D606B' };
 $('events').innerHTML = EVENTS.map(function (e) {
   return '<article class="card ev"><div class="top"><span class="tag" style="color:' + TAGC[e[1]] + '">' + esc(e[0]) + '</span><span class="note" style="font-size:13px">' + esc(e[2]) + '</span></div><h3>' + esc(e[3]) + '</h3><p style="color:var(--muted);font-size:15px">' + esc(e[4]) + '</p></article>';
 }).join('');
@@ -354,7 +385,7 @@ function renderRaid() {
   $('bossType').innerHTML = dot(b.t) + cap(b.t);
   $('bossText').textContent = b.text;
   $('bossResist').textContent = b.resist;
-  $('bossWeak').innerHTML = b.weak.map(function (w) { return '<span class="weak">' + dot(w, 1) + cap(w) + ' <small>1,6×</small></span>'; }).join('');
+  $('bossWeak').innerHTML = b.weak.map(function (w) { return '<span class="weak" style="background:' + TC[w] + '">' + cap(w) + ' <small>1,6×</small></span>'; }).join('');
   group($('bossTabs'), [{ k: 'darkrai', label: 'Darkrai' }, { k: 'cresselia', label: 'Cresselia' }], function (i) { return i.k === st.boss; }, function (i) { st.boss = i.k; savePrefs(); renderRaid(); });
   group($('coTabs'), [{ k: 'all', label: 'Vše' }, { k: 'nomega', label: 'Bez Mega' }, { k: 'plain', label: 'Jen běžní' }], function (i) { return i.k === st.co; }, function (i) { st.co = i.k; renderRaid(); });
   if (!CO) { $('counters').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
@@ -364,7 +395,7 @@ function renderRaid() {
     list.map(function (c, i) {
       return '<div class="tr"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + esc(c.name) + '</span>' + kindBadge(c.kind) + '</div>' +
         '<div class="mv"><span>' + esc(c.fast) + '</span><span>' + dot(c.ctype) + esc(c.charged) + '</span></div>' +
-        '<span class="num" style="font-weight:700">' + c.dps.toFixed(1) + '</span><span class="num" style="color:var(--muted)">' + c.tdo + '</span>' +
+        '<span class="num big">' + c.dps.toFixed(1) + '</span><span class="num" style="color:var(--muted)">' + c.tdo + '</span>' +
         '<div class="score"><div class="bar"><i style="width:' + Math.round(c.score / max * 100) + '%"></i></div><b>' + c.score.toFixed(1) + '</b></div></div>';
     }).join('');
 }
@@ -412,7 +443,7 @@ function renderDm() {
     var e = r.e;
     return '<div class="tr"><span class="rank">' + (i + 1) + '</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><div><span class="name">' + esc(r.m[0]) + '</span>' + kindBadge(r.m[1]) + '</div><span class="note">' + r.m[2].map(cap).join(' / ') + '</span></div>' +
       '<div class="mv"><span>' + dot(e[5]) + esc(e[3]) + '</span><span>' + dot(e[6]) + esc(e[4]) + '</span></div>' +
-      '<span class="num" style="font-weight:700">' + e[1].toFixed(2) + '</span><span class="num" style="color:var(--muted)">' + e[2] + '</span>' +
+      '<span class="num big">' + e[1].toFixed(2) + '</span><span class="num" style="color:var(--muted)">' + e[2] + '</span>' +
       '<div class="score"><div class="bar"><i style="width:' + Math.max(2, Math.round(val(r) / top * 100)) + '%"></i></div><b>' + r.s.toFixed(1) + '</b></div></div>';
   }).join('');
   $('dmTable').innerHTML = html;
@@ -439,7 +470,7 @@ function renderPvp() {
   group($('leagueTabs'), ['great','ultra','master'].map(function (k) { return { k: k, label: LEAGUES[k].label }; }), function (i) { return i.k === st.league; }, function (i) { st.league = i.k; savePrefs(); renderPvp(); });
   $('leagueNote').textContent = lg.note;
   $('pvpGrid').innerHTML = lg.rows.map(function (r, i) {
-    return '<article class="card pv"><div class="top"><span class="rank">#' + (i + 1) + '</span><b style="color:var(--accent);font-variant-numeric:tabular-nums">' + r[2].toFixed(1) + '</b></div><h3 style="font-family:Inter,sans-serif;font-size:18px;font-weight:700;letter-spacing:0">' + esc(r[0]) + '</h3><p style="font-size:14px;color:var(--dim)">' + esc(r[1]) + '</p><div class="bar"><i style="width:' + Math.max(8, Math.round((r[2] - 85) / 15 * 100)) + '%"></i></div></article>';
+    return '<article class="card pv"><div class="top"><span class="rank">#' + (i + 1) + '</span><b style="color:var(--accent);font-variant-numeric:tabular-nums">' + r[2].toFixed(1) + '</b></div><h3 style="font-size:19px">' + esc(r[0]) + '</h3><p style="font-size:14px;color:var(--dim)">' + esc(r[1]) + '</p><div class="bar"><i style="width:' + Math.max(8, Math.round((r[2] - 85) / 15 * 100)) + '%"></i></div></article>';
   }).join('');
 }
 
