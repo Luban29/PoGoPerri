@@ -356,7 +356,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   <div class="table" id="maxAtkTable"></div>
   <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší tanky</h3><p class="lead">vydrží nejvíc ránu od bosse</p></div>
   <div class="table" id="maxTankTable"></div>
-  <p class="note">Výpočet: level 40, IV 15/15/15, Max útok na úrovni 3 (Dynamax 350, Gigantamax 450 síla, G-Max jen s rychlým útokem svého typu). Tank skóre = obrana × HP × odolnost proti typům útoků bosse. Seznam Dynamax a Gigantamax Pokémonů podle GO Hub DB.</p>
+  <p class="note">Výpočet: level 40, IV 15/15/15, Max útok na úrovni 3 (Dynamax 350, Gigantamax 450 síla, G-Max jen s rychlým útokem svého typu). Zacian (Crowned Sword), Zamazenta (Crowned Shield) a Eternatus mají pevný Max útok: Behemoth Blade, Behemoth Bash (350) a Dynamax Cannon (450). Tank skóre = obrana × HP × odolnost proti typům útoků bosse. Seznam Dynamax a Gigantamax Pokémonů podle GO Hub DB a godex.site.</p>
 </section>
 
 <!-- DAMAGE METER -->
@@ -691,6 +691,7 @@ $('bossPicker').addEventListener('click', function (e) { var b = e.target.closes
 /* ---------- MAX BATTLES ---------- */
 var curMax = null;
 var GMAXT = { lapras: 'ice', duraludon: 'dragon' };
+var FIXED = { zacian_crowned_sword: ['steel', 350, 'Behemoth Blade'], zamazenta_crowned_shield: ['steel', 350, 'Behemoth Bash'], eternatus: ['dragon', 450, 'Dynamax Cannon'] };
 function renderMax() {
   if (!BS || !PVE) { $('maxAtkTable').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
   var now = new Date(), feats = BS.max.filter(function (b) { return new Date(b.b) > now; });
@@ -718,8 +719,12 @@ function renderMax() {
   var D = (boss[6] + 15) * 0.79, atk = [], tank = [];
   BS.dmax.forEach(function (d) {
     var m = PVEIDX[d[0]]; if (!m) return;
-    var A = (m[5] + 15) * 0.7903, best = null;
-    m[8].forEach(function (fid) {
+    var A = (m[5] + 15) * 0.7903, best = null, fx = FIXED[d[0]];
+    if (fx) {
+      var e0 = effMul(fx[0], types), st0 = m[4].indexOf(fx[0]) !== -1 ? 1.2 : 1;
+      best = { dmg: Math.floor(0.5 * fx[1] * A / D * st0 * e0) + 1, F: [fx[2], fx[0]], g: false, e: e0, fixed: 1 };
+    }
+    if (!fx) m[8].forEach(function (fid) {
       var F = PVE.moves[fid]; if (!F) return;
       var t = F[1], g = d[1] && t === (GMAXT[d[0]] || m[4][0]), P = g ? 450 : 350;
       var stab = m[4].indexOf(t) !== -1 ? 1.2 : 1, e = effMul(t, types);
@@ -734,14 +739,14 @@ function renderMax() {
   var am = atk.length ? atk[0].b.dmg : 1, tm = tank.length ? tank[0].s : 1;
   $('maxAtkTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Rychlý útok → Max útok</span><span class="num">Efekt.</span><span>Síla Max útoku</span></div>' +
     atk.slice(0, 12).map(function (x, i) {
-      return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.b.g ? 'Gigantamax ' : 'Dynamax ') + esc(x.m[1]) + '</span>' + (x.b.g ? ' <span class="kind mega">G-MAX</span>' : '') + '</div>' +
-        '<div class="mv"><span>' + dot(x.b.F[1]) + esc(x.b.F[0]) + ' → ' + (x.b.g ? 'G-Max útok' : 'Max ' + cap(x.b.F[1])) + '</span></div>' +
+      return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.b.g ? 'Gigantamax ' : (x.b.fixed ? '' : 'Dynamax ')) + esc(x.m[1]) + '</span>' + (x.b.g ? ' <span class="kind mega">G-MAX</span>' : '') + '</div>' +
+        '<div class="mv"><span>' + dot(x.b.F[1]) + (x.b.fixed ? 'vždy ' + esc(x.b.F[0]) + ' (pevný Max útok)' : esc(x.b.F[0]) + ' → ' + (x.b.g ? 'G-Max útok' : 'Max ' + cap(x.b.F[1]))) + '</span></div>' +
         '<span class="num big">' + fmt(x.b.e, 2).replace(/,?0+$/, '') + '×</span>' +
         '<div class="score"><div class="bar"><i style="width:' + Math.round(x.b.dmg / am * 100) + '%"></i></div><b>' + x.b.dmg + '</b></div></a>';
     }).join('');
   $('maxTankTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Typy</span><span class="num">Dostává</span><span>Tank skóre</span></div>' +
     tank.slice(0, 10).map(function (x, i) {
-      return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.g ? 'Gigantamax ' : 'Dynamax ') + esc(x.m[1]) + '</span></div>' +
+      return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.g ? 'Gigantamax ' : (FIXED[x.m[0]] ? '' : 'Dynamax ')) + esc(x.m[1]) + '</span></div>' +
         '<div class="types" style="display:flex;gap:4px;flex-wrap:wrap">' + x.m[4].map(tchip).join('') + '</div>' +
         '<span class="num big">' + fmt(x.avg, 2).replace(/,?0+$/, '') + '×</span>' +
         '<div class="score"><div class="bar"><i style="width:' + Math.round(x.s / tm * 100) + '%;background:var(--sky)"></i></div><b>' + Math.round(x.s) + '</b></div></a>';
