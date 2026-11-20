@@ -295,7 +295,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   <div style="display:flex;flex-direction:column;gap:6px">
     <p class="eyebrow">Všichni aktuální bossové</p>
     <h2 class="h2" id="h-raidy">Raid countery</h2>
-    <p class="lead">Vyber bosse podle obtížnosti. Countery se počítají proti jeho typům a obraně, Mega+ útoky podle zvolené Mega úrovně.</p>
+    <p class="lead">Vyber bosse podle obtížnosti. Countery se počítají proti jeho typům a obraně, Mega+ útoky na úrovni Super Max.</p>
   </div>
   <div class="card" style="display:flex;flex-direction:column;gap:14px" id="bossPicker"></div>
   <div style="display:flex;flex-wrap:wrap;gap:16px">
@@ -317,10 +317,6 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   <div class="row" style="align-items:center;margin-top:8px">
     <h3 style="font-size:24px;text-transform:uppercase">Top 12 counterů</h3>
     <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
-      <div class="pills" role="group" aria-label="Mega úroveň" style="align-items:center">
-        <span class="label">Mega úroveň</span>
-        <span class="pills" data-mlv></span>
-      </div>
       <div class="tabs" role="group" aria-label="Které verze ukázat" id="coTabs"></div>
     </div>
   </div>
@@ -383,10 +379,6 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
         <span class="label">Řadit podle</span>
         <div class="pills" role="group" aria-label="Řazení" id="sorts"></div>
       </div>
-      <div class="ctl" style="flex:1 1 300px">
-        <span class="label">Mega úroveň (síla + útoků)</span>
-        <div class="pills" role="group" aria-label="Mega úroveň" data-mlv></div>
-      </div>
     </div>
     <div class="ctl">
       <span class="label">Typ útoku</span>
@@ -396,7 +388,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   <p style="font-size:15px;color:var(--muted)" id="dmSummary" aria-live="polite">Načítám data…</p>
   <div class="table" id="dmTable"></div>
   <button class="pill more" type="button" id="more" hidden>Ukázat dalších 50</button>
-  <p class="note">Výpočet: level 40, IV 15/15/15, neutrální cíl, bez počasí. Shadow ×1,2 útok, Mega/Primal se svým bonusem (1,3× vlastní typ, jinak 1,1×). Mega+ útoky (Future Sight+, Dynamic Punch+, Ominous Wind+ …) mají sílu podle Mega úrovně: Base ×1,0 · High ×1,1 · Max ×1,2 · Super Max ×1,3. Hidden Power není zahrnut. Hodnoty jsou orientační – slouží k porovnání. * = elite / legacy útok.</p>
+  <p class="note">Výpočet: level 40, IV 15/15/15, neutrální cíl, bez počasí. Shadow ×1,2 útok, Mega/Primal se svým bonusem (1,3× vlastní typ, jinak 1,1×). Mega+ útoky (Future Sight+, Dynamic Punch+, Ominous Wind+ …) jsou počítané na úrovni Super Max (síla ×1,3). Hidden Power není zahrnut. Hodnoty jsou orientační – slouží k porovnání. * = elite / legacy útok.</p>
 </section>
 
 <!-- PVP -->
@@ -484,7 +476,7 @@ function kindBadge(k) { return k ? ' <span class="kind ' + k + '">' + k.toUpperC
 function store(key, val) { try { if (val === undefined) return JSON.parse(localStorage.getItem('pogokompas.' + key)); localStorage.setItem('pogokompas.' + key, JSON.stringify(val)); } catch (e) { return null; } }
 
 var st = { boss: 'darkrai', co: 'all', mlv: 4, q: '', type: 'all', sort: 'dps', kinds: { normal: true, shadow: true, mega: true }, limit: 50, league: 'great' };
-var saved = store('prefs'); if (saved && typeof saved === 'object') { ['mlv','sort','league','boss'].forEach(function (k) { if (saved[k] !== undefined) st[k] = saved[k]; }); }
+var saved = store('prefs'); if (saved && typeof saved === 'object') { ['sort','league','boss'].forEach(function (k) { if (saved[k] !== undefined) st[k] = saved[k]; }); }
 function savePrefs() { store('prefs', { mlv: st.mlv, sort: st.sort, league: st.league, boss: st.boss }); }
 
 /* ---------- ROUTING ---------- */
@@ -1001,7 +993,7 @@ function openPveDetail(ctx, id) {
       '<p class="note">Level 40, IV 15/15/15, bez počasí a přátelství' + (boss ? ', cíl ' + boss + ' (' + dtypes.map(cap).join('/') + ')' : ', neutrální cíl') + '. Číslo za útokem je efektivita proti bossovi.</p></div>' +
     '<div class="card wide"><h3>Rychlé útoky</h3><div class="mscroll"><table class="mtab"><thead><tr><th>Útok</th><th>Síla</th><th>Energie</th><th>Trvání</th><th>DPS</th><th>EPS</th></tr></thead><tbody>' + fastRows + '</tbody></table></div></div>' +
     '<div class="card wide"><h3>Nabité útoky</h3><div class="mscroll"><table class="mtab"><thead><tr><th>Útok</th><th>Síla</th><th>Cena</th><th>Trvání</th><th>DPS</th><th>DPE</th></tr></thead><tbody>' + chRows + '</tbody></table></div>' +
-      '<p class="note">DPS a DPE samotného útoku včetně STAB. Žlutě je nejlepší moveset. ★ = STAB, * = elite / legacy' + (mon[11] ? ', MEGA+ = útok jen v Mega formě, síla podle Mega úrovně' : '') + '.</p></div>' +
+      '<p class="note">DPS a DPE samotného útoku včetně STAB. Žlutě je nejlepší moveset. ★ = STAB, * = elite / legacy' + (mon[11] ? ', MEGA+ = útok jen v Mega formě, síla na úrovni Super Max' : '') + '.</p></div>' +
     '<div class="card wide"><h3>Slabiny a odolnosti</h3><span class="label">Dostává víc od</span>' + dc(weak) + '<span class="label" style="margin-top:6px">Dostává míň od</span>' + dc(res) + '</div>';
   var d = $('pd');
   if (!d.open) { try { d.showModal(); } catch (err) { d.setAttribute('open', ''); } }
