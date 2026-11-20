@@ -360,6 +360,13 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
     <div class="pills" role="group" aria-label="Obtížnost bosse" id="maxTier"></div>
   </div>
   <div class="tactic" id="maxTactic"></div>
+  <div class="card" style="display:flex;flex-wrap:wrap;gap:12px;align-items:end">
+    <div class="ctl" style="flex:2 1 280px">
+      <label class="label" for="maxQ">Najít Pokémona v tabulkách</label>
+      <input id="maxQ" type="search" placeholder="např. Metagross, Charizard…" autocomplete="off">
+    </div>
+    <button type="button" class="pill" id="maxAll" aria-pressed="false">Ukázat všechny</button>
+  </div>
   <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší útočníci <span style="font-size:16px">(Max fáze)</span></h3><p class="lead">na Max útoky po naplnění metru, ne na nabíjení</p></div>
   <div class="table" id="maxAtkTable"></div>
   <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší energy gaineři</h3><p class="lead">nejrychleji nabijí Max metr</p></div>
@@ -705,7 +712,13 @@ var GMAXT = { lapras: 'ice', duraludon: 'dragon' };
 var MTIERS = [['1', '1★', 1700, 0.15, 1, 0], ['2', '2★', 5000, 0.38, 1, 0], ['3', '3★', 10000, 0.5, 1, 0], ['4', '4★', 20000, 0.6, 1, 0],
   ['5', '5★ legendární', 60000, 0.7, 4, 2], ['gmax', 'Gigantamax', 75000, 0.7, 15, 2], ['eter', 'Eternamax', 90000, 0.75, 4, 2]];
 var MT = {}; MTIERS.forEach(function (t) { MT[t[0]] = t; });
-var curMaxTier = null, maxTierFor = null;
+var curMaxTier = null, maxTierFor = null, maxQ = '', maxShowAll = false;
+function maxPick(list, n) {
+  var q = maxQ.trim().toLowerCase(), out = [];
+  list.forEach(function (x, i) { if (q ? x.m[1].toLowerCase().indexOf(q) !== -1 : (maxShowAll || i < n)) out.push([x, i]); });
+  return out;
+}
+function maxEmpty(arr) { return arr.length ? '' : '<p style="padding:20px 22px" class="note">Nikdo nenalezen. Tenhle Pokémon možná nemá Dynamax formu.</p>'; }
 var FIXED = { zacian_crowned_sword: ['steel', 350, 'Behemoth Blade'], zamazenta_crowned_shield: ['steel', 350, 'Behemoth Bash'], eternatus: ['dragon', 450, 'Dynamax Cannon'] };
 function renderMax() {
   if (!BS || !PVE) { $('maxAtkTable').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
@@ -777,14 +790,14 @@ function renderMax() {
     if (best) gain.push({ m: m, g: d[1], b: best, bulk: bulk });
   });
   gain.sort(function (a, b) { return (Math.round(b.b.cps * 10) - Math.round(a.b.cps * 10)) || (b.bulk - a.bulk); });
-  var gm = 0; gain.slice(0, 12).forEach(function (x) { if (x.bulk > gm) gm = x.bulk; });
+  var gm = 0; gain.forEach(function (x) { if (x.bulk > gm) gm = x.bulk; });
   $('maxGainTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">Nabití/s</span><span>Výdrž</span></div>' +
-    gain.slice(0, 12).map(function (x, i) {
+    maxPick(gain, 12).map(function (p) { var x = p[0], i = p[1];
       return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.g ? 'Gigantamax ' : (FIXED[x.m[0]] ? '' : 'Dynamax ')) + esc(x.m[1]) + '</span></div>' +
         '<div class="mv"><span>' + dot(x.b.F[1]) + esc(x.b.F[0]) + (x.b.C ? ' / ' + esc(x.b.C[0]) : ' · jen rychlý') + '</span><span class="sub">' + (x.b.C ? 'nabitý dá ' + fmt(x.b.cc, 2).replace(/,?0+$/, '') + ' nabití' : fmt(x.b.F[4], 1) + ' s na útok') + '</span></div>' +
         '<span class="num big">' + fmt(x.b.cps, 1) + '</span>' +
-        '<div class="score"><div class="bar"><i style="width:' + Math.round(x.bulk / gm * 100) + '%;background:#1D7A35"></i></div><b>' + Math.round(x.bulk) + '</b></div></a>';
-    }).join('');
+        '<div class="score"><div class="bar"><i style="width:' + Math.min(100, Math.round(x.bulk / gm * 100)) + '%;background:#1D7A35"></i></div><b>' + Math.round(x.bulk) + '</b></div></a>';
+    }).join('') + maxEmpty(maxPick(gain, 12));
   var top = gain.slice(0, 12), withC = top.filter(function (x) { return x.b.C; }).length;
   var useC = withC >= 6;
   $('maxTactic').className = 'tactic ' + (useC ? 'tc-charged' : 'tc-fast');
@@ -794,23 +807,25 @@ function renderMax() {
   atk.sort(function (a, b) { return b.b.dmg - a.b.dmg; }); tank.sort(function (a, b) { return b.s - a.s; });
   var am = atk.length ? atk[0].b.dmg : 1, tm = tank.length ? tank[0].s : 1;
   $('maxAtkTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Rychlý útok → Max útok</span><span class="num">Efekt.</span><span>Síla Max útoku</span></div>' +
-    atk.slice(0, 12).map(function (x, i) {
+    maxPick(atk, 12).map(function (p) { var x = p[0], i = p[1];
       return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.b.g ? 'Gigantamax ' : (x.b.fixed ? '' : 'Dynamax ')) + esc(x.m[1]) + '</span>' + (x.b.g ? ' <span class="kind mega">G-MAX</span>' : '') + '</div>' +
         '<div class="mv"><span>' + dot(x.b.F[1]) + (x.b.fixed ? 'vždy ' + esc(x.b.F[0]) + ' (pevný Max útok)' : esc(x.b.F[0]) + ' → ' + (x.b.g ? 'G-Max útok' : 'Max ' + cap(x.b.F[1]))) + '</span></div>' +
         '<span class="num big">' + fmt(x.b.e, 2).replace(/,?0+$/, '') + '×</span>' +
         '<div class="score"><div class="bar"><i style="width:' + Math.round(x.b.dmg / am * 100) + '%"></i></div><b>' + x.b.dmg + '</b></div></a>';
-    }).join('');
+    }).join('') + maxEmpty(maxPick(atk, 12));
   $('maxTankTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Typy</span><span class="num">Dostává</span><span>Tank skóre</span></div>' +
-    tank.slice(0, 10).map(function (x, i) {
+    maxPick(tank, 10).map(function (p) { var x = p[0], i = p[1];
       return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.g ? 'Gigantamax ' : (FIXED[x.m[0]] ? '' : 'Dynamax ')) + esc(x.m[1]) + '</span></div>' +
         '<div class="types" style="display:flex;gap:4px;flex-wrap:wrap">' + x.m[4].map(tchip).join('') + '</div>' +
         '<span class="num big">' + fmt(x.avg, 2).replace(/,?0+$/, '') + '×</span>' +
         '<div class="score"><div class="bar"><i style="width:' + Math.round(x.s / tm * 100) + '%;background:var(--sky)"></i></div><b>' + Math.round(x.s) + '</b></div></a>';
-    }).join('');
+    }).join('') + maxEmpty(maxPick(tank, 10));
   Array.prototype.forEach.call($('maxPicker').querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-max') === curMax); });
 }
 $('maxPicker').addEventListener('click', function (e) { var b = e.target.closest('button[data-max]'); if (b) { curMax = b.getAttribute('data-max'); renderMax(); } });
 $('maxAny').addEventListener('change', function () { if (this.value) { curMax = this.value; renderMax(); } });
+var maxQT; $('maxQ').addEventListener('input', function () { clearTimeout(maxQT); var v = this.value; maxQT = setTimeout(function () { maxQ = v; renderMax(); }, 120); });
+$('maxAll').addEventListener('click', function () { maxShowAll = !maxShowAll; this.setAttribute('aria-pressed', maxShowAll); this.textContent = maxShowAll ? 'Jen top' : 'Ukázat všechny'; renderMax(); });
 
 /* ---------- MEGA LEVEL (shared) ---------- */
 function renderMlv() {
