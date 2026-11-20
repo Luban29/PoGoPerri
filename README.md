@@ -32,3 +32,9 @@ Fanouškovský projekt, není spojený s Niantic, Scopely ani The Pokémon Compa
 Potřebuje navíc žebříčky PvPoke v `src/gm/rank/`: `r1500.json`, `r2500.json`, `r10000.json` z
 `https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/rankings/all/overall/rankings-<CP>.json`.
 Detail Pokémona má vlastní adresu `#pvp-<liga>-<speciesId>`, např. `#pvp-great-medicham`.
+
+## Detail Pokémona v Raidech a Damage meteru
+
+`build_data.py` zapíše i `docs/data/pve.json` (movepooly, base staty, PvE hodnoty útoků a tabulka typů).
+Movesety v detailu počítá prohlížeč stejným vzorcem jako `dps.py`, takže reagují na Mega úroveň.
+Adresy: `#dmg-<speciesId>` (neutrální cíl) a `#raid-<boss>-<speciesId>` (proti bossovi).

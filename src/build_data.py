@@ -37,8 +37,7 @@ dm=[]
 for r in rows:
     e4=entries(r,4)
     if not e4: continue
-    row=[r['e']['speciesName'],r['kind'],r['types'],e4]
-    if r['plus']: row.append({str(L):entries(r,L) for L in (1,2,3)})
+    row=[r['e']['speciesName'],r['kind'],r['types'],e4,({str(L):entries(r,L) for L in (1,2,3)} if r['plus'] else 0),r['e']['speciesId']]
     dm.append(row)
 open('../docs/data/dm.json','w').write('[\n'+',\n'.join(json.dumps(r,ensure_ascii=False,separators=(',',':')) for r in dm)+'\n]\n')
 print(len(dm), len(json.dumps(dm,separators=(',',':'))))
@@ -50,12 +49,26 @@ for k,(bdef,bt) in bosses.items():
         out=[]
         for r in rows:
             b=bestf(r,L,dtypes=bt,tdef=tdef,se=True)
-            if b: out.append(dict(score=round((b[0]**3*b[1])**0.25,1),dps=round(b[0],1),tdo=round(b[1]),name=r['e']['speciesName'],fast=b[2],charged=b[3],ctype=b[5],kind=r['kind']))
+            if b: out.append(dict(id=r['e']['speciesId'],score=round((b[0]**3*b[1])**0.25,1),dps=round(b[0],1),tdo=round(b[1]),name=r['e']['speciesName'],fast=b[2],charged=b[3],ctype=b[5],kind=r['kind']))
         out.sort(key=lambda o:-o['score'])
         co[k][str(L)]={'all':out[:10],'nomega':[o for o in out if o['kind'] not in ('mega','primal')][:10],'plain':[o for o in out if not o['kind']][:10]}
     print(k,'L4'); [print('  ',o['name'],o['fast'],o['charged'],o['dps'],o['score']) for o in co[k]['4']['all']]
 json.dump(co,open('../docs/data/counters.json','w'),ensure_ascii=False,separators=(',',':'))
-# overall top at L4 and L1
-for L in (1,4):
-    top=sorted([(m[3][0][1],m[0],m[3][0][3],m[3][0][4]) for m in dm] if L==4 else [((m[4]['1'][0][1] if len(m)>4 else m[3][0][1]),m[0],(m[4]['1'][0][4] if len(m)>4 else m[3][0][4]),'') for m in dm],reverse=True)[:12]
-    print('L',L,top)
+
+# ---- PvE detail: movepooly, staty a tabulka typů pro výpočet v prohlížeči ----
+pve={'mons':[], 'moves':{}, 'types':TYPES, 'chart':[[teff[a][i] for i in range(18)] for a in TYPES]}
+def addmove(mid, m, name):
+    if mid not in pve['moves']:
+        pve['moves'][mid]=[name, m['type'], m['power'], m['energy'], m['dur']]
+for r in rows:
+    e=r['e']
+    if not r['fast'] or not r['ch']: continue
+    f=[]; c=[]
+    for mid,m in r['fast']: addmove(mid,m,nm(mid,set())); f.append(mid)
+    for mid,m in r['ch']: addmove(mid,m,nm(mid,set())); c.append(mid)
+    plus=None
+    if r['plus']:
+        mid,name,t,pw,dur=r['plus']; addmove(mid,dict(type=t,power=pw,energy=-100,dur=dur),name); plus=mid
+    pve['mons'].append([e['speciesId'],e['speciesName'],e['dex'],r['kind'],r['types'],e['baseStats']['atk'],e['baseStats']['def'],e['baseStats']['hp'],f,c,sorted(m for m in r['elite'] if m in f+c),plus])
+open('../docs/data/pve.json','w').write(json.dumps(pve,ensure_ascii=False,separators=(',',':')))
+print('pve mons',len(pve['mons']),'moves',len(pve['moves']))

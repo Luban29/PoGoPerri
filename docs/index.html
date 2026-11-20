@@ -99,6 +99,9 @@ section.page.on{display:flex}
 .tr:nth-child(odd):not(.head){background:#FAFBF6}
 .tr.head{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--line);border-bottom:0}
 .tr:last-child{border-bottom:0}
+a.tr.link{text-decoration:none;color:var(--text);font-weight:400}
+a.tr.link:hover{background:#FFF3D6;color:var(--text)}
+.sub{font-size:12px;color:var(--dim);display:block}
 .rank{font-family:var(--pixel);font-size:20px;color:var(--faint);font-variant-numeric:tabular-nums}
 .tr:nth-child(2) .rank,.tr:nth-child(3) .rank,.tr:nth-child(4) .rank{color:var(--accent)}
 .num{text-align:right;font-variant-numeric:tabular-nums}
@@ -189,6 +192,7 @@ dialog#pd::backdrop{background:rgba(23,24,28,.55)}
 .mtab td{padding:9px 8px;border-bottom:1px solid var(--grid);text-align:right;font-variant-numeric:tabular-nums}
 .mtab tr.rec td{background:#FFF3D6}
 .mtab td:first-child{font-weight:700}
+.mtab.combo td:nth-child(2){text-align:left;font-weight:700}
 .mtab .eff{font-size:12px;color:var(--muted);text-align:left;font-weight:500}
 .mscroll{overflow-x:auto}
 .use{display:inline-block;min-width:38px;font-family:var(--pixel)}
@@ -294,14 +298,14 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
     </div>
   </div>
   <div class="table" id="counters"></div>
-  <p class="note">Výpočet: level 40, IV 15/15/15, bez počasí a bonusu přátelství, jen útoky super effective na bosse. Mega+ útoky podle zvolené Mega úrovně. Skóre kombinuje DPS a TDO. * = elite / legacy útok.</p>
+  <p class="note">Výpočet: level 40, IV 15/15/15, bez počasí a bonusu přátelství, jen útoky super effective na bosse. Mega+ útoky podle zvolené Mega úrovně. Skóre kombinuje DPS a TDO. * = elite / legacy útok. Klikni na Pokémona pro detail.</p>
 </section>
 
 <!-- DAMAGE METER -->
 <section class="page" id="p-damage-meter" aria-labelledby="h-dm">
   <div style="display:flex;flex-direction:column;gap:6px">
     <h2 class="h2" id="h-dm">Damage meter</h2>
-    <p class="lead">DPS všech Pokémonů ve hře včetně Shadow, Mega a Primal verzí a regionálních forem. U každého je nejlepší moveset proti neutrálnímu cíli. Když vybereš typ, ukáže se nejlepší moveset, kde je rychlý i nabitý útok toho typu.</p>
+    <p class="lead">DPS všech Pokémonů ve hře včetně Shadow, Mega a Primal verzí a regionálních forem. U každého je nejlepší moveset proti neutrálnímu cíli. Když vybereš typ, ukáže se nejlepší moveset, kde je rychlý i nabitý útok toho typu. Klikni na Pokémona a uvidíš jeho staty a všechny útoky.</p>
   </div>
   <div class="card controls">
     <div class="ctl-row">
@@ -418,11 +422,14 @@ var saved = store('prefs'); if (saved && typeof saved === 'object') { ['mlv','so
 function savePrefs() { store('prefs', { mlv: st.mlv, sort: st.sort, league: st.league, boss: st.boss }); }
 
 /* ---------- ROUTING ---------- */
-var curPage = null, pendingDetail = null;
+var curPage = null, pendingDetail = null, pendingPve = null;
 function route() {
   var h = (location.hash || '').slice(1), detail = null;
-  var m = /^pvp-(great|ultra|master)-(.+)$/.exec(h);
+  var m = /^pvp-(great|ultra|master)-(.+)$/.exec(h), pd = null;
   if (m) { detail = [m[1], m[2]]; h = 'pvp'; }
+  var m2 = /^dmg-(.+)$/.exec(h), m3 = /^raid-(darkrai|cresselia)-(.+)$/.exec(h);
+  if (m2) { pd = ['dmg', m2[1]]; h = 'damage-meter'; }
+  if (m3) { pd = [m3[1], m3[2]]; h = 'raidy'; if (st.boss !== m3[1]) { st.boss = m3[1]; savePrefs(); renderRaid(); } }
   if (PAGES.indexOf(h) === -1) h = 'tento-tyden';
   PAGES.forEach(function (p) { $('p-' + p).classList.toggle('on', p === h); });
   Array.prototype.forEach.call($('nav').querySelectorAll('a'), function (a) {
@@ -430,7 +437,9 @@ function route() {
   });
   if (h !== curPage) window.scrollTo(0, 0);
   curPage = h;
-  if (detail) {
+  pendingPve = pd;
+  if (pd) { if (PVE) openPveDetail(pd[0], pd[1]); }
+  else if (detail) {
     if (st.league !== detail[0]) { st.league = detail[0]; savePrefs(); if (typeof renderPvpControls === 'function') { renderPvpControls(); renderPvp(); } }
     pendingDetail = detail; if (PVP) openDetail(detail[0], detail[1]);
   } else { pendingDetail = null; if (typeof closeDetail === 'function') closeDetail(); }
@@ -481,10 +490,10 @@ function renderRaid() {
   var max = list.length ? list[0].score : 1;
   $('counters').innerHTML = '<div class="tr head"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">DPS</span><span class="num">TDO</span><span>Skóre</span></div>' +
     list.map(function (c, i) {
-      return '<div class="tr"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + esc(c.name) + '</span>' + kindBadge(c.kind) + '</div>' +
+      return '<a class="tr link" href="#raid-' + st.boss + '-' + esc(c.id) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + esc(c.name) + '</span>' + kindBadge(c.kind) + '</div>' +
         '<div class="mv"><span>' + esc(c.fast) + '</span><span>' + dot(c.ctype) + esc(c.charged) + '</span></div>' +
         '<span class="num big">' + c.dps.toFixed(1) + '</span><span class="num" style="color:var(--muted)">' + c.tdo + '</span>' +
-        '<div class="score"><div class="bar"><i style="width:' + Math.round(c.score / max * 100) + '%"></i></div><b>' + c.score.toFixed(1) + '</b></div></div>';
+        '<div class="score"><div class="bar"><i style="width:' + Math.round(c.score / max * 100) + '%"></i></div><b>' + c.score.toFixed(1) + '</b></div></a>';
     }).join('');
 }
 
@@ -492,7 +501,7 @@ function renderRaid() {
 function renderMlv() {
   Array.prototype.forEach.call(document.querySelectorAll('[data-mlv]'), function (el) {
     group(el, [{ v: 1, label: 'Base' }, { v: 2, label: 'High' }, { v: 3, label: 'Max' }, { v: 4, label: 'Super Max' }], function (i) { return i.v === st.mlv; },
-      function (i) { st.mlv = i.v; savePrefs(); renderMlv(); renderRaid(); renderDm(); }, 'pill');
+      function (i) { st.mlv = i.v; savePrefs(); renderMlv(); renderRaid(); renderDm(); if (pendingPve && $('pd').open) openPveDetail(pendingPve[0], pendingPve[1]); }, 'pill');
   });
 }
 
@@ -529,10 +538,10 @@ function renderDm() {
   if (!res.length) html += '<p style="padding:32px 22px;text-align:center" class="note">Nic nenalezeno. Zkus jiné jméno nebo typ.</p>';
   html += res.slice(0, st.limit).map(function (r, i) {
     var e = r.e;
-    return '<div class="tr"><span class="rank">' + (i + 1) + '</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><div><span class="name">' + esc(r.m[0]) + '</span>' + kindBadge(r.m[1]) + '</div><span class="note">' + r.m[2].map(cap).join(' / ') + '</span></div>' +
+    return '<a class="tr link" href="#dmg-' + esc(r.m[5]) + '"><span class="rank">' + (i + 1) + '</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><div><span class="name">' + esc(r.m[0]) + '</span>' + kindBadge(r.m[1]) + '</div><span class="note">' + r.m[2].map(cap).join(' / ') + '</span></div>' +
       '<div class="mv"><span>' + dot(e[5]) + esc(e[3]) + '</span><span>' + dot(e[6]) + esc(e[4]) + '</span></div>' +
       '<span class="num big">' + e[1].toFixed(2) + '</span><span class="num" style="color:var(--muted)">' + e[2] + '</span>' +
-      '<div class="score"><div class="bar"><i style="width:' + Math.max(2, Math.round(val(r) / top * 100)) + '%"></i></div><b>' + r.s.toFixed(1) + '</b></div></div>';
+      '<div class="score"><div class="bar"><i style="width:' + Math.max(2, Math.round(val(r) / top * 100)) + '%"></i></div><b>' + r.s.toFixed(1) + '</b></div></a>';
   }).join('');
   $('dmTable').innerHTML = html;
   $('more').hidden = res.length <= st.limit;
@@ -641,9 +650,96 @@ function openDetail(league, id) {
   d.scrollTop = 0;
 }
 function closeDetail() { var d = $('pd'); if (d.open) d.close(); }
-$('pdClose').addEventListener('click', function () { location.hash = 'pvp'; });
-$('pd').addEventListener('cancel', function (e) { e.preventDefault(); location.hash = 'pvp'; });
-$('pd').addEventListener('click', function (e) { if (e.target === this) location.hash = 'pvp'; });
+function closeTo() { location.hash = curPage || 'tento-tyden'; }
+$('pdClose').addEventListener('click', closeTo);
+$('pd').addEventListener('cancel', function (e) { e.preventDefault(); closeTo(); });
+$('pd').addEventListener('click', function (e) { if (e.target === this) closeTo(); });
+
+/* ---------- PVE DETAIL (Raidy, Damage meter) ---------- */
+var PVE = null, PVEIDX = {};
+var LVLMUL = { 1: 1.0, 2: 1.1, 3: 1.2, 4: 1.3 };
+var BOSSDEF = { darkrai: 198, cresselia: 228 };
+function effMul(at, dtypes) { var m = 1; if (!dtypes) return 1; var ai = PVE.types.indexOf(at); dtypes.forEach(function (t) { m *= PVE.chart[ai][PVE.types.indexOf(t)]; }); return m; }
+function pveMove(id, plus) {
+  var m = PVE.moves[id]; if (!m) return null;
+  return { id: id, n: m[0], t: m[1], p: plus ? m[2] * LVLMUL[st.mlv] : m[2], e: m[3], d: m[4], plus: !!plus };
+}
+function pveCalc(mon, F, C, tdef, dtypes) {
+  var shadow = mon[3] === 'shadow', mega = mon[3] === 'mega' || mon[3] === 'primal', types = mon[4];
+  var A = (mon[5] + 15) * 0.7903 * (shadow ? 1.2 : 1), D = (mon[6] + 15) * 0.7903 * (shadow ? 5 / 6 : 1), HP = Math.floor((mon[7] + 15) * 0.7903);
+  var y = 900 / D;
+  function dmg(m) { var stab = types.indexOf(m.t) !== -1 ? 1.2 : 1, boost = mega ? (types.indexOf(m.t) !== -1 ? 1.3 : 1.1) : 1;
+    return Math.floor(0.5 * m.p * A / tdef * stab * boost * effMul(m.t, dtypes)) + 1; }
+  var FD = dmg(F), FE = F.e, Fd = F.d, CD = dmg(C), CE = -C.e, Cd = C.d;
+  if (FE <= 0 || CE <= 0) return null;
+  if (CE >= 100) CE = CE + 0.5 * FE + 0.5 * y * Cd;
+  var FDPS = FD / Fd, FEPS = FE / Fd, CDPS = CD / Cd, CEPS = CE / Cd, x = 0.5 * CE + 0.5 * FE, dps;
+  if (CDPS > FDPS) dps = (FDPS * CEPS + CDPS * FEPS) / (CEPS + FEPS) + (CDPS - FDPS) / (CEPS + FEPS) * (0.5 - x / HP) * y; else dps = FDPS;
+  dps = Math.max(dps, FDPS * 0.5);
+  var tdo = dps * HP / y;
+  return { dps: dps, tdo: tdo, score: Math.pow(dps * dps * dps * tdo, 0.25) };
+}
+function statRow(mon, lvl, cpmv) {
+  var shadow = mon[3] === 'shadow';
+  var a = (mon[5] + 15) * cpmv, d = (mon[6] + 15) * cpmv, h = Math.floor((mon[7] + 15) * cpmv);
+  var cp = Math.max(10, Math.floor((mon[5] + 15) * Math.sqrt(mon[6] + 15) * Math.sqrt(mon[7] + 15) * cpmv * cpmv / 10));
+  return '<tr><td>Level ' + lvl + '</td><td>' + cp + '</td><td>' + fmt(a * (shadow ? 1.2 : 1), 1) + '</td><td>' + fmt(d * (shadow ? 5 / 6 : 1), 1) + '</td><td>' + h + '</td></tr>';
+}
+function openPveDetail(ctx, id) {
+  if (!PVE) return;
+  var mon = PVEIDX[id]; if (!mon) return;
+  var boss = ctx === 'dmg' ? null : ctx, dtypes = boss ? [BOSSES[boss].t] : null, tdef = boss ? (BOSSDEF[boss] + 15) * 0.79 : 160;
+  var types = mon[4], c1 = TC[types[0]], c2 = TC[types[1] || types[0]], elite = {};
+  mon[10].forEach(function (m) { elite[m] = 1; });
+  $('pdHd').style.background = 'linear-gradient(120deg,' + c1 + ' 0 55%,' + c2 + ' 55% 100%)';
+  $('pdDex').textContent = '#' + String(mon[2]).padStart(4, '0');
+  $('pdName').textContent = mon[1];
+  $('pdMeta').innerHTML = types.map(tchip).join('') + kindBadge(mon[3]) + '<span class="tchip" style="background:#fff">' + (boss ? 'Raid proti: ' + BOSSES[boss].name : 'Neutrální cíl') + (mon[11] ? ' · Mega úroveň ' + ['', 'Base', 'High', 'Max', 'Super Max'][st.mlv] : '') + '</span>';
+  var fast = mon[8].map(function (m) { return pveMove(m); }).filter(Boolean);
+  var ch = mon[9].map(function (m) { return pveMove(m); }).filter(Boolean);
+  if (mon[11]) ch.push(pveMove(mon[11], true));
+  var combos = [];
+  fast.forEach(function (F) { ch.forEach(function (C) { var r = pveCalc(mon, F, C, tdef, dtypes); if (r) combos.push({ F: F, C: C, r: r }); }); });
+  combos.sort(function (a, b) { return b.r.dps - a.r.dps; });
+  var best = combos[0];
+  var stabOf = function (t) { return types.indexOf(t) !== -1; };
+  function mlabel(m) { return '<span style="display:inline-flex;align-items:center;gap:8px">' + dot(m.t) + esc(m.n) + (elite[m.id] ? '*' : '') + (stabOf(m.t) ? ' ★' : '') + '</span>'; }
+  function effTag(m) { if (!dtypes) return ''; var e = effMul(m.t, dtypes); return e > 1.01 ? ' <small style="color:#1D7A35;font-weight:800">' + fmt(e, 1) + '×</small>' : (e < .99 ? ' <small style="color:var(--accent);font-weight:800">' + fmt(e, 2) + '×</small>' : ''); }
+  var comboRows = combos.slice(0, 10).map(function (c, i) {
+    return '<tr' + (i === 0 ? ' class="rec"' : '') + '><td>' + mlabel(c.F) + effTag(c.F) + '</td><td>' + mlabel(c.C) + effTag(c.C) + '</td><td><b>' + fmt(c.r.dps, 2) + '</b></td><td>' + Math.round(c.r.tdo) + '</td><td>' + fmt(c.r.score, 1) + '</td></tr>';
+  }).join('');
+  var fastRows = fast.slice().sort(function (a, b) { return b.p / b.d - a.p / a.d; }).map(function (m) {
+    var k = stabOf(m.t) ? 1.2 : 1;
+    return '<tr' + (best && best.F.id === m.id ? ' class="rec"' : '') + '><td>' + mlabel(m) + effTag(m) + '</td><td>' + m.p + '</td><td>' + m.e + '</td><td>' + fmt(m.d, 1) + ' s</td><td>' + fmt(m.p * k / m.d, 2) + '</td><td>' + fmt(m.e / m.d, 2) + '</td></tr>';
+  }).join('');
+  var chRows = ch.slice().sort(function (a, b) { return b.p / b.d - a.p / a.d; }).map(function (m) {
+    var k = stabOf(m.t) ? 1.2 : 1, cost = -m.e;
+    return '<tr' + (best && best.C.id === m.id ? ' class="rec"' : '') + '><td>' + mlabel(m) + effTag(m) + (m.plus ? ' <span class="kind mega">MEGA+</span>' : '') + '</td><td>' + fmt(m.p, m.p % 1 ? 1 : 0) + '</td><td>' + cost + (cost >= 100 ? ' (1 bar)' : cost >= 50 ? ' (2 bary)' : ' (3 bary)') + '</td><td>' + fmt(m.d, 1) + ' s</td><td>' + fmt(m.p * k / m.d, 2) + '</td><td>' + fmt(m.p * k / cost, 2) + '</td></tr>';
+  }).join('');
+  var weak = [], res = [];
+  PVE.types.forEach(function (at) { var e = effMul(at, types); if (e > 1.01) weak.push([at, e]); else if (e < .99) res.push([at, e]); });
+  weak.sort(function (a, b) { return b[1] - a[1]; }); res.sort(function (a, b) { return a[1] - b[1]; });
+  function dc(list) { return list.length ? '<div class="dchart">' + list.map(function (x) { return '<span style="background:' + TC[x[0]] + '">' + cap(x[0]) + '<small>' + fmt(x[1], 3).replace(/,?0+$/, '') + '×</small></span>'; }).join('') + '</div>' : '<p class="note">Žádné.</p>'; }
+  var shadow = mon[3] === 'shadow', mega = mon[3] === 'mega' || mon[3] === 'primal';
+  $('pdBody').innerHTML =
+    '<div class="card"><h3>Souhrn</h3><div class="stats">' +
+      '<div class="stat"><small>Nejlepší DPS</small><b>' + (best ? fmt(best.r.dps, 2) : '–') + '</b></div><div class="stat"><small>TDO</small><b>' + (best ? Math.round(best.r.tdo) : '–') + '</b></div>' +
+      '<div class="stat"><small>Skóre</small><b>' + (best ? fmt(best.r.score, 1) : '–') + '</b></div><div class="stat"><small>Base A/D/HP</small><b class="sm">' + mon[5] + '/' + mon[6] + '/' + mon[7] + '</b></div>' +
+    '</div><p class="note">' + (best ? 'Nejlepší moveset: <strong>' + esc(best.F.n) + ' · ' + esc(best.C.n) + '</strong>' + (boss ? ' proti ' + ({ darkrai: 'Darkraiovi', cresselia: 'Cresselii' }[boss] || BOSSES[boss].name) + '.' : ' proti neutrálnímu cíli.') : '') + '</p></div>' +
+    '<div class="card"><h3>Staty (IV 15/15/15)</h3><div class="mscroll"><table class="mtab" style="min-width:0"><thead><tr><th>Level</th><th>CP</th><th>Útok</th><th>Obrana</th><th>HP</th></tr></thead><tbody>' +
+      statRow(mon, 30, 0.7317) + statRow(mon, 40, 0.7903) + statRow(mon, 50, 0.8403) + '</tbody></table></div><p class="note">' +
+      (shadow ? 'Shadow: útok ×1,2 a obrana ×0,83 jsou už v tabulce, CP je jako u běžné verze. ' : '') +
+      (mega ? 'Mega/Primal: svým útokům stejného typu dává 1,3×, ostatním 1,1×, a stejný bonus dostanou i ostatní v raidu. ' : '') + 'Level 30 = max z raidu za počasí, 40 = bez XL candy, 50 = s XL candy.</p></div>' +
+    '<div class="card wide"><h3>Nejlepší movesety</h3><div class="mscroll"><table class="mtab combo"><thead><tr><th>Rychlý</th><th style="text-align:left">Nabitý</th><th>DPS</th><th>TDO</th><th>Skóre</th></tr></thead><tbody>' + comboRows + '</tbody></table></div>' +
+      '<p class="note">Level 40, IV 15/15/15, bez počasí a přátelství' + (boss ? ', cíl ' + BOSSES[boss].name + ' (' + cap(BOSSES[boss].t) + ')' : ', neutrální cíl') + '. Číslo za útokem je efektivita proti bossovi.</p></div>' +
+    '<div class="card wide"><h3>Rychlé útoky</h3><div class="mscroll"><table class="mtab"><thead><tr><th>Útok</th><th>Síla</th><th>Energie</th><th>Trvání</th><th>DPS</th><th>EPS</th></tr></thead><tbody>' + fastRows + '</tbody></table></div></div>' +
+    '<div class="card wide"><h3>Nabité útoky</h3><div class="mscroll"><table class="mtab"><thead><tr><th>Útok</th><th>Síla</th><th>Cena</th><th>Trvání</th><th>DPS</th><th>DPE</th></tr></thead><tbody>' + chRows + '</tbody></table></div>' +
+      '<p class="note">DPS a DPE samotného útoku včetně STAB. Žlutě je nejlepší moveset. ★ = STAB, * = elite / legacy' + (mon[11] ? ', MEGA+ = útok jen v Mega formě, síla podle Mega úrovně' : '') + '.</p></div>' +
+    '<div class="card wide"><h3>Slabiny a odolnosti</h3><span class="label">Dostává víc od</span>' + dc(weak) + '<span class="label" style="margin-top:6px">Dostává míň od</span>' + dc(res) + '</div>';
+  var d = $('pd');
+  if (!d.open) { try { d.showModal(); } catch (err) { d.setAttribute('open', ''); } }
+  d.scrollTop = 0;
+}
 
 /* ---------- CO DELAT ---------- */
 var TODOS = [
@@ -674,6 +770,7 @@ fetch('data/counters.json').then(function (r) { return r.json(); }).then(functio
   .catch(function () { $('counters').innerHTML = '<p style="padding:24px" class="note">Data se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
 fetch('data/pvp.json').then(function (r) { return r.json(); }).then(function (d) { PVP = d; renderPvp(); if (pendingDetail) openDetail(pendingDetail[0], pendingDetail[1]); })
   .catch(function () { $('pvpSummary').textContent = 'Žebříček se nepodařilo načíst. Zkus stránku obnovit.'; });
+fetch('data/pve.json').then(function (r) { return r.json(); }).then(function (d) { PVE = d; d.mons.forEach(function (m) { PVEIDX[m[0]] = m; }); if (pendingPve) openPveDetail(pendingPve[0], pendingPve[1]); });
 fetch('data/dm.json').then(function (r) { return r.json(); }).then(function (d) { DM = d; renderDm(); })
   .catch(function () { $('dmSummary').textContent = 'Data se nepodařilo načíst. Zkus stránku obnovit.'; });
 })();
