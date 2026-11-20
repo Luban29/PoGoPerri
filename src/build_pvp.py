@@ -6,7 +6,8 @@ import json, math
 TOP = 100
 PV = json.load(open('gm/pvpoke.json'))
 GM = json.load(open('gm/alex.json'))
-LEAGUES = [('great', 1500, 'gm/rank/r1500.json'), ('ultra', 2500, 'gm/rank/r2500.json'), ('master', 10000, 'gm/rank/r10000.json')]
+LEAGUES = [('great', 1500, 'gm/rank/r1500.json'), ('ultra', 2500, 'gm/rank/r2500.json'), ('master', 10000, 'gm/rank/r10000.json'),
+           ('megagreat', 1500, 'gm/rank/m1500.json'), ('megaultra', 2500, 'gm/rank/m2500.json'), ('megamaster', 10000, 'gm/rank/m10000.json')]
 TYPES = ['normal','fighting','flying','poison','ground','rock','bug','ghost','steel','fire','water','grass','electric','psychic','ice','dragon','dark','fairy']
 
 cpm_int = None; teff = {}
@@ -54,11 +55,13 @@ out = {'leagues': {}, 'moves': {}, 'names': {}}
 for key, cap, path in LEAGUES:
     rank = json.load(open(path))
     rows = []
-    for i, r in enumerate(rank[:TOP]):
+    mega_only = key.startswith('mega')
+    pool = [(i, r) for i, r in enumerate(rank) if (not mega_only) or 'mega' in POKE.get(r['speciesId'], {}).get('tags', [])]
+    for oi, r in (pool if mega_only else pool[:TOP]):
         sid = r['speciesId']; p = POKE[sid]
         types = [t for t in p['types'] if t != 'none']
         tags = p.get('tags', [])
-        kind = 'shadow' if 'shadow' in tags else ('mega' if 'mega' in tags else '')
+        kind = 'shadow' if 'shadow' in tags else (('primal' if 'primal' in sid else 'mega') if 'mega' in tags else '')
         if cap == 10000:
             iv = [15, 15, 15]; lvl = 50
         else:
@@ -71,6 +74,10 @@ for key, cap, path in LEAGUES:
         use_c = {m['moveId']: round(100 * (m.get('uses') or 0) / tot_c) for m in r['moves']['chargedMoves']}
         fast = [m for m in p['fastMoves'] if m in MOVES]
         charged = [m for m in p['chargedMoves'] if m in MOVES]
+        for m in [r['moveset'][0]] + list(use_f):
+            if m in MOVES and m not in fast: fast.append(m)
+        for m in r['moveset'][1:] + list(use_c):
+            if m in MOVES and m not in charged: charged.append(m)
         for m in fast + charged + r['moveset']: used_moves.add(m)
         for o in r.get('matchups', []) + r.get('counters', []):
             out['names'][o['opponent']] = POKE.get(o['opponent'], {}).get('speciesName', o['opponent'])
@@ -83,7 +90,7 @@ for key, cap, path in LEAGUES:
             'c': [[m, use_c.get(m, 0), 1 if m in elite else 0] for m in charged],
             'w': [[o['opponent'], o['rating']] for o in r.get('matchups', [])],
             'l': [[o['opponent'], o['rating']] for o in r.get('counters', [])],
-            'def': defense_chart(types),
+            'def': defense_chart(types), 'or': oi + 1,
         })
     out['leagues'][key] = rows
 for m in used_moves:

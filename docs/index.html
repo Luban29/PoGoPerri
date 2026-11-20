@@ -21,6 +21,7 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{margin:0;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55}
@@ -166,6 +167,7 @@ input::placeholder{color:#7C7F88;font-weight:500}
 .prow:hover .go{color:var(--accent)}
 @media (max-width:720px){.prow{grid-template-columns:44px minmax(0,1fr) 90px;gap:10px;padding:12px}.prow .mvcol,.prow .go{display:none}}
 
+.megainfo{font-size:15px;color:var(--text2);background:#E3F1FF;border:2px solid var(--line);border-radius:10px;padding:12px 14px}
 /* PvP detail */
 dialog#pd{width:min(980px,calc(100% - 24px));max-height:calc(100% - 24px);padding:0;border:3px solid var(--line);border-radius:18px;background:var(--bg);color:var(--text);box-shadow:8px 8px 0 var(--line);overflow:auto}
 dialog#pd::backdrop{background:rgba(23,24,28,.55)}
@@ -362,15 +364,19 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
       <h2 class="h2" id="h-pvp">PvP žebříček</h2>
       <p class="lead">Pořadí podle simulací PvPoke. Klikni na Pokémona a uvidíš jeho staty v lize, všechny útoky s PvP hodnotami, s kým vyhrává a kdo je pro něj hrozba.</p>
     </div>
-    <div class="tabs" role="group" aria-label="Liga" id="leagueTabs"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+      <div class="tabs" role="group" aria-label="Liga" id="leagueTabs"></div>
+      <div class="tabs" role="group" aria-label="Žebříček" id="fmtTabs"></div>
+    </div>
   </div>
+  <p class="megainfo" id="megaInfo" hidden></p>
   <div class="card controls">
     <div class="ctl-row">
       <div class="ctl" style="flex:2 1 280px">
         <label class="label" for="pq">Hledat v lize</label>
         <input id="pq" type="search" placeholder="např. Medicham, Azumarill…" autocomplete="off">
       </div>
-      <div class="ctl" style="flex:1 1 220px">
+      <div class="ctl" style="flex:1 1 220px" id="pkindsWrap">
         <span class="label">Verze</span>
         <div class="pills" role="group" aria-label="Verze" id="pkinds"></div>
       </div>
@@ -382,7 +388,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   </div>
   <p id="pvpSummary" aria-live="polite">Načítám žebříček…</p>
   <div class="plist" id="pvpList"></div>
-  <p class="note">Data: PvPoke (simulace všech zápasů v lize). Staty jsou pro IV s nejlepším stat productem v dané lize, v Master League level 50 a 15/15/15. * = elite / legacy útok, ★ = STAB (útok stejného typu, 1,2×).</p>
+  <p class="note">Data: PvPoke (simulace všech zápasů v lize, u Meg žebříček Mega Edition). Staty jsou pro IV s nejlepším stat productem v dané lize, v Master League level 50 a 15/15/15. * = elite / legacy útok, ★ = STAB (útok stejného typu, 1,2×).</p>
 </section>
 
 <dialog id="pd" aria-labelledby="pdName">
@@ -442,7 +448,7 @@ function savePrefs() { store('prefs', { mlv: st.mlv, sort: st.sort, league: st.l
 var curPage = null, pendingDetail = null, pendingPve = null, pendingEv = null;
 function route() {
   var h = (location.hash || '').slice(1), detail = null;
-  var m = /^pvp-(great|ultra|master)-(.+)$/.exec(h), pd = null;
+  var m = /^pvp-((?:mega)?(?:great|ultra|master))-(.+)$/.exec(h), pd = null;
   if (m) { detail = [m[1], m[2]]; h = 'pvp'; }
   var m2 = /^dmg-(.+)$/.exec(h), m3 = /^raid-(darkrai|cresselia)-(.+)$/.exec(h);
   if (m2) { pd = ['dmg', m2[1]]; h = 'damage-meter'; }
@@ -461,7 +467,8 @@ function route() {
   if (evd) { if (EV) openEventDetail(evd); }
   else if (pd) { if (PVE) openPveDetail(pd[0], pd[1]); }
   else if (detail) {
-    if (st.league !== detail[0]) { st.league = detail[0]; savePrefs(); if (typeof renderPvpControls === 'function') { renderPvpControls(); renderPvp(); } }
+    var dl = detail[0].replace(/^mega/, ''), df = detail[0].indexOf('mega') === 0 ? 'mega' : 'std';
+    if (st.league !== dl || pst.fmt !== df) { st.league = dl; pst.fmt = df; savePrefs(); renderPvpControls(); renderPvp(); }
     pendingDetail = detail; if (PVP) openDetail(detail[0], detail[1]);
   } else { pendingDetail = null; if (typeof closeDetail === 'function') closeDetail(); }
 }
@@ -659,15 +666,20 @@ $('q').addEventListener('input', function () { clearTimeout(qTimer); var v = thi
 $('more').addEventListener('click', function () { st.limit += 50; renderDm(); });
 
 /* ---------- PVP ---------- */
-var PVP = null, pst = { q: '', type: 'all', kinds: { normal: true, shadow: true, mega: true } };
-var LG = { great: 'Great League', ultra: 'Ultra League', master: 'Master League' };
+var PVP = null, pst = { q: '', type: 'all', fmt: 'std', kinds: { normal: true, shadow: true, mega: true } };
+var LG = { great: 'Great League', ultra: 'Ultra League', master: 'Master League', megagreat: 'Great League: Mega Edition', megaultra: 'Ultra League: Mega Edition', megamaster: 'Master League: Mega Edition' };
+function lkey() { return (pst.fmt === 'mega' ? 'mega' : '') + st.league; }
 var LG_SHORT = { great: 'Great 1500', ultra: 'Ultra 2500', master: 'Master' };
 var ROLES = ['Lead', 'Closer', 'Switch', 'Charger', 'Attacker', 'Consistency'];
-if (!LG[st.league]) st.league = 'great';
+if (['great','ultra','master'].indexOf(st.league) === -1) st.league = 'great';
 function tchip(t) { return '<span class="tchip" style="background:' + TC[t] + '">' + cap(t) + '</span>'; }
 function mname(id) { var m = PVP.moves[id]; return m ? m.n : id; }
 function renderPvpControls() {
   group($('leagueTabs'), ['great','ultra','master'].map(function (k) { return { k: k, label: LG_SHORT[k] }; }), function (i) { return i.k === st.league; }, function (i) { st.league = i.k; savePrefs(); renderPvpControls(); renderPvp(); });
+  group($('fmtTabs'), [{ k: 'std', label: 'Klasická liga' }, { k: 'mega', label: 'Megy a Primaly' }], function (i) { return i.k === pst.fmt; }, function (i) { pst.fmt = i.k; renderPvpControls(); renderPvp(); });
+  $('pkindsWrap').hidden = pst.fmt === 'mega';
+  $('megaInfo').hidden = pst.fmt !== 'mega';
+  $('megaInfo').textContent = 'Všechny Mega a Primal formy seřazené podle PvPoke žebříčku ' + LG['mega' + st.league] + '. Číslo „celkově“ je pořadí mezi všemi Pokémony v Mega Edition. Mega+ útoky (např. Night Shade+, Psybeam+) jsou v movesetu jako třetí nabitý útok, protože Mega je dostane automaticky.';
   group($('pkinds'), [{ k: 'normal', label: 'Běžní' }, { k: 'shadow', label: 'Shadow' }, { k: 'mega', label: 'Mega' }], function (i) { return pst.kinds[i.k]; },
     function (i) { pst.kinds[i.k] = !pst.kinds[i.k]; renderPvpControls(); renderPvp(); }, 'pill');
   group($('ptypes'), [{ k: 'all', label: 'Všechny' }].concat(TYPES.map(function (t) { return { k: t, label: cap(t), html: dot(t, 1) + cap(t) }; })), function (i) { return i.k === pst.type; },
@@ -675,25 +687,25 @@ function renderPvpControls() {
 }
 function renderPvp() {
   if (!PVP) return;
-  var rows = PVP.leagues[st.league], q = pst.q.trim().toLowerCase(), out = [];
+  var key = lkey(), rows = PVP.leagues[key], q = pst.q.trim().toLowerCase(), out = [];
   rows.forEach(function (r, i) {
-    var kk = r.k || 'normal';
-    if (!pst.kinds[kk]) return;
+    var kk = r.k === 'primal' ? 'mega' : (r.k || 'normal');
+    if (pst.fmt !== 'mega' && !pst.kinds[kk]) return;
     if (q && r.n.toLowerCase().indexOf(q) === -1) return;
     if (pst.type !== 'all' && r.ty.indexOf(pst.type) === -1) return;
     out.push([r, i + 1]);
   });
-  $('pvpSummary').textContent = LG[st.league] + ' · ' + out.length + ' z ' + rows.length + ' Pokémonů';
+  $('pvpSummary').textContent = LG[key] + ' · ' + out.length + ' z ' + rows.length + (pst.fmt === 'mega' ? ' Meg a Primalů' : ' Pokémonů');
   $('pvpList').innerHTML = out.length ? out.map(function (x) {
     var r = x[0];
     return '<button type="button" class="prow" data-id="' + esc(r.id) + '"><span class="rank">' + x[1] + '</span>' +
-      '<span style="min-width:0"><span class="name">' + esc(r.n) + '</span>' + kindBadge(r.k) + '<span class="types">' + r.ty.map(tchip).join('') + '</span></span>' +
+      '<span style="min-width:0"><span class="name">' + esc(r.n) + '</span>' + kindBadge(r.k) + '<span class="types">' + r.ty.map(tchip).join('') + (pst.fmt === 'mega' ? '<span class="sub" style="margin-left:4px">celkově #' + r.or + '</span>' : '') + '</span></span>' +
       '<span class="mv mvcol"><span>' + dot(PVP.moves[r.ms[0]].t) + esc(mname(r.ms[0])) + '</span><span>' + r.ms.slice(1).map(function (m) { return dot(PVP.moves[m].t) + esc(mname(m)); }).join('&nbsp;·&nbsp;') + '</span></span>' +
       '<span class="score"><span class="bar"><i style="width:' + Math.max(4, Math.round((r.s - 70) / 30 * 100)) + '%;background:var(--sky)"></i></span><b>' + r.s.toFixed(1) + '</b></span>' +
       '<span class="go" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>';
   }).join('') : '<p style="padding:28px;text-align:center" class="note">Nic nenalezeno. Zkus jiné jméno nebo typ.</p>';
 }
-$('pvpList').addEventListener('click', function (e) { var b = e.target.closest('.prow'); if (b) location.hash = 'pvp-' + st.league + '-' + b.getAttribute('data-id'); });
+$('pvpList').addEventListener('click', function (e) { var b = e.target.closest('.prow'); if (b) location.hash = 'pvp-' + lkey() + '-' + b.getAttribute('data-id'); });
 var pqT; $('pq').addEventListener('input', function () { clearTimeout(pqT); var v = this.value; pqT = setTimeout(function () { pst.q = v; renderPvp(); }, 120); });
 
 function buffText(m) {
@@ -713,7 +725,7 @@ function openDetail(league, id) {
   $('pdHd').style.background = 'linear-gradient(120deg,' + c1 + ' 0 55%,' + c2 + ' 55% 100%)'; $('pdHd').style.color = '';
   $('pdDex').textContent = '#' + String(r.dex).padStart(4, '0');
   $('pdName').textContent = r.n;
-  $('pdMeta').innerHTML = r.ty.map(tchip).join('') + kindBadge(r.k) + '<span class="tchip" style="background:#fff">' + LG[league] + ' · #' + (idx + 1) + ' · skóre ' + fmt(r.s, 1) + '</span>';
+  $('pdMeta').innerHTML = r.ty.map(tchip).join('') + kindBadge(r.k) + '<span class="tchip" style="background:#fff">' + LG[league] + ' · #' + (idx + 1) + (league.indexOf('mega') === 0 ? ' z Meg (celkově #' + r.or + ')' : '') + ' · skóre ' + fmt(r.s, 1) + '</span>';
   var rec = {}; r.ms.forEach(function (m) { rec[m] = 1; });
   var stab = function (t) { return r.ty.indexOf(t) !== -1; };
   var fastRows = r.f.slice().sort(function (a, b) { return b[1] - a[1]; }).map(function (x) {
@@ -743,7 +755,7 @@ function openDetail(league, id) {
       '<div class="stat"><small>IV</small><b class="sm">' + r.iv.join('/') + '</b></div><div class="stat"><small>Stat product</small><b>' + (r.st.product || '–') + '</b></div>' +
       '<div class="stat"><small>Útok</small><b>' + fmt(r.st.atk || 0, 1) + '</b></div><div class="stat"><small>Obrana</small><b>' + fmt(r.st.def || 0, 1) + '</b></div>' +
       '<div class="stat"><small>HP</small><b>' + (r.st.hp || '–') + '</b></div><div class="stat"><small>Base A/D/HP</small><b class="sm">' + r.bs.atk + '/' + r.bs.def + '/' + r.bs.hp + '</b></div>' +
-    '</div><p class="note">' + (league === 'master' ? 'Level 50, IV 15/15/15.' : 'IV s nejlepším stat productem pod ' + (league === 'great' ? '1500' : '2500') + ' CP.') + (r.k === 'shadow' ? ' Shadow: útok ×1,2, obrana ×0,83 (už započteno).' : '') + '</p></div>' +
+    '</div><p class="note">' + (/master$/.test(league) ? 'Level 50, IV 15/15/15.' : 'IV s nejlepším stat productem pod ' + (/great$/.test(league) ? '1500' : '2500') + ' CP.') + (r.k === 'shadow' ? ' Shadow: útok ×1,2, obrana ×0,83 (už započteno).' : '') + '</p></div>' +
     '<div class="card"><h3>Hodnocení podle role</h3><div class="roles">' + r.sc.map(function (v, i) {
       return '<span>' + ROLES[i] + '</span><span class="bar"><i style="width:' + Math.max(3, Math.round(v)) + '%;background:var(--sky)"></i></span><b>' + Math.round(v) + '</b>';
     }).join('') + '</div><p class="note">Doporučený moveset: <strong>' + r.ms.map(function (m) { return esc(mname(m)); }).join(' · ') + '</strong></p></div>' +

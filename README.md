@@ -44,3 +44,9 @@ Adresy: `#dmg-<speciesId>` (neutrální cíl) a `#raid-<boss>-<speciesId>` (prot
 `cd src && python3 events.py` zapíše `docs/data/events.json`: všechny eventy (s bonusy, shiny, úkoly a odměnami),
 promokódy, partnerské akce a týdenní rytmus. Stránka sama třídí na Právě běží / Brzy / Do budoucna podle aktuálního času.
 Detail eventu má adresu `#udalost-<id>`. Časy jsou místní, GBL a Global Challenge přepočtené na SEČ.
+
+### Megy a Primaly v PvP
+
+`build_pvp.py` čte i žebříčky Mega Edition (`src/gm/rank/m1500.json`, `m2500.json`, `m10000.json` z
+`.../rankings/mega/overall/rankings-<CP>.json`) a z nich bere všechny Mega a Primal formy (klíče `megagreat`, `megaultra`, `megamaster`).
+Detail: `#pvp-megagreat-sableye_mega`.
