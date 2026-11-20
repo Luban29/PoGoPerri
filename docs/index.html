@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PoGo Kompas – tahák na Pokémon GO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F1020; --surface:#1A1C33; --surface2:#23264A; --line:#2A2D4D; --line2:#3A3E66;
+  --text:#F4F2EA; --text2:#D6D7EA; --muted:#C4C6DE; --dim:#A9ABC8; --faint:#6E719A;
+  --accent:#FFD23F; --sky:#5CC8FF; --ink:#15162A;
+  --display:'Bricolage Grotesque',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}a:hover{color:#FFE680}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;margin:0}
+p{margin:0}
+
+/* header */
+header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;background:rgba(15,16,32,.92);backdrop-filter:blur(10px)}
+.nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 24px;max-width:1200px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.logo span{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.logo:hover{color:var(--text)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;background:var(--surface);border:1px solid var(--line);padding:5px;border-radius:14px}
+.tab{min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border-radius:10px;font-weight:600;font-size:15px;color:var(--text2);text-decoration:none;border:0;background:transparent}
+.tab:hover{color:var(--text);background:var(--surface2)}
+.tab[aria-current="page"],.tab[aria-pressed="true"],.tab[aria-selected="true"]{background:var(--accent);color:var(--ink)}
+.season{font-size:13px;color:var(--dim);border:1px solid var(--line);padding:6px 12px;border-radius:999px}
+@media (max-width:720px){.season{display:none}.nav{padding:12px 16px}.tabs{width:100%;overflow-x:auto;flex-wrap:nowrap}.tab{white-space:nowrap;padding:0 12px}}
+
+main{padding-bottom:80px}
+section.page{padding:56px 0 24px;display:none;flex-direction:column;gap:24px}
+section.page.on{display:flex}
+.eyebrow{font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.h2{font-weight:800;font-size:clamp(30px,4vw,40px)}
+.lead{color:var(--dim);font-size:15px;max-width:760px}
+.row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text2);background:var(--surface2);padding:4px 12px;border-radius:999px}
+.dot{flex:none;width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.lg{width:10px;height:10px}
+.kind{font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--ink);padding:2px 8px;border-radius:6px}
+.kind.shadow{background:#B79CFF}.kind.mega{background:var(--sky)}.kind.primal{background:#FF8A5C}
+.note{font-size:13px;color:var(--dim)}
+.bar{flex:1;height:8px;background:var(--surface2);border-radius:999px;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+.pill{min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:0 14px;border-radius:999px;font-weight:600;font-size:14px;background:var(--bg);color:var(--text2);border:1px solid var(--line2)}
+.pill[aria-pressed="true"]{background:var(--text);color:var(--ink);border-color:var(--text)}
+.label{font-size:13px;font-weight:600;color:var(--dim)}
+
+/* hero */
+.hero{display:flex;flex-wrap:wrap;gap:32px;align-items:stretch;padding:8px 0 24px}
+.hero-l{flex:1 1 460px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.hero h1{font-weight:800;font-size:clamp(40px,6vw,72px);line-height:1.02;letter-spacing:-.03em}
+.hero-r{flex:1 1 380px;min-width:0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px}
+.btn{min-height:48px;display:inline-flex;align-items:center;padding:0 22px;border-radius:14px;font-weight:700;font-size:16px;text-decoration:none}
+.btn.primary{background:var(--accent);color:var(--ink)}.btn.primary:hover{color:var(--ink);filter:brightness(1.05)}
+.btn.ghost{color:var(--text);border:1px solid var(--line2);font-weight:600}.btn.ghost:hover{color:var(--text);background:var(--surface)}
+.badge{align-self:flex-start;font-size:13px;font-weight:700;color:var(--ink);background:var(--sky);padding:5px 12px;border-radius:999px}
+.tip{display:flex;gap:10px;align-items:center;padding:14px 16px;background:var(--surface2);border-radius:14px;font-size:14px;color:var(--muted)}
+.ev{display:flex;flex-direction:column;gap:10px}
+.ev .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ev .tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.ev h3{font-weight:700;font-size:22px;line-height:1.2}
+
+/* tables */
+.table{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow-x:auto}
+.tr{display:grid;grid-template-columns:52px minmax(0,1.6fr) minmax(0,1.9fr) 80px 80px minmax(140px,1fr);gap:16px;align-items:center;padding:12px 22px;border-bottom:1px solid var(--surface2);min-width:820px}
+.tr.head{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line)}
+.tr:last-child{border-bottom:0}
+.rank{font-family:var(--display);font-weight:800;font-size:18px;color:var(--faint);font-variant-numeric:tabular-nums}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.name{font-weight:700;font-size:16px}
+.mv{display:flex;flex-direction:column;gap:2px;font-size:14px;color:var(--muted)}
+.mv span{display:flex;align-items:center;gap:8px}
+.score{display:flex;align-items:center;gap:10px}
+.score b{min-width:40px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* raid boss */
+.weak{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:700;background:var(--surface2);padding:8px 14px;border-radius:12px}
+.weak small{color:var(--dim);font-weight:500;font-size:14px}
+
+/* damage meter */
+.controls{display:flex;flex-direction:column;gap:16px}
+.ctl-row{display:flex;flex-wrap:wrap;gap:16px;align-items:end}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+input[type=search]{min-height:48px;width:100%;padding:0 16px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);font-size:16px}
+input::placeholder{color:#8A8DB0}
+.more{align-self:center}
+
+/* pvp */
+.pv{display:flex;flex-direction:column;gap:10px;padding:18px 20px}
+.pv .top{display:flex;justify-content:space-between;align-items:baseline}
+.pv .bar{flex:none;height:6px}.pv .bar>i{background:var(--sky)}
+
+/* todo */
+.todo-wrap{display:flex;flex-wrap:wrap;gap:32px}
+.todo-l{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.todos{flex:2 1 520px;min-width:0;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.todo{width:100%;min-height:56px;display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 18px}
+.todo:hover{border-color:var(--line2)}
+.box{flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px solid #4A4E7A}
+.todo[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent)}
+.todo[aria-pressed="true"] .t{color:var(--dim);text-decoration:line-through}
+.todo .t{font-weight:600;font-size:16px}
+.todo .h{font-size:14px;color:var(--dim)}
+
+footer{border-top:1px solid var(--line)}
+footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px;color:var(--dim)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<header>
+  <nav class="nav" aria-label="Hlavní navigace">
+    <a class="logo" href="#tento-tyden">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true" fill="none"><circle cx="17" cy="17" r="15" stroke="#FFD23F" stroke-width="2.5"/><path d="M17 6 L21 17 L17 28 L13 17 Z" fill="#FFD23F"/><circle cx="17" cy="17" r="2.5" fill="#0F1020"/></svg>
+      <span>PoGo Kompas</span>
+    </a>
+    <div class="tabs" id="nav">
+      <a class="tab" href="#tento-tyden">Tento týden</a>
+      <a class="tab" href="#raidy">Raidy</a>
+      <a class="tab" href="#damage-meter">Damage meter</a>
+      <a class="tab" href="#pvp">PvP</a>
+      <a class="tab" href="#co-delat">Co dělat</a>
+    </div>
+    <span class="season">Sezóna Twilight Trails · do 1. 12.</span>
+  </nav>
+</header>
+
+<main class="wrap">
+
+<!-- TENTO TYDEN -->
+<section class="page" id="p-tento-tyden" aria-labelledby="h-tyden">
+  <div class="hero">
+    <div class="hero-l">
+      <p class="eyebrow">Týden 16.–25. listopadu 2026</p>
+      <h1 id="h-tyden">Co tento týden<br>v Pokémon GO?</h1>
+      <p style="font-size:19px;color:var(--muted);max-width:520px">Rychlý tahák pro trenéry: co se děje, koho stavět do raidů a s kým vyrazit do GO Battle League. Bez omáčky.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
+        <a class="btn primary" href="#co-delat">Ukaž mi plán na týden</a>
+        <a class="btn ghost" href="#raidy">Countery na Darkraie</a>
+      </div>
+    </div>
+    <div class="hero-r card">
+      <span class="badge">Hlavní akce víkendu</span>
+      <h2 style="font-weight:800;font-size:34px;line-height:1.1">Pawniard Community Day</h2>
+      <p style="font-size:18px;font-weight:600;color:var(--accent)">Sobota 21. 11. · 14:00–17:00</p>
+      <ul style="margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:8px;color:var(--text2)">
+        <li>Vyvíjej Bisharp do <strong style="color:var(--text)">21:00</strong> → Kingambit dostane exkluzivní Dark útok <strong style="color:var(--text)">Kowtow Cleave</strong>.</li>
+        <li>V okně stačí Bisharp jako buddy na <strong style="color:var(--text)">1 raid</strong> (Dark/Steel boss) místo 15.</li>
+        <li>Vajíčka se líhnou na 1/4 vzdálenosti.</li>
+      </ul>
+      <div class="tip">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#5CC8FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span>Kingambit s Kowtow Cleave patří mezi nejlepší běžné countery na Cresselii.</span>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:16px">
+    <h2 class="h2">Tento týden</h2>
+    <p class="lead">časy jsou místní</p>
+  </div>
+  <div class="grid" id="events"></div>
+</section>
+
+<!-- RAIDY -->
+<section class="page" id="p-raidy" aria-labelledby="h-raidy">
+  <div class="row">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <p class="eyebrow">5★ raidy · do 24. 11.</p>
+      <h2 class="h2" id="h-raidy">Raid countery</h2>
+    </div>
+    <div class="tabs" role="group" aria-label="Raid boss" id="bossTabs"></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:16px">
+    <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <h3 style="font-weight:800;font-size:30px" id="bossName"></h3>
+        <span class="chip" id="bossType"></span>
+      </div>
+      <p style="color:var(--muted)" id="bossText"></p>
+    </article>
+    <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:12px">
+      <span class="label" style="text-transform:uppercase;letter-spacing:.06em;font-weight:700">Slabý na</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="bossWeak"></div>
+      <span class="label" style="text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:6px">Odolává</span>
+      <p style="color:var(--muted);font-size:15px" id="bossResist"></p>
+    </article>
+  </div>
+  <div class="row" style="align-items:center;margin-top:8px">
+    <h3 style="font-weight:700;font-size:24px">Top 10 counterů</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+      <div class="pills" role="group" aria-label="Mega úroveň" style="align-items:center">
+        <span class="label">Mega úroveň</span>
+        <span class="pills" data-mlv></span>
+      </div>
+      <div class="tabs" role="group" aria-label="Které verze ukázat" id="coTabs"></div>
+    </div>
+  </div>
+  <div class="table" id="counters"></div>
+  <p class="note">Výpočet: level 40, IV 15/15/15, bez počasí a bonusu přátelství, jen útoky super effective na bosse. Mega+ útoky podle zvolené Mega úrovně. Skóre kombinuje DPS a TDO. * = elite / legacy útok.</p>
+</section>
+
+<!-- DAMAGE METER -->
+<section class="page" id="p-damage-meter" aria-labelledby="h-dm">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <h2 class="h2" id="h-dm">Damage meter</h2>
+    <p class="lead">DPS všech Pokémonů ve hře včetně Shadow, Mega a Primal verzí a regionálních forem. U každého je nejlepší moveset proti neutrálnímu cíli. Když vybereš typ, ukáže se nejlepší moveset, kde je rychlý i nabitý útok toho typu.</p>
+  </div>
+  <div class="card controls">
+    <div class="ctl-row">
+      <div class="ctl" style="flex:2 1 280px">
+        <label class="label" for="q">Hledat Pokémona</label>
+        <input id="q" type="search" placeholder="např. Mewtwo, Kyogre, Lucario…" autocomplete="off">
+      </div>
+      <div class="ctl" style="flex:1 1 260px">
+        <span class="label">Verze</span>
+        <div class="pills" role="group" aria-label="Verze" id="kinds"></div>
+      </div>
+      <div class="ctl" style="flex:1 1 220px">
+        <span class="label">Řadit podle</span>
+        <div class="pills" role="group" aria-label="Řazení" id="sorts"></div>
+      </div>
+      <div class="ctl" style="flex:1 1 300px">
+        <span class="label">Mega úroveň (síla + útoků)</span>
+        <div class="pills" role="group" aria-label="Mega úroveň" data-mlv></div>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="label">Typ útoku</span>
+      <div class="pills" role="group" aria-label="Typ útoku" id="types"></div>
+    </div>
+  </div>
+  <p style="font-size:15px;color:var(--muted)" id="dmSummary" aria-live="polite">Načítám data…</p>
+  <div class="table" id="dmTable"></div>
+  <button class="pill more" type="button" id="more" hidden>Ukázat dalších 50</button>
+  <p class="note">Výpočet: level 40, IV 15/15/15, neutrální cíl, bez počasí. Shadow ×1,2 útok, Mega/Primal se svým bonusem (1,3× vlastní typ, jinak 1,1×). Mega+ útoky (Future Sight+, Dynamic Punch+, Ominous Wind+ …) mají sílu podle Mega úrovně: Base ×1,0 · High ×1,1 · Max ×1,2 · Super Max ×1,3. Hidden Power není zahrnut. Hodnoty jsou orientační – slouží k porovnání. * = elite / legacy útok.</p>
+</section>
+
+<!-- PVP -->
+<section class="page" id="p-pvp" aria-labelledby="h-pvp">
+  <div class="row">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <h2 class="h2" id="h-pvp">PvP žebříček</h2>
+      <p class="lead">Top Pokémoni podle simulací PvPoke. GBL teď dává za výhry 4× Stardust (do 25. 11.).</p>
+    </div>
+    <div class="tabs" role="group" aria-label="Liga" id="leagueTabs"></div>
+  </div>
+  <p style="font-size:15px;color:var(--muted)" id="leagueNote"></p>
+  <div class="grid" id="pvpGrid"></div>
+</section>
+
+<!-- CO DELAT -->
+<section class="page" id="p-co-delat" aria-labelledby="h-todo">
+  <div class="todo-wrap">
+    <div class="todo-l">
+      <h2 class="h2" id="h-todo">Co dělat tento týden</h2>
+      <p style="color:var(--muted);font-size:17px">Odškrtávej, co máš hotovo. Nejdůležitější věci jsou nahoře. Stránka si to pamatuje v tomhle prohlížeči.</p>
+      <div class="card" style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+        <span style="font-size:14px;color:var(--dim)">Hotovo</span>
+        <span style="font-family:var(--display);font-weight:800;font-size:44px;line-height:1" id="doneCount">0 / 0</span>
+        <div class="bar" style="flex:none;height:10px"><i id="doneBar" style="width:0"></i></div>
+        <button type="button" class="pill" id="resetTodos" style="align-self:flex-start;margin-top:8px">Vymazat odškrtnutí</button>
+      </div>
+    </div>
+    <ul class="todos" id="todos"></ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Fanouškovský projekt. Není spojený s Niantic, Scopely ani The Pokémon Company.</span>
+    <span>Data: herní soubory hry, PvPoke, Dittobase, Pokémon GO Hub · aktualizováno 20. 11. 2026</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+'use strict';
+var TYPES = ['normal','fighting','flying','poison','ground','rock','bug','ghost','steel','fire','water','grass','electric','psychic','ice','dragon','dark','fairy'];
+var TC = { normal:'#C9C3A8', fighting:'#E0603A', flying:'#9DB7F5', poison:'#B46CD6', ground:'#D9A55B', rock:'#BFA75A', bug:'#A8C23A', ghost:'#9A86D9', steel:'#B8C2CC', fire:'#FF8A3D', water:'#4FA3F7', grass:'#6CC96C', electric:'#FFD23F', psychic:'#FF6FA3', ice:'#7FDBEA', dragon:'#7C6CF0', dark:'#8C7A6B', fairy:'#F5A3D3' };
+var PAGES = ['tento-tyden','raidy','damage-meter','pvp','co-delat'];
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
+function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
+function dot(t, lg) { return '<i class="dot' + (lg ? ' lg' : '') + '" style="background:' + (TC[t] || '#999') + '" aria-hidden="true"></i>'; }
+function kindBadge(k) { return k ? ' <span class="kind ' + k + '">' + k.toUpperCase() + '</span>' : ''; }
+function store(key, val) { try { if (val === undefined) return JSON.parse(localStorage.getItem('pogokompas.' + key)); localStorage.setItem('pogokompas.' + key, JSON.stringify(val)); } catch (e) { return null; } }
+
+var st = { boss: 'darkrai', co: 'all', mlv: 4, q: '', type: 'all', sort: 'dps', kinds: { normal: true, shadow: true, mega: true }, limit: 50, league: 'great' };
+var saved = store('prefs'); if (saved && typeof saved === 'object') { ['mlv','sort','league','boss'].forEach(function (k) { if (saved[k] !== undefined) st[k] = saved[k]; }); }
+function savePrefs() { store('prefs', { mlv: st.mlv, sort: st.sort, league: st.league, boss: st.boss }); }
+
+/* ---------- ROUTING ---------- */
+function route() {
+  var h = (location.hash || '').slice(1);
+  if (PAGES.indexOf(h) === -1) h = 'tento-tyden';
+  PAGES.forEach(function (p) { $('p-' + p).classList.toggle('on', p === h); });
+  Array.prototype.forEach.call($('nav').querySelectorAll('a'), function (a) {
+    if (a.getAttribute('href') === '#' + h) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+
+/* ---------- small helpers for toggle groups ---------- */
+function group(el, items, isOn, onPick, cls) {
+  el.innerHTML = items.map(function (it, i) {
+    return '<button type="button" class="' + (cls || 'tab') + '" data-i="' + i + '" aria-pressed="' + (isOn(it) ? 'true' : 'false') + '">' + (it.html || esc(it.label)) + '</button>';
+  }).join('');
+  el.onclick = function (e) { var b = e.target.closest('button[data-i]'); if (b) onPick(items[+b.getAttribute('data-i')]); };
+}
+
+/* ---------- TENTO TYDEN ---------- */
+var EVENTS = [
+  ['5★ raidy', 'a', 'do 24. 11.', 'Cresselia a Darkrai', 'Na Darkraie ber Fighting, na Cresselii Ghost a Dark. Konkrétní countery najdeš v záložce Raidy.'],
+  ['Mega raid', 'a', 'do 24. 11.', 'Mega Banette', 'Ghost typ – slabý na Dark a Ghost útoky. Dobrá šance na Mega energii.'],
+  ['Shadow raid', 'a', 'celý listopad', 'Shadow Tornadus', 'Incarnate forma, může být i shiny. Na létajícího bosse ber Electric, Ice nebo Rock útočníky.'],
+  ['Max Battles', 's', '16.–23. 11.', 'Dynamax Trails', 'Víc aktivních Power Spotů a Max Battles. V sobotu 11–14 Eternamax Eternatus pro candy.'],
+  ['Community Day', 's', 'so 21. 11.', 'Pawniard', '14:00–17:00, evoluce na Kingambit s Kowtow Cleave do 21:00.'],
+  ['GO Battle League', 's', '18.–25. 11.', 'Great, Ultra, Master: Mega Edition', 'Plus 2026 GO LAIC Cup. Výhry dávají 4× Stardust.'],
+  ['Brzy', 'd', 'so 28. 11.', 'Clefable Super Mega Raid Day', '14:00–17:00. Debut Mega Clefable a její Moonblast+. Šetři si raid passy.'],
+  ['Konec sezóny', 'd', 'út 1. 12.', 'Twilight Trails končí', 'Dotáhni sezónní výzkumy a GBL odměny.']
+];
+var TAGC = { a: 'var(--accent)', s: 'var(--sky)', d: 'var(--dim)' };
+$('events').innerHTML = EVENTS.map(function (e) {
+  return '<article class="card ev"><div class="top"><span class="tag" style="color:' + TAGC[e[1]] + '">' + esc(e[0]) + '</span><span class="note" style="font-size:13px">' + esc(e[2]) + '</span></div><h3>' + esc(e[3]) + '</h3><p style="color:var(--muted);font-size:15px">' + esc(e[4]) + '</p></article>';
+}).join('');
+
+/* ---------- RAIDY ---------- */
+var BOSSES = {
+  darkrai: { name: 'Darkrai', t: 'dark', text: 'Mythical Pokémon, v 5★ raidech do 24. 11. Rychle rozdává Dark a Fighting útoky, takže křehcí útočníci (hlavně Psychic) padají rychle. Fighting countery jsou nejsilnější a nejdostupnější volba.', weak: ['fighting','bug','fairy'], resist: 'Ghost, Dark a Psychic (Psychic útoky na něj skoro nefungují).' },
+  cresselia: { name: 'Cresselia', t: 'psychic', text: 'Legendary, v 5★ raidech do 24. 11. Extrémně odolná, takže hlavně potřebuješ hodně DPS a větší skupinu. Skvělá příležitost vyzkoušet nového Kingambita s Kowtow Cleave.', weak: ['bug','ghost','dark'], resist: 'Fighting a Psychic – bojovníky na ni neber.' }
+};
+var CO = null;
+function renderRaid() {
+  var b = BOSSES[st.boss];
+  $('bossName').textContent = b.name;
+  $('bossType').innerHTML = dot(b.t) + cap(b.t);
+  $('bossText').textContent = b.text;
+  $('bossResist').textContent = b.resist;
+  $('bossWeak').innerHTML = b.weak.map(function (w) { return '<span class="weak">' + dot(w, 1) + cap(w) + ' <small>1,6×</small></span>'; }).join('');
+  group($('bossTabs'), [{ k: 'darkrai', label: 'Darkrai' }, { k: 'cresselia', label: 'Cresselia' }], function (i) { return i.k === st.boss; }, function (i) { st.boss = i.k; savePrefs(); renderRaid(); });
+  group($('coTabs'), [{ k: 'all', label: 'Vše' }, { k: 'nomega', label: 'Bez Mega' }, { k: 'plain', label: 'Jen běžní' }], function (i) { return i.k === st.co; }, function (i) { st.co = i.k; renderRaid(); });
+  if (!CO) { $('counters').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
+  var list = CO[st.boss][String(st.mlv)][st.co];
+  var max = list.length ? list[0].score : 1;
+  $('counters').innerHTML = '<div class="tr head"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">DPS</span><span class="num">TDO</span><span>Skóre</span></div>' +
+    list.map(function (c, i) {
+      return '<div class="tr"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + esc(c.name) + '</span>' + kindBadge(c.kind) + '</div>' +
+        '<div class="mv"><span>' + esc(c.fast) + '</span><span>' + dot(c.ctype) + esc(c.charged) + '</span></div>' +
+        '<span class="num" style="font-weight:700">' + c.dps.toFixed(1) + '</span><span class="num" style="color:var(--muted)">' + c.tdo + '</span>' +
+        '<div class="score"><div class="bar"><i style="width:' + Math.round(c.score / max * 100) + '%"></i></div><b>' + c.score.toFixed(1) + '</b></div></div>';
+    }).join('');
+}
+
+/* ---------- MEGA LEVEL (shared) ---------- */
+function renderMlv() {
+  Array.prototype.forEach.call(document.querySelectorAll('[data-mlv]'), function (el) {
+    group(el, [{ v: 1, label: 'Base' }, { v: 2, label: 'High' }, { v: 3, label: 'Max' }, { v: 4, label: 'Super Max' }], function (i) { return i.v === st.mlv; },
+      function (i) { st.mlv = i.v; savePrefs(); renderMlv(); renderRaid(); renderDm(); }, 'pill');
+  });
+}
+
+/* ---------- DAMAGE METER ---------- */
+var DM = null;
+function renderDmControls() {
+  group($('kinds'), [{ k: 'normal', label: 'Běžní' }, { k: 'shadow', label: 'Shadow' }, { k: 'mega', label: 'Mega / Primal' }], function (i) { return st.kinds[i.k]; },
+    function (i) { st.kinds[i.k] = !st.kinds[i.k]; st.limit = 50; renderDmControls(); renderDm(); }, 'pill');
+  group($('sorts'), [{ k: 'dps', label: 'DPS' }, { k: 'tdo', label: 'TDO' }, { k: 'score', label: 'Skóre' }], function (i) { return i.k === st.sort; },
+    function (i) { st.sort = i.k; savePrefs(); renderDmControls(); renderDm(); }, 'pill');
+  group($('types'), [{ k: 'all', label: 'Všechny' }].concat(TYPES.map(function (t) { return { k: t, label: cap(t), html: dot(t, 1) + cap(t) }; })), function (i) { return i.k === st.type; },
+    function (i) { st.type = i.k; st.limit = 50; renderDmControls(); renderDm(); }, 'pill');
+}
+function renderDm() {
+  if (!DM) return;
+  var q = st.q.trim().toLowerCase(), res = [];
+  for (var i = 0; i < DM.length; i++) {
+    var m = DM[i];
+    var kk = m[1] === '' ? 'normal' : (m[1] === 'shadow' ? 'shadow' : 'mega');
+    if (!st.kinds[kk]) continue;
+    if (q && m[0].toLowerCase().indexOf(q) === -1) continue;
+    var ents = (st.mlv !== 4 && m[4]) ? m[4][String(st.mlv)] : m[3], ent = null;
+    for (var j = 0; j < ents.length; j++) { if (ents[j][0] === st.type) { ent = ents[j]; break; } }
+    if (!ent) continue;
+    res.push({ m: m, e: ent, s: Math.pow(Math.pow(ent[1], 3) * ent[2], 0.25) });
+  }
+  var sk = st.sort;
+  function val(r) { return sk === 'tdo' ? r.e[2] : (sk === 'score' ? r.s : r.e[1]); }
+  res.sort(function (a, b) { return val(b) - val(a); });
+  var top = res.length ? val(res[0]) : 1;
+  var tn = st.type === 'all' ? 'všechny typy' : cap(st.type) + ' útoky';
+  $('dmSummary').textContent = res.length + ' výsledků · ' + tn + (q ? ' · hledáš „' + st.q.trim() + '“' : '');
+  var html = '<div class="tr head"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">DPS</span><span class="num">TDO</span><span>Skóre</span></div>';
+  if (!res.length) html += '<p style="padding:32px 22px;text-align:center" class="note">Nic nenalezeno. Zkus jiné jméno nebo typ.</p>';
+  html += res.slice(0, st.limit).map(function (r, i) {
+    var e = r.e;
+    return '<div class="tr"><span class="rank">' + (i + 1) + '</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><div><span class="name">' + esc(r.m[0]) + '</span>' + kindBadge(r.m[1]) + '</div><span class="note">' + r.m[2].map(cap).join(' / ') + '</span></div>' +
+      '<div class="mv"><span>' + dot(e[5]) + esc(e[3]) + '</span><span>' + dot(e[6]) + esc(e[4]) + '</span></div>' +
+      '<span class="num" style="font-weight:700">' + e[1].toFixed(2) + '</span><span class="num" style="color:var(--muted)">' + e[2] + '</span>' +
+      '<div class="score"><div class="bar"><i style="width:' + Math.max(2, Math.round(val(r) / top * 100)) + '%"></i></div><b>' + r.s.toFixed(1) + '</b></div></div>';
+  }).join('');
+  $('dmTable').innerHTML = html;
+  $('more').hidden = res.length <= st.limit;
+}
+var qTimer;
+$('q').addEventListener('input', function () { clearTimeout(qTimer); var v = this.value; qTimer = setTimeout(function () { st.q = v; st.limit = 50; renderDm(); }, 120); });
+$('more').addEventListener('click', function () { st.limit += 50; renderDm(); });
+
+/* ---------- PVP ---------- */
+var LEAGUES = {
+  great: { label: 'Great 1500', note: 'Great League (max 1500 CP) – nejlepší liga na začátek, stačí levní Pokémoni.', rows: [
+    ['Melmetal','Thunder Shock · Double Iron Bash, Dynamic Punch',93.9],['Altaria','Dragon Breath · Moonblast, Flamethrower',92.8],['Shadow Ninetales','Ember · Weather Ball (Fire), Energy Ball',92.6],['Mimikyu','Shadow Claw · Shadow Sneak, Play Rough',92.0],
+    ['Cramorant','Peck · Surf, Fly',91.6],['Shadow Altaria','Dragon Breath · Moonblast, Flamethrower',91.5],['Tinkaton','Fairy Wind · Gigaton Hammer, Bulldoze',91.5],['Corviknight','Sand Attack · Air Cutter, Iron Head',91.4]] },
+  ultra: { label: 'Ultra 2500', note: 'Ultra League (max 2500 CP) – tento týden běží v klasické verzi, minulý týden byla Mega Edition.', rows: [
+    ['Tinkaton','Fairy Wind · Gigaton Hammer, Bulldoze',94.3],['Corviknight','Sand Attack · Air Cutter, Iron Head',93.9],['Shadow Snorlax','Psywave · Body Slam, Earthquake',93.4],['Shadow Corviknight','Sand Attack · Air Cutter, Payback',93.2],
+    ['Zygarde (Complete)','Dragon Tail · Crunch, Bulldoze',92.7],['Virizion','Double Kick · Leaf Blade, Sacred Sword',92.3],['Mimikyu','Shadow Claw · Shadow Sneak, Play Rough',92.1],['Florges (Red)','Fairy Wind · Chilling Water, Disarming Voice',92.0]] },
+  master: { label: 'Master', note: 'Master League (bez limitu). Pozor: tento týden běží Master League: Mega Edition, kde se pořadí liší – tohle je klasický žebříček.', rows: [
+    ['Palkia (Origin)','Dragon Breath · Aqua Tail, Spacial Rend',98.3],['Zacian (Crowned Sword)','Metal Claw · Close Combat, Behemoth Blade',97.1],['Kyogre','Waterfall · Avalanche, Origin Pulse',93.8],['White Kyurem','Dragon Breath · Fusion Flare, Ice Burn',93.8],
+    ['Metagross','Shadow Claw · Meteor Mash, Earthquake',93.7],['Zygarde (Complete)','Dragon Tail · Crunch, Bulldoze',93.5],['Dialga (Origin)','Dragon Breath · Roar of Time, Iron Head',93.3],['Reshiram','Dragon Breath · Fusion Flare, Draco Meteor',93.3]] }
+};
+function renderPvp() {
+  var lg = LEAGUES[st.league] || LEAGUES.great;
+  group($('leagueTabs'), ['great','ultra','master'].map(function (k) { return { k: k, label: LEAGUES[k].label }; }), function (i) { return i.k === st.league; }, function (i) { st.league = i.k; savePrefs(); renderPvp(); });
+  $('leagueNote').textContent = lg.note;
+  $('pvpGrid').innerHTML = lg.rows.map(function (r, i) {
+    return '<article class="card pv"><div class="top"><span class="rank">#' + (i + 1) + '</span><b style="color:var(--accent);font-variant-numeric:tabular-nums">' + r[2].toFixed(1) + '</b></div><h3 style="font-family:Inter,sans-serif;font-size:18px;font-weight:700;letter-spacing:0">' + esc(r[0]) + '</h3><p style="font-size:14px;color:var(--dim)">' + esc(r[1]) + '</p><div class="bar"><i style="width:' + Math.max(8, Math.round((r[2] - 85) / 15 * 100)) + '%"></i></div></article>';
+  }).join('');
+}
+
+/* ---------- CO DELAT ---------- */
+var TODOS = [
+  ['cd', 'Odehraj Pawniard Community Day', 'So 21. 11., 14–17. Hledej dobré IV pro PvP i raidy.'],
+  ['evo', 'Vyvinout Bisharp → Kingambit', 'Nejpozději do 21:00 v sobotu, jinak nedostaneš Kowtow Cleave.'],
+  ['darkrai', 'Dej aspoň pár raidů na Darkraie', 'Do 24. 11. Postav tým Fighting / Fairy útočníků.'],
+  ['gbl', 'Odehraj 5 setů GBL', 'Do 25. 11. jsou 4× Stardust za výhry.'],
+  ['eter', 'Eternamax Eternatus v sobotu ráno', '11–14 na Power Spotech, candy na jednoho z top útočníků.'],
+  ['passy', 'Šetři raid passy na 28. 11.', 'Clefable Super Mega Raid Day, 14–17.'],
+  ['gifts', 'Pošli dárky kamarádům', 'Každý den – friendship = bonusy v raidech.']
+];
+var done = store('todos-2026-w47') || {};
+function renderTodos() {
+  var n = 0;
+  $('todos').innerHTML = TODOS.map(function (t, i) {
+    var on = !!done[t[0]]; if (on) n++;
+    return '<li><button type="button" class="todo" data-i="' + i + '" aria-pressed="' + on + '"><span class="box" aria-hidden="true">' + (on ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15162A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>' : '') + '</span><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="t">' + esc(t[1]) + '</span><span class="h">' + esc(t[2]) + '</span></span></button></li>';
+  }).join('');
+  $('doneCount').textContent = n + ' / ' + TODOS.length;
+  $('doneBar').style.width = Math.round(n / TODOS.length * 100) + '%';
+}
+$('todos').addEventListener('click', function (e) { var b = e.target.closest('button[data-i]'); if (!b) return; var k = TODOS[+b.getAttribute('data-i')][0]; done[k] = !done[k]; store('todos-2026-w47', done); renderTodos(); });
+$('resetTodos').addEventListener('click', function () { done = {}; store('todos-2026-w47', done); renderTodos(); });
+
+/* ---------- INIT ---------- */
+route(); renderRaid(); renderMlv(); renderDmControls(); renderPvp(); renderTodos();
+fetch('data/counters.json').then(function (r) { return r.json(); }).then(function (d) { CO = d; renderRaid(); })
+  .catch(function () { $('counters').innerHTML = '<p style="padding:24px" class="note">Data se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
+fetch('data/dm.json').then(function (r) { return r.json(); }).then(function (d) { DM = d; renderDm(); })
+  .catch(function () { $('dmSummary').textContent = 'Data se nepodařilo načíst. Zkus stránku obnovit.'; });
+})();
+</script>
+</body>
+</html>
