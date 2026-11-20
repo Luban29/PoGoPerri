@@ -127,6 +127,9 @@ a.tr.link:hover{background:#FFF3D6;color:var(--text)}
 @media (max-width:640px){.tierrow{grid-template-columns:1fr}}
 .tr.mx{grid-template-columns:52px minmax(0,1.6fr) minmax(0,1.6fr) 80px minmax(160px,1fr)}
 .sel{min-height:48px;padding:0 12px;border-radius:10px;border:2.5px solid var(--line);background:var(--surface2);font-size:16px;font-weight:600}
+.tactic{border:2.5px solid var(--line);border-radius:12px;padding:14px 16px;font-size:16px;box-shadow:3px 3px 0 var(--line)}
+.tactic b{display:block;font-size:18px;margin-bottom:2px}
+.tc-fast{background:#E3F1FF}.tc-charged{background:#FFF0C9}
 /* damage meter */
 .controls{display:flex;flex-direction:column;gap:16px}
 .ctl-row{display:flex;flex-wrap:wrap;gap:16px;align-items:end}
@@ -352,11 +355,16 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
       <div style="display:flex;flex-wrap:wrap;gap:8px" id="maxAtk"></div>
     </article>
   </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:10px">
+    <span class="label">Obtížnost bosse (mění, kolik nabití dává útok)</span>
+    <div class="pills" role="group" aria-label="Obtížnost bosse" id="maxTier"></div>
+  </div>
+  <div class="tactic" id="maxTactic"></div>
   <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší útočníci</h3><p class="lead">podle síly Max útoku</p></div>
   <div class="table" id="maxAtkTable"></div>
   <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší energy gaineři</h3><p class="lead">nejrychleji nabijí Max metr</p></div>
   <div class="table" id="maxGainTable"></div>
-  <p class="note">U 5★ a silnějších bossů dá každý zásah aspoň 1 nabití a víc skoro nikdy, takže rozhoduje hlavně rychlost rychlého útoku (0,5 s = 2 nabití za sekundu). Při stejné rychlosti vyhrává ten, kdo déle vydrží na hřišti. U 1★–4★ bossů se počítá i škoda (1 nabití za každých 0,5 % HP bosse).</p>
+  <p class="note">Nabití za útok = max(1, škoda / HP bosse × 200 × M), u 1★–4★ zaokrouhleno dolů na celé, u legendárních (M = 4) a Gigantamax (M = 15) na setiny. Moveset ukazuje, jestli se vyplatí střídat rychlý útok s nabitým (nabitý pouštíš vždy, když máš energii), nebo jen klikat rychlý. Při podobné rychlosti nabíjení rozhoduje výdrž. HP legendárních a Gigantamax bossů se liší podle bosse, tady je odhad.</p>
   <div class="row" style="align-items:center;margin-top:8px"><h3 style="font-size:24px;text-transform:uppercase">Nejlepší tanky</h3><p class="lead">vydrží nejvíc ránu od bosse</p></div>
   <div class="table" id="maxTankTable"></div>
   <p class="note">Výpočet: level 40, IV 15/15/15, Max útok na úrovni 3 (Dynamax 350, Gigantamax 450 síla, G-Max jen s rychlým útokem svého typu). Zacian (Crowned Sword), Zamazenta (Crowned Shield) a Eternatus mají pevný Max útok: Behemoth Blade, Behemoth Bash (350) a Dynamax Cannon (450). Tank skóre = obrana × HP × odolnost proti typům útoků bosse. Seznam Dynamax a Gigantamax Pokémonů podle GO Hub DB a godex.site.</p>
@@ -694,6 +702,10 @@ $('bossPicker').addEventListener('click', function (e) { var b = e.target.closes
 /* ---------- MAX BATTLES ---------- */
 var curMax = null;
 var GMAXT = { lapras: 'ice', duraludon: 'dragon' };
+var MTIERS = [['1', '1★', 1700, 0.15, 1, 0], ['2', '2★', 5000, 0.38, 1, 0], ['3', '3★', 10000, 0.5, 1, 0], ['4', '4★', 20000, 0.6, 1, 0],
+  ['5', '5★ legendární', 60000, 0.7, 4, 2], ['gmax', 'Gigantamax', 75000, 0.7, 15, 2], ['eter', 'Eternamax', 90000, 0.75, 4, 2]];
+var MT = {}; MTIERS.forEach(function (t) { MT[t[0]] = t; });
+var curMaxTier = null, maxTierFor = null;
 var FIXED = { zacian_crowned_sword: ['steel', 350, 'Behemoth Blade'], zamazenta_crowned_shield: ['steel', 350, 'Behemoth Bash'], eternatus: ['dragon', 450, 'Dynamax Cannon'] };
 function renderMax() {
   if (!BS || !PVE) { $('maxAtkTable').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
@@ -711,6 +723,13 @@ function renderMax() {
   var id = curMax.slice(2), feat = null; feats.forEach(function (b) { if ('f:' + b.id === curMax) feat = b; });
   var boss = PVEIDX[id]; if (!boss) return;
   var types = boss[4];
+  if (maxTierFor !== curMax) {
+    maxTierFor = curMax;
+    var bst = boss[5] + boss[6] + boss[7], gm = BS.dmax.some(function (d) { return d[0] === id && d[1]; });
+    curMaxTier = feat && feat.id === 'eternatus' ? 'eter' : (feat && feat.id === 'espurr' ? '1' : (bst > 640 ? '5' : (gm && curMax.indexOf('f:') !== 0 ? 'gmax' : (bst < 420 ? '1' : '3'))));
+  }
+  group($('maxTier'), MTIERS.map(function (t) { return { k: t[0], label: t[1] }; }), function (i) { return i.k === curMaxTier; }, function (i) { curMaxTier = i.k; renderMax(); }, 'pill');
+  var TT = MT[curMaxTier];
   $('maxName').textContent = feat ? feat.n : 'Dynamax ' + boss[1];
   $('maxType').innerHTML = types.map(tchip).join('');
   $('maxWhen').textContent = feat ? (feat.t + ' · ' + (new Date(feat.a) <= now ? 'teď, do ' + fmtShort(feat.b) : fmtShort(feat.a) + ' – ' + fmtShort(feat.b))) : 'Vlastní výběr bosse';
@@ -719,7 +738,7 @@ function renderMax() {
   var bmt = Object.keys(bossMoveTypes);
   var tc = typeChart(types); $('maxWeak').innerHTML = tc[0];
   $('maxAtk').innerHTML = bmt.map(function (t) { return '<span class="weak" style="background:' + TC[t] + '">' + cap(t) + '</span>'; }).join('');
-  var D = (boss[6] + 15) * 0.79, atk = [], tank = [];
+  var D = (boss[6] + 15) * TT[3], atk = [], tank = [];
   BS.dmax.forEach(function (d) {
     var m = PVEIDX[d[0]]; if (!m) return;
     var A = (m[5] + 15) * 0.7903, best = null, fx = FIXED[d[0]];
@@ -739,27 +758,39 @@ function renderMax() {
     tank.push({ m: m, g: d[1], s: (m[6] + 15) * 0.7903 * Math.floor((m[7] + 15) * 0.7903) / avg / 100, avg: avg });
   });
   var gain = [];
+  function charges(dmg) { var f = Math.pow(10, TT[5]); return Math.min(100, Math.max(1, Math.floor(dmg / TT[2] * 200 * TT[4] * f) / f)); }
   BS.dmax.forEach(function (d) {
     var m = PVEIDX[d[0]]; if (!m) return;
     var avg = 0; bmt.forEach(function (t) { avg += effMul(t, m[4]); }); avg = bmt.length ? avg / bmt.length : 1;
     var bulk = (m[6] + 15) * 0.7903 * Math.floor((m[7] + 15) * 0.7903) / avg / 100, A = (m[5] + 15) * 0.7903, best = null;
+    function hit(mv) { var stab = m[4].indexOf(mv[1]) !== -1 ? 1.2 : 1; return Math.floor(0.5 * mv[2] * A / D * stab * effMul(mv[1], types)) + 1; }
     m[8].forEach(function (fid) {
-      var F = PVE.moves[fid]; if (!F) return;
-      var stab = m[4].indexOf(F[1]) !== -1 ? 1.2 : 1, dps = (Math.floor(0.5 * F[2] * A / D * stab * effMul(F[1], types)) + 1) / F[4];
-      var c = { F: F, cps: 1 / F[4], dps: dps };
-      if (!best || c.cps > best.cps + 1e-9 || (Math.abs(c.cps - best.cps) < 1e-9 && c.dps > best.dps)) best = c;
+      var F = PVE.moves[fid]; if (!F || F[3] <= 0) return;
+      var cf = charges(hit(F)), c = { F: F, C: null, cps: cf / F[4], cf: cf };
+      if (!best || c.cps > best.cps + 1e-9) best = c;
+      m[9].forEach(function (cid) {
+        var C = PVE.moves[cid]; if (!C || C[3] >= 0) return;
+        var n = Math.ceil(-C[3] / F[3]), cc = charges(hit(C)), rate = (n * cf + cc) / (n * F[4] + C[4]);
+        if (rate > cf / F[4] + 1e-9 && rate > best.cps + 1e-9) best = { F: F, C: C, cps: rate, cf: cf, cc: cc };
+      });
     });
-    if (best) gain.push({ m: m, g: d[1], b: best, bulk: bulk, s: best.cps * Math.sqrt(bulk) });
+    if (best) gain.push({ m: m, g: d[1], b: best, bulk: bulk });
   });
-  gain.sort(function (a, b) { return (b.b.cps - a.b.cps) || (b.bulk - a.bulk); });
+  gain.sort(function (a, b) { return (Math.round(b.b.cps * 10) - Math.round(a.b.cps * 10)) || (b.bulk - a.bulk); });
   var gm = 0; gain.slice(0, 12).forEach(function (x) { if (x.bulk > gm) gm = x.bulk; });
-  $('maxGainTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Rychlý útok</span><span class="num">Nabití/s</span><span>Výdrž</span></div>' +
+  $('maxGainTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">Nabití/s</span><span>Výdrž</span></div>' +
     gain.slice(0, 12).map(function (x, i) {
       return '<a class="tr link mx" href="#dmg-' + esc(x.m[0]) + '"><span class="rank">' + (i + 1) + '</span><div><span class="name">' + (x.g ? 'Gigantamax ' : (FIXED[x.m[0]] ? '' : 'Dynamax ')) + esc(x.m[1]) + '</span></div>' +
-        '<div class="mv"><span>' + dot(x.b.F[1]) + esc(x.b.F[0]) + ' · ' + fmt(x.b.F[4], 1) + ' s</span></div>' +
+        '<div class="mv"><span>' + dot(x.b.F[1]) + esc(x.b.F[0]) + (x.b.C ? ' / ' + esc(x.b.C[0]) : ' · jen rychlý') + '</span><span class="sub">' + (x.b.C ? 'nabitý dá ' + fmt(x.b.cc, 2).replace(/,?0+$/, '') + ' nabití' : fmt(x.b.F[4], 1) + ' s na útok') + '</span></div>' +
         '<span class="num big">' + fmt(x.b.cps, 1) + '</span>' +
         '<div class="score"><div class="bar"><i style="width:' + Math.round(x.bulk / gm * 100) + '%;background:#1D7A35"></i></div><b>' + Math.round(x.bulk) + '</b></div></a>';
     }).join('');
+  var top = gain.slice(0, 12), withC = top.filter(function (x) { return x.b.C; }).length;
+  var useC = withC >= 6;
+  $('maxTactic').className = 'tactic ' + (useC ? 'tc-charged' : 'tc-fast');
+  $('maxTactic').innerHTML = useC
+    ? '<b>Tip: používej i nabité útoky.</b> U tohoto bosse dá silný nabitý útok víc nabití, než kolik bys za stejný čas naklikal rychlými. Pouštěj ho vždy, když máš plnou energii. Tanky se slabým nabitým útokem dál jen klikají.'
+    : '<b>Tip: klikej jen rychlý útok.</b> Každý útok tu dá skoro vždy jen 1 nabití, takže nabitý útok jen zdržuje. Nejrychleji nabíjí útok za 0,5 s.' + (withC ? ' Výjimkou jsou Pokémoni níže s uvedeným nabitým útokem.' : '');
   atk.sort(function (a, b) { return b.b.dmg - a.b.dmg; }); tank.sort(function (a, b) { return b.s - a.s; });
   var am = atk.length ? atk[0].b.dmg : 1, tm = tank.length ? tank[0].s : 1;
   $('maxAtkTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Rychlý útok → Max útok</span><span class="num">Efekt.</span><span>Síla Max útoku</span></div>' +
