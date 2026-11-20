@@ -1096,15 +1096,16 @@ $('resetTodos').addEventListener('click', function () { done = {}; store('todos-
 /* ---------- INIT ---------- */
 renderRaid(); renderMlv(); renderDmControls(); renderPvpControls(); renderTodos(); route();
 setInterval(function () { if (EV && curPage === 'udalosti') renderEvents(); }, 60000);
-fetch('data/bosses.json').then(function (r) { return r.json(); }).then(function (d) { BS = d; d.raids.forEach(function (b) { RB[bossKey(b)] = b; }); afterData(); })
+var NC = { cache: 'no-cache' };
+fetch('data/bosses.json', NC).then(function (r) { return r.json(); }).then(function (d) { BS = d; BS.maxbosses = BS.maxbosses || []; d.raids.forEach(function (b) { RB[bossKey(b)] = b; }); afterData(); })
   .catch(function () { $('counters').innerHTML = '<p style="padding:24px" class="note">Data se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
 function afterData() { if (!BS || !PVE) return; renderRaid(); renderMax(); if (pendingPve && (pendingPve[0] === 'dmg' || RB[pendingPve[0]])) openPveDetail(pendingPve[0], pendingPve[1]); }
-fetch('data/pvp.json').then(function (r) { return r.json(); }).then(function (d) { PVP = d; renderPvp(); if (pendingDetail) openDetail(pendingDetail[0], pendingDetail[1]); })
+fetch('data/pvp.json', NC).then(function (r) { return r.json(); }).then(function (d) { PVP = d; renderPvp(); if (pendingDetail) openDetail(pendingDetail[0], pendingDetail[1]); })
   .catch(function () { $('pvpSummary').textContent = 'Žebříček se nepodařilo načíst. Zkus stránku obnovit.'; });
-fetch('data/events.json').then(function (r) { return r.json(); }).then(function (d) { EV = d; renderEvents(); if (pendingEv) openEventDetail(pendingEv); })
+fetch('data/events.json', NC).then(function (r) { return r.json(); }).then(function (d) { EV = d; renderEvents(); if (pendingEv) openEventDetail(pendingEv); })
   .catch(function () { $('evNow').innerHTML = '<p class="note">Události se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
-fetch('data/pve.json').then(function (r) { return r.json(); }).then(function (d) { PVE = d; d.mons.forEach(function (m) { PVEIDX[m[0]] = m; }); if (pendingPve && pendingPve[0] === 'dmg') openPveDetail(pendingPve[0], pendingPve[1]); afterData(); });
-fetch('data/dm.json').then(function (r) { return r.json(); }).then(function (d) { DM = d; renderDm(); })
+fetch('data/pve.json', NC).then(function (r) { return r.json(); }).then(function (d) { PVE = d; d.mons.forEach(function (m) { PVEIDX[m[0]] = m; }); if (pendingPve && pendingPve[0] === 'dmg') openPveDetail(pendingPve[0], pendingPve[1]); afterData(); });
+fetch('data/dm.json', NC).then(function (r) { return r.json(); }).then(function (d) { DM = d; renderDm(); })
   .catch(function () { $('dmSummary').textContent = 'Data se nepodařilo načíst. Zkus stránku obnovit.'; });
 })();
 </script>
