@@ -25,3 +25,10 @@ Mega/Primal 1,3× na vlastní typ a 1,1× ostatní, Mega+ útoky podle Mega úro
 DPS podle „comprehensive DPS“ vzorce, skóre = (DPS³·TDO)^¼.
 
 Fanouškovský projekt, není spojený s Niantic, Scopely ani The Pokémon Company.
+
+## PvP žebříček
+
+`cd src && python3 build_pvp.py` zapíše `docs/data/pvp.json` (top 100 pro Great, Ultra a Master League).
+Potřebuje navíc žebříčky PvPoke v `src/gm/rank/`: `r1500.json`, `r2500.json`, `r10000.json` z
+`https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/rankings/all/overall/rankings-<CP>.json`.
+Detail Pokémona má vlastní adresu `#pvp-<liga>-<speciesId>`, např. `#pvp-great-medicham`.

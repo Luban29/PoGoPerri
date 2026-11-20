@@ -149,6 +149,58 @@ input::placeholder{color:#7C7F88;font-weight:500}
 .todo .h{font-size:14px;color:var(--dim)}
 .counter-big{font-family:var(--pixel);font-size:48px;line-height:1;color:var(--lcd-hi);background:var(--lcd);border:2.5px solid var(--line);border-radius:10px;padding:10px 16px;align-self:flex-start}
 
+
+/* PvP seznam */
+#pvpSummary{font-family:var(--pixel);font-size:17px}
+.plist{display:flex;flex-direction:column;background:var(--surface);border:2.5px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.prow{display:grid;grid-template-columns:56px minmax(0,1.5fr) minmax(0,2fr) minmax(130px,.9fr) 28px;gap:16px;align-items:center;padding:12px 18px;border:0;border-bottom:1.5px solid var(--grid);background:transparent;text-align:left;width:100%}
+.prow:nth-child(even){background:#FAFBF6}
+.prow:hover{background:#FFF3D6}
+.prow:last-child{border-bottom:0}
+.prow .types{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.tchip{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);padding:1px 7px;border-radius:5px;border:1.5px solid var(--line)}
+.prow .go{justify-self:end;color:var(--faint)}
+.prow:hover .go{color:var(--accent)}
+@media (max-width:720px){.prow{grid-template-columns:44px minmax(0,1fr) 90px;gap:10px;padding:12px}.prow .mvcol,.prow .go{display:none}}
+
+/* PvP detail */
+dialog#pd{width:min(980px,calc(100% - 24px));max-height:calc(100% - 24px);padding:0;border:3px solid var(--line);border-radius:18px;background:var(--bg);color:var(--text);box-shadow:8px 8px 0 var(--line);overflow:auto}
+dialog#pd::backdrop{background:rgba(23,24,28,.55)}
+.pd-hd{position:relative;padding:26px 28px 22px;border-bottom:3px solid var(--line);display:flex;flex-direction:column;gap:8px;color:var(--ink)}
+.pd-hd h2{font-size:clamp(30px,5vw,46px);text-transform:uppercase;line-height:1;padding-right:56px}
+.pd-dex{font-family:var(--pixel);font-size:18px;background:var(--line);color:#fff;align-self:flex-start;padding:2px 10px;border-radius:6px}
+.pd-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pd-meta .tchip{font-size:13px;padding:3px 10px;background:#fff}
+.pd-x{position:absolute;top:18px;right:18px;width:48px;height:48px;border-radius:12px;border:2.5px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:3px 3px 0 var(--line)}
+.pd-x:hover{background:var(--surface2)}
+.pd-body{padding:24px 28px 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.pd-body .card{padding:18px;display:flex;flex-direction:column;gap:12px}
+.pd-body .wide{grid-column:1/-1}
+.pd-body h3{font-size:18px;text-transform:uppercase}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.stat{background:var(--lcd);color:var(--lcd-text);border:2px solid var(--line);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column}
+.stat small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--lcd-dim)}
+.stat{min-width:0}.stat b{font-family:var(--pixel);font-weight:500;font-size:20px;color:#E6F6D2;overflow-wrap:anywhere;line-height:1.2}.stat b.sm{font-size:16px}
+.roles{display:grid;grid-template-columns:96px 1fr 40px;gap:8px 10px;align-items:center;font-size:14px;font-weight:700}
+.roles b{font-family:var(--pixel);font-weight:500;text-align:right}
+.mtab{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+.mtab th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;text-align:right;color:var(--dim);padding:6px 8px;border-bottom:2px solid var(--line)}
+.mtab th:first-child,.mtab td:first-child{text-align:left}
+.mtab td{padding:9px 8px;border-bottom:1px solid var(--grid);text-align:right;font-variant-numeric:tabular-nums}
+.mtab tr.rec td{background:#FFF3D6}
+.mtab td:first-child{font-weight:700}
+.mtab .eff{font-size:12px;color:var(--muted);text-align:left;font-weight:500}
+.mscroll{overflow-x:auto}
+.use{display:inline-block;min-width:38px;font-family:var(--pixel)}
+.mu{display:flex;flex-direction:column;gap:6px}
+.mu a,.mu span.o{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border:2px solid var(--line);border-radius:8px;text-decoration:none;color:var(--text);font-weight:700;background:#fff}
+.mu a:hover{background:var(--surface2);color:var(--text)}
+.mu b{font-family:var(--pixel);font-weight:500}
+.mu.win b{color:#1D7A35}.mu.loss b{color:var(--accent)}
+.dchart{display:flex;flex-wrap:wrap;gap:6px}
+.dchart span{font-size:13px;font-weight:800;padding:4px 9px;border-radius:7px;border:2px solid var(--line);color:var(--ink)}
+.dchart span small{font-family:var(--pixel);font-weight:500;margin-left:4px}
+@media (max-width:560px){.pd-hd,.pd-body{padding-left:16px;padding-right:16px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 footer{background:var(--line);color:#C9CBD3}
 footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px}
 @media (prefers-reduced-motion:reduce){.btn,.todo{transition:none}}
@@ -285,14 +337,42 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 <section class="page" id="p-pvp" aria-labelledby="h-pvp">
   <div class="row">
     <div style="display:flex;flex-direction:column;gap:6px">
+      <p class="eyebrow">GO Battle League · top 100</p>
       <h2 class="h2" id="h-pvp">PvP žebříček</h2>
-      <p class="lead">Top Pokémoni podle simulací PvPoke. GBL teď dává za výhry 4× Stardust (do 25. 11.).</p>
+      <p class="lead">Pořadí podle simulací PvPoke. Klikni na Pokémona a uvidíš jeho staty v lize, všechny útoky s PvP hodnotami, s kým vyhrává a kdo je pro něj hrozba.</p>
     </div>
     <div class="tabs" role="group" aria-label="Liga" id="leagueTabs"></div>
   </div>
-  <p style="font-size:15px;color:var(--muted)" id="leagueNote"></p>
-  <div class="grid" id="pvpGrid"></div>
+  <div class="card controls">
+    <div class="ctl-row">
+      <div class="ctl" style="flex:2 1 280px">
+        <label class="label" for="pq">Hledat v lize</label>
+        <input id="pq" type="search" placeholder="např. Medicham, Azumarill…" autocomplete="off">
+      </div>
+      <div class="ctl" style="flex:1 1 220px">
+        <span class="label">Verze</span>
+        <div class="pills" role="group" aria-label="Verze" id="pkinds"></div>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="label">Typ Pokémona</span>
+      <div class="pills" role="group" aria-label="Typ Pokémona" id="ptypes"></div>
+    </div>
+  </div>
+  <p id="pvpSummary" aria-live="polite">Načítám žebříček…</p>
+  <div class="plist" id="pvpList"></div>
+  <p class="note">Data: PvPoke (simulace všech zápasů v lize). Staty jsou pro IV s nejlepším stat productem v dané lize, v Master League level 50 a 15/15/15. * = elite / legacy útok, ★ = STAB (útok stejného typu, 1,2×).</p>
 </section>
+
+<dialog id="pd" aria-labelledby="pdName">
+  <div class="pd-hd" id="pdHd">
+    <button type="button" class="pd-x" id="pdClose" aria-label="Zavřít detail"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="pd-dex" id="pdDex"></div>
+    <h2 id="pdName"></h2>
+    <div class="pd-meta" id="pdMeta"></div>
+  </div>
+  <div class="pd-body" id="pdBody"></div>
+</dialog>
 
 <!-- CO DELAT -->
 <section class="page" id="p-co-delat" aria-labelledby="h-todo">
@@ -338,14 +418,22 @@ var saved = store('prefs'); if (saved && typeof saved === 'object') { ['mlv','so
 function savePrefs() { store('prefs', { mlv: st.mlv, sort: st.sort, league: st.league, boss: st.boss }); }
 
 /* ---------- ROUTING ---------- */
+var curPage = null, pendingDetail = null;
 function route() {
-  var h = (location.hash || '').slice(1);
+  var h = (location.hash || '').slice(1), detail = null;
+  var m = /^pvp-(great|ultra|master)-(.+)$/.exec(h);
+  if (m) { detail = [m[1], m[2]]; h = 'pvp'; }
   if (PAGES.indexOf(h) === -1) h = 'tento-tyden';
   PAGES.forEach(function (p) { $('p-' + p).classList.toggle('on', p === h); });
   Array.prototype.forEach.call($('nav').querySelectorAll('a'), function (a) {
     if (a.getAttribute('href') === '#' + h) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
-  window.scrollTo(0, 0);
+  if (h !== curPage) window.scrollTo(0, 0);
+  curPage = h;
+  if (detail) {
+    if (st.league !== detail[0]) { st.league = detail[0]; savePrefs(); if (typeof renderPvpControls === 'function') { renderPvpControls(); renderPvp(); } }
+    pendingDetail = detail; if (PVP) openDetail(detail[0], detail[1]);
+  } else { pendingDetail = null; if (typeof closeDetail === 'function') closeDetail(); }
 }
 window.addEventListener('hashchange', route);
 
@@ -454,25 +542,108 @@ $('q').addEventListener('input', function () { clearTimeout(qTimer); var v = thi
 $('more').addEventListener('click', function () { st.limit += 50; renderDm(); });
 
 /* ---------- PVP ---------- */
-var LEAGUES = {
-  great: { label: 'Great 1500', note: 'Great League (max 1500 CP) – nejlepší liga na začátek, stačí levní Pokémoni.', rows: [
-    ['Melmetal','Thunder Shock · Double Iron Bash, Dynamic Punch',93.9],['Altaria','Dragon Breath · Moonblast, Flamethrower',92.8],['Shadow Ninetales','Ember · Weather Ball (Fire), Energy Ball',92.6],['Mimikyu','Shadow Claw · Shadow Sneak, Play Rough',92.0],
-    ['Cramorant','Peck · Surf, Fly',91.6],['Shadow Altaria','Dragon Breath · Moonblast, Flamethrower',91.5],['Tinkaton','Fairy Wind · Gigaton Hammer, Bulldoze',91.5],['Corviknight','Sand Attack · Air Cutter, Iron Head',91.4]] },
-  ultra: { label: 'Ultra 2500', note: 'Ultra League (max 2500 CP) – tento týden běží v klasické verzi, minulý týden byla Mega Edition.', rows: [
-    ['Tinkaton','Fairy Wind · Gigaton Hammer, Bulldoze',94.3],['Corviknight','Sand Attack · Air Cutter, Iron Head',93.9],['Shadow Snorlax','Psywave · Body Slam, Earthquake',93.4],['Shadow Corviknight','Sand Attack · Air Cutter, Payback',93.2],
-    ['Zygarde (Complete)','Dragon Tail · Crunch, Bulldoze',92.7],['Virizion','Double Kick · Leaf Blade, Sacred Sword',92.3],['Mimikyu','Shadow Claw · Shadow Sneak, Play Rough',92.1],['Florges (Red)','Fairy Wind · Chilling Water, Disarming Voice',92.0]] },
-  master: { label: 'Master', note: 'Master League (bez limitu). Pozor: tento týden běží Master League: Mega Edition, kde se pořadí liší – tohle je klasický žebříček.', rows: [
-    ['Palkia (Origin)','Dragon Breath · Aqua Tail, Spacial Rend',98.3],['Zacian (Crowned Sword)','Metal Claw · Close Combat, Behemoth Blade',97.1],['Kyogre','Waterfall · Avalanche, Origin Pulse',93.8],['White Kyurem','Dragon Breath · Fusion Flare, Ice Burn',93.8],
-    ['Metagross','Shadow Claw · Meteor Mash, Earthquake',93.7],['Zygarde (Complete)','Dragon Tail · Crunch, Bulldoze',93.5],['Dialga (Origin)','Dragon Breath · Roar of Time, Iron Head',93.3],['Reshiram','Dragon Breath · Fusion Flare, Draco Meteor',93.3]] }
-};
-function renderPvp() {
-  var lg = LEAGUES[st.league] || LEAGUES.great;
-  group($('leagueTabs'), ['great','ultra','master'].map(function (k) { return { k: k, label: LEAGUES[k].label }; }), function (i) { return i.k === st.league; }, function (i) { st.league = i.k; savePrefs(); renderPvp(); });
-  $('leagueNote').textContent = lg.note;
-  $('pvpGrid').innerHTML = lg.rows.map(function (r, i) {
-    return '<article class="card pv"><div class="top"><span class="rank">#' + (i + 1) + '</span><b style="color:var(--accent);font-variant-numeric:tabular-nums">' + r[2].toFixed(1) + '</b></div><h3 style="font-size:19px">' + esc(r[0]) + '</h3><p style="font-size:14px;color:var(--dim)">' + esc(r[1]) + '</p><div class="bar"><i style="width:' + Math.max(8, Math.round((r[2] - 85) / 15 * 100)) + '%"></i></div></article>';
-  }).join('');
+var PVP = null, pst = { q: '', type: 'all', kinds: { normal: true, shadow: true, mega: true } };
+var LG = { great: 'Great League', ultra: 'Ultra League', master: 'Master League' };
+var LG_SHORT = { great: 'Great 1500', ultra: 'Ultra 2500', master: 'Master' };
+var ROLES = ['Lead', 'Closer', 'Switch', 'Charger', 'Attacker', 'Consistency'];
+if (!LG[st.league]) st.league = 'great';
+function tchip(t) { return '<span class="tchip" style="background:' + TC[t] + '">' + cap(t) + '</span>'; }
+function mname(id) { var m = PVP.moves[id]; return m ? m.n : id; }
+function renderPvpControls() {
+  group($('leagueTabs'), ['great','ultra','master'].map(function (k) { return { k: k, label: LG_SHORT[k] }; }), function (i) { return i.k === st.league; }, function (i) { st.league = i.k; savePrefs(); renderPvpControls(); renderPvp(); });
+  group($('pkinds'), [{ k: 'normal', label: 'Běžní' }, { k: 'shadow', label: 'Shadow' }, { k: 'mega', label: 'Mega' }], function (i) { return pst.kinds[i.k]; },
+    function (i) { pst.kinds[i.k] = !pst.kinds[i.k]; renderPvpControls(); renderPvp(); }, 'pill');
+  group($('ptypes'), [{ k: 'all', label: 'Všechny' }].concat(TYPES.map(function (t) { return { k: t, label: cap(t), html: dot(t, 1) + cap(t) }; })), function (i) { return i.k === pst.type; },
+    function (i) { pst.type = i.k; renderPvpControls(); renderPvp(); }, 'pill');
 }
+function renderPvp() {
+  if (!PVP) return;
+  var rows = PVP.leagues[st.league], q = pst.q.trim().toLowerCase(), out = [];
+  rows.forEach(function (r, i) {
+    var kk = r.k || 'normal';
+    if (!pst.kinds[kk]) return;
+    if (q && r.n.toLowerCase().indexOf(q) === -1) return;
+    if (pst.type !== 'all' && r.ty.indexOf(pst.type) === -1) return;
+    out.push([r, i + 1]);
+  });
+  $('pvpSummary').textContent = LG[st.league] + ' · ' + out.length + ' z ' + rows.length + ' Pokémonů';
+  $('pvpList').innerHTML = out.length ? out.map(function (x) {
+    var r = x[0];
+    return '<button type="button" class="prow" data-id="' + esc(r.id) + '"><span class="rank">' + x[1] + '</span>' +
+      '<span style="min-width:0"><span class="name">' + esc(r.n) + '</span>' + kindBadge(r.k) + '<span class="types">' + r.ty.map(tchip).join('') + '</span></span>' +
+      '<span class="mv mvcol"><span>' + dot(PVP.moves[r.ms[0]].t) + esc(mname(r.ms[0])) + '</span><span>' + r.ms.slice(1).map(function (m) { return dot(PVP.moves[m].t) + esc(mname(m)); }).join('&nbsp;·&nbsp;') + '</span></span>' +
+      '<span class="score"><span class="bar"><i style="width:' + Math.max(4, Math.round((r.s - 70) / 30 * 100)) + '%;background:var(--sky)"></i></span><b>' + r.s.toFixed(1) + '</b></span>' +
+      '<span class="go" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>';
+  }).join('') : '<p style="padding:28px;text-align:center" class="note">Nic nenalezeno. Zkus jiné jméno nebo typ.</p>';
+}
+$('pvpList').addEventListener('click', function (e) { var b = e.target.closest('.prow'); if (b) location.hash = 'pvp-' + st.league + '-' + b.getAttribute('data-id'); });
+var pqT; $('pq').addEventListener('input', function () { clearTimeout(pqT); var v = this.value; pqT = setTimeout(function () { pst.q = v; renderPvp(); }, 120); });
+
+function buffText(m) {
+  if (!m.b) return '';
+  var who = m.bt === 'self' ? 'sobě' : 'soupeři', parts = [];
+  if (m.b[0]) parts.push('útok ' + (m.b[0] > 0 ? '+' : '−') + Math.abs(m.b[0]));
+  if (m.b[1]) parts.push('obrana ' + (m.b[1] > 0 ? '+' : '−') + Math.abs(m.b[1]));
+  return parts.join(', ') + ' ' + who + (m.bc < 1 ? ' (' + Math.round(m.bc * 100) + ' %)' : '');
+}
+function fmt(n, d) { return (Math.round(n * Math.pow(10, d)) / Math.pow(10, d)).toFixed(d).replace('.', ','); }
+function openDetail(league, id) {
+  if (!PVP) return;
+  var rows = PVP.leagues[league], idx = -1;
+  for (var i = 0; i < rows.length; i++) if (rows[i].id === id) { idx = i; break; }
+  if (idx < 0) return;
+  var r = rows[idx], c1 = TC[r.ty[0]], c2 = TC[r.ty[1] || r.ty[0]];
+  $('pdHd').style.background = 'linear-gradient(120deg,' + c1 + ' 0 55%,' + c2 + ' 55% 100%)';
+  $('pdDex').textContent = '#' + String(r.dex).padStart(4, '0');
+  $('pdName').textContent = r.n;
+  $('pdMeta').innerHTML = r.ty.map(tchip).join('') + kindBadge(r.k) + '<span class="tchip" style="background:#fff">' + LG[league] + ' · #' + (idx + 1) + ' · skóre ' + fmt(r.s, 1) + '</span>';
+  var rec = {}; r.ms.forEach(function (m) { rec[m] = 1; });
+  var stab = function (t) { return r.ty.indexOf(t) !== -1; };
+  var fastRows = r.f.slice().sort(function (a, b) { return b[1] - a[1]; }).map(function (x) {
+    var m = PVP.moves[x[0]], k = stab(m.t) ? 1.2 : 1;
+    return '<tr' + (rec[x[0]] ? ' class="rec"' : '') + '><td><span style="display:inline-flex;align-items:center;gap:8px">' + dot(m.t) + esc(m.n) + (x[2] ? '*' : '') + (k > 1 ? ' ★' : '') + '</span></td>' +
+      '<td>' + m.p + '</td><td>' + m.e + '</td><td>' + m.tu + '</td><td>' + fmt(m.p * k / m.tu, 2) + '</td><td>' + fmt(m.e / m.tu, 2) + '</td><td><span class="use">' + (x[1] ? x[1] + ' %' : '–') + '</span></td></tr>';
+  }).join('');
+  var chRows = r.c.slice().sort(function (a, b) { return b[1] - a[1]; }).map(function (x) {
+    var m = PVP.moves[x[0]], k = stab(m.t) ? 1.2 : 1;
+    return '<tr' + (rec[x[0]] ? ' class="rec"' : '') + '><td><span style="display:inline-flex;align-items:center;gap:8px">' + dot(m.t) + esc(m.n) + (x[2] ? '*' : '') + (k > 1 ? ' ★' : '') + '</span></td>' +
+      '<td>' + m.p + '</td><td>' + m.c + '</td><td>' + fmt(m.p * k / m.c, 2) + '</td><td class="eff">' + esc(buffText(m)) + '</td><td><span class="use">' + (x[1] ? x[1] + ' %' : '–') + '</span></td></tr>';
+  }).join('');
+  var inLeague = {}; rows.forEach(function (x) { inLeague[x.id] = 1; });
+  function mu(list, cls) {
+    return '<div class="mu ' + cls + '">' + list.map(function (o) {
+      var nm = esc(PVP.names[o[0]] || o[0]), inner = '<span>' + nm + '</span><b>' + o[1] + '</b>';
+      return inLeague[o[0]] ? '<a href="#pvp-' + league + '-' + esc(o[0]) + '">' + inner + '</a>' : '<span class="o">' + inner + '</span>';
+    }).join('') + '</div>';
+  }
+  var weak = [], res = [];
+  Object.keys(r.def).forEach(function (t) { (r.def[t] > 1 ? weak : res).push([t, r.def[t]]); });
+  weak.sort(function (a, b) { return b[1] - a[1]; }); res.sort(function (a, b) { return a[1] - b[1]; });
+  function dc(list) { return list.length ? '<div class="dchart">' + list.map(function (x) { return '<span style="background:' + TC[x[0]] + '">' + cap(x[0]) + '<small>' + fmt(x[1], x[1] < .3 ? 3 : (x[1] % 1 ? 2 : 1)).replace(/,?0+$/, '') + '×</small></span>'; }).join('') + '</div>' : '<p class="note">Žádné.</p>'; }
+  $('pdBody').innerHTML =
+    '<div class="card"><h3>Staty v lize</h3><div class="stats">' +
+      '<div class="stat"><small>CP</small><b>' + r.cp + '</b></div><div class="stat"><small>Level</small><b>' + String(r.lv).replace('.', ',') + '</b></div>' +
+      '<div class="stat"><small>IV</small><b class="sm">' + r.iv.join('/') + '</b></div><div class="stat"><small>Stat product</small><b>' + (r.st.product || '–') + '</b></div>' +
+      '<div class="stat"><small>Útok</small><b>' + fmt(r.st.atk || 0, 1) + '</b></div><div class="stat"><small>Obrana</small><b>' + fmt(r.st.def || 0, 1) + '</b></div>' +
+      '<div class="stat"><small>HP</small><b>' + (r.st.hp || '–') + '</b></div><div class="stat"><small>Base A/D/HP</small><b class="sm">' + r.bs.atk + '/' + r.bs.def + '/' + r.bs.hp + '</b></div>' +
+    '</div><p class="note">' + (league === 'master' ? 'Level 50, IV 15/15/15.' : 'IV s nejlepším stat productem pod ' + (league === 'great' ? '1500' : '2500') + ' CP.') + (r.k === 'shadow' ? ' Shadow: útok ×1,2, obrana ×0,83 (už započteno).' : '') + '</p></div>' +
+    '<div class="card"><h3>Hodnocení podle role</h3><div class="roles">' + r.sc.map(function (v, i) {
+      return '<span>' + ROLES[i] + '</span><span class="bar"><i style="width:' + Math.max(3, Math.round(v)) + '%;background:var(--sky)"></i></span><b>' + Math.round(v) + '</b>';
+    }).join('') + '</div><p class="note">Doporučený moveset: <strong>' + r.ms.map(function (m) { return esc(mname(m)); }).join(' · ') + '</strong></p></div>' +
+    '<div class="card wide"><h3>Rychlé útoky</h3><div class="mscroll"><table class="mtab"><thead><tr><th>Útok</th><th>Síla</th><th>Energie</th><th>Tahy</th><th>DPT</th><th>EPT</th><th>Použití</th></tr></thead><tbody>' + fastRows + '</tbody></table></div></div>' +
+    '<div class="card wide"><h3>Nabité útoky</h3><div class="mscroll"><table class="mtab"><thead><tr><th>Útok</th><th>Síla</th><th>Cena</th><th>DPE</th><th style="text-align:left">Efekt</th><th>Použití</th></tr></thead><tbody>' + chRows + '</tbody></table></div>' +
+      '<p class="note">DPT a DPE už počítají se STAB bonusem. Žlutě je doporučený moveset, použití je podíl v simulacích PvPoke.</p></div>' +
+    '<div class="card"><h3>Nejlepší výhry</h3>' + mu(r.w, 'win') + '<p class="note">Číslo je výsledek zápasu 1v1 (500 = remíza, víc = výhra).</p></div>' +
+    '<div class="card"><h3>Největší hrozby</h3>' + mu(r.l, 'loss') + '</div>' +
+    '<div class="card wide"><h3>Slabiny a odolnosti</h3><span class="label">Dostává víc od</span>' + dc(weak) + '<span class="label" style="margin-top:6px">Dostává míň od</span>' + dc(res) + '</div>';
+  var d = $('pd');
+  if (!d.open) { try { d.showModal(); } catch (err) { d.setAttribute('open', ''); } }
+  d.scrollTop = 0;
+}
+function closeDetail() { var d = $('pd'); if (d.open) d.close(); }
+$('pdClose').addEventListener('click', function () { location.hash = 'pvp'; });
+$('pd').addEventListener('cancel', function (e) { e.preventDefault(); location.hash = 'pvp'; });
+$('pd').addEventListener('click', function (e) { if (e.target === this) location.hash = 'pvp'; });
 
 /* ---------- CO DELAT ---------- */
 var TODOS = [
@@ -498,9 +669,11 @@ $('todos').addEventListener('click', function (e) { var b = e.target.closest('bu
 $('resetTodos').addEventListener('click', function () { done = {}; store('todos-2026-w47', done); renderTodos(); });
 
 /* ---------- INIT ---------- */
-route(); renderRaid(); renderMlv(); renderDmControls(); renderPvp(); renderTodos();
+renderRaid(); renderMlv(); renderDmControls(); renderPvpControls(); renderTodos(); route();
 fetch('data/counters.json').then(function (r) { return r.json(); }).then(function (d) { CO = d; renderRaid(); })
   .catch(function () { $('counters').innerHTML = '<p style="padding:24px" class="note">Data se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
+fetch('data/pvp.json').then(function (r) { return r.json(); }).then(function (d) { PVP = d; renderPvp(); if (pendingDetail) openDetail(pendingDetail[0], pendingDetail[1]); })
+  .catch(function () { $('pvpSummary').textContent = 'Žebříček se nepodařilo načíst. Zkus stránku obnovit.'; });
 fetch('data/dm.json').then(function (r) { return r.json(); }).then(function (d) { DM = d; renderDm(); })
   .catch(function () { $('dmSummary').textContent = 'Data se nepodařilo načíst. Zkus stránku obnovit.'; });
 })();
