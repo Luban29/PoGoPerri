@@ -174,7 +174,7 @@ dialog#pd::backdrop{background:rgba(23,24,28,.55)}
 .pd-dex{font-family:var(--pixel);font-size:18px;background:var(--line);color:#fff;align-self:flex-start;padding:2px 10px;border-radius:6px}
 .pd-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .pd-meta .tchip{font-size:13px;padding:3px 10px;background:#fff}
-.pd-x{position:absolute;top:18px;right:18px;width:48px;height:48px;border-radius:12px;border:2.5px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:3px 3px 0 var(--line)}
+.pd-x{color:var(--ink);position:absolute;top:18px;right:18px;width:48px;height:48px;border-radius:12px;border:2.5px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:3px 3px 0 var(--line)}
 .pd-x:hover{background:var(--surface2)}
 .pd-body{padding:24px 28px 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
 .pd-body .card{padding:18px;display:flex;flex-direction:column;gap:12px}
@@ -205,6 +205,24 @@ dialog#pd::backdrop{background:rgba(23,24,28,.55)}
 .dchart span{font-size:13px;font-weight:800;padding:4px 9px;border-radius:7px;border:2px solid var(--line);color:var(--ink)}
 .dchart span small{font-family:var(--pixel);font-weight:500;margin-left:4px}
 @media (max-width:560px){.pd-hd,.pd-body{padding-left:16px;padding-right:16px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* události */
+a.evlink{text-decoration:none;color:var(--text);font-weight:400;transition:transform .08s,box-shadow .08s}
+a.evlink:hover{color:var(--text);background:#FFFBEF;transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--line)}
+.evst{font-size:12px;font-weight:800;padding:3px 8px;border-radius:6px;border:1.5px solid var(--line);white-space:nowrap}
+.more-l{display:inline-flex;align-items:center;gap:4px;font-weight:800;color:var(--accent);margin-top:auto}
+.coderow{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1.5px solid var(--grid)}
+.coderow:last-child{border-bottom:0}
+.coderow code{font-family:var(--pixel);font-size:16px;background:var(--lcd);color:var(--lcd-hi);padding:6px 10px;border-radius:8px;border:2px solid var(--line);overflow-wrap:anywhere}
+.cr-what{font-weight:700;display:flex;flex-direction:column}.cr-what small{font-weight:500;color:var(--dim);font-size:13px}
+@media (max-width:640px){.coderow{grid-template-columns:1fr}.coderow .copy{justify-self:start}}
+.evlist{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.mons{display:flex;flex-wrap:wrap;gap:6px}
+.mon{font-size:14px;font-weight:700;padding:4px 10px;border:2px solid var(--line);border-radius:8px;background:#fff}
+.mon b{color:#C58A00}
+.step{display:flex;flex-direction:column;gap:6px;padding:12px;border:2px dashed var(--grid);border-radius:10px}
+.mtab.tasks{min-width:0}.mtab.tasks td{text-align:left}.mtab.tasks td:first-child{width:55%}
+.pd-body > .note.wide{grid-column:1/-1}
 footer{background:var(--line);color:#C9CBD3}
 footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px}
 @media (prefers-reduced-motion:reduce){.btn,.todo{transition:none}}
@@ -213,11 +231,11 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 <body>
 <header>
   <nav class="nav" aria-label="Hlavní navigace">
-    <a class="logo" href="#tento-tyden">
+    <a class="logo" href="#udalosti">
       <span class="lens" aria-hidden="true"></span><span>PoGo Kompas</span><span class="leds" aria-hidden="true"><i style="background:#FF5A4E"></i><i style="background:#FFD23F"></i><i style="background:#5BD16B"></i></span>
     </a>
     <div class="tabs" id="nav">
-      <a class="tab" href="#tento-tyden">Tento týden</a>
+      <a class="tab" href="#udalosti">Události</a>
       <a class="tab" href="#raidy">Raidy</a>
       <a class="tab" href="#damage-meter">Damage meter</a>
       <a class="tab" href="#pvp">PvP</a>
@@ -229,38 +247,37 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 
 <main class="wrap">
 
-<!-- TENTO TYDEN -->
-<section class="page" id="p-tento-tyden" aria-labelledby="h-tyden">
+<!-- UDALOSTI -->
+<section class="page" id="p-udalosti" aria-labelledby="h-udalosti">
   <div class="hero">
     <div class="hero-l">
-      <p class="eyebrow">Týden 16.–25. 11. 2026</p>
-      <h1 id="h-tyden">Co tento týden<br>v <em>Pokémon GO?</em></h1>
-      <p style="font-size:19px;color:var(--muted);max-width:34ch">Rychlý tahák pro trenéry: co se děje, koho stavět do raidů a s kým vyrazit do GO Battle League. Bez omáčky.</p>
+      <p class="eyebrow" id="evStamp">Aktualizováno 20. 11. 2026</p>
+      <h1 id="h-udalosti">Co se děje<br>v <em>Pokémon GO?</em></h1>
+      <p style="font-size:19px;color:var(--muted);max-width:34ch">Všechny eventy, raidy, Max Battles, GBL a promokódy na jednom místě. Klikni na event a uvidíš bonusy, shiny, úkoly i odměny.</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
         <a class="btn primary" href="#co-delat">Ukaž mi plán na týden</a>
-        <a class="btn ghost" href="#raidy">Countery na Darkraie</a>
+        <a class="btn ghost" href="#kody">Promokódy</a>
       </div>
     </div>
-    <div class="hero-r"><div class="screen">
-      <span class="badge">Hlavní akce víkendu</span>
-      <h2>Pawniard Community Day</h2>
-      <p style="font-size:18px;font-weight:600;color:var(--accent)">Sobota 21. 11. · 14:00–17:00</p>
-      <ul style="margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:8px;color:var(--text2)">
-        <li>Vyvíjej Bisharp do <strong style="color:var(--text)">21:00</strong> → Kingambit dostane exkluzivní Dark útok <strong style="color:var(--text)">Kowtow Cleave</strong>.</li>
-        <li>V okně stačí Bisharp jako buddy na <strong style="color:var(--text)">1 raid</strong> (Dark/Steel boss) místo 15.</li>
-        <li>Vajíčka se líhnou na 1/4 vzdálenosti.</li>
-      </ul>
-      <div class="tip">
-        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9EDB4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        <span>Kingambit s Kowtow Cleave patří mezi nejlepší běžné countery na Cresselii.</span>
-      </div>
-    </div></div>
+    <div class="hero-r"><div class="screen" id="evHero"></div></div>
   </div>
-  <div class="row" style="margin-top:16px">
-    <h2 class="h2">Tento týden</h2>
-    <p class="lead">časy jsou místní</p>
+  <div class="card controls" style="padding:16px 20px">
+    <div class="ctl">
+      <span class="label">Zobrazit</span>
+      <div class="pills" role="group" aria-label="Typ události" id="evCats"></div>
+    </div>
   </div>
-  <div class="grid" id="events"></div>
+  <div class="row"><h2 class="h2">Právě běží</h2><p class="lead" id="evNowCount"></p></div>
+  <div class="grid" id="evNow"></div>
+  <div class="row" style="margin-top:12px"><h2 class="h2">Brzy</h2><p class="lead">časy jsou místní, pokud není uvedeno jinak</p></div>
+  <div class="grid" id="evSoon"></div>
+  <div class="row" style="margin-top:12px"><h2 class="h2">Do budoucna</h2><p class="lead">potvrzená data, detaily přibudou</p></div>
+  <div class="grid" id="evLater"></div>
+  <div class="row" style="margin-top:12px" id="kody"><h2 class="h2">Promokódy a partneři</h2><p class="lead">Kódy uplatníš na <a href="https://store.pokemongo.com/offer-redemption">store.pokemongo.com/offer-redemption</a></p></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:10px" id="evCodes"></div>
+  <div class="grid" id="evPartners"></div>
+  <div class="row" style="margin-top:12px"><h2 class="h2">Týdenní rytmus</h2><p class="lead">opakuje se každý týden</p></div>
+  <div class="grid" id="evWeekly"></div>
 </section>
 
 <!-- RAIDY -->
@@ -409,7 +426,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 'use strict';
 var TYPES = ['normal','fighting','flying','poison','ground','rock','bug','ghost','steel','fire','water','grass','electric','psychic','ice','dragon','dark','fairy'];
 var TC = { normal:'#C9C3A8', fighting:'#E0603A', flying:'#9DB7F5', poison:'#B46CD6', ground:'#D9A55B', rock:'#BFA75A', bug:'#A8C23A', ghost:'#9A86D9', steel:'#B8C2CC', fire:'#FF8A3D', water:'#4FA3F7', grass:'#6CC96C', electric:'#FFD23F', psychic:'#FF6FA3', ice:'#7FDBEA', dragon:'#7C6CF0', dark:'#8C7A6B', fairy:'#F5A3D3' };
-var PAGES = ['tento-tyden','raidy','damage-meter','pvp','co-delat'];
+var PAGES = ['udalosti','raidy','damage-meter','pvp','co-delat'];
 function $(id) { return document.getElementById(id); }
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
 function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
@@ -422,7 +439,7 @@ var saved = store('prefs'); if (saved && typeof saved === 'object') { ['mlv','so
 function savePrefs() { store('prefs', { mlv: st.mlv, sort: st.sort, league: st.league, boss: st.boss }); }
 
 /* ---------- ROUTING ---------- */
-var curPage = null, pendingDetail = null, pendingPve = null;
+var curPage = null, pendingDetail = null, pendingPve = null, pendingEv = null;
 function route() {
   var h = (location.hash || '').slice(1), detail = null;
   var m = /^pvp-(great|ultra|master)-(.+)$/.exec(h), pd = null;
@@ -430,15 +447,19 @@ function route() {
   var m2 = /^dmg-(.+)$/.exec(h), m3 = /^raid-(darkrai|cresselia)-(.+)$/.exec(h);
   if (m2) { pd = ['dmg', m2[1]]; h = 'damage-meter'; }
   if (m3) { pd = [m3[1], m3[2]]; h = 'raidy'; if (st.boss !== m3[1]) { st.boss = m3[1]; savePrefs(); renderRaid(); } }
-  if (PAGES.indexOf(h) === -1) h = 'tento-tyden';
+  if (h === 'tento-tyden') h = 'udalosti';
+  var m4 = /^udalost-(.+)$/.exec(h), evd = null;
+  if (m4) { evd = m4[1]; h = 'udalosti'; }
+  if (PAGES.indexOf(h) === -1) h = 'udalosti';
   PAGES.forEach(function (p) { $('p-' + p).classList.toggle('on', p === h); });
   Array.prototype.forEach.call($('nav').querySelectorAll('a'), function (a) {
     if (a.getAttribute('href') === '#' + h) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
   if (h !== curPage) window.scrollTo(0, 0);
   curPage = h;
-  pendingPve = pd;
-  if (pd) { if (PVE) openPveDetail(pd[0], pd[1]); }
+  pendingPve = pd; pendingEv = evd;
+  if (evd) { if (EV) openEventDetail(evd); }
+  else if (pd) { if (PVE) openPveDetail(pd[0], pd[1]); }
   else if (detail) {
     if (st.league !== detail[0]) { st.league = detail[0]; savePrefs(); if (typeof renderPvpControls === 'function') { renderPvpControls(); renderPvp(); } }
     pendingDetail = detail; if (PVP) openDetail(detail[0], detail[1]);
@@ -454,21 +475,108 @@ function group(el, items, isOn, onPick, cls) {
   el.onclick = function (e) { var b = e.target.closest('button[data-i]'); if (b) onPick(items[+b.getAttribute('data-i')]); };
 }
 
-/* ---------- TENTO TYDEN ---------- */
-var EVENTS = [
-  ['5★ raidy', 'a', 'do 24. 11.', 'Cresselia a Darkrai', 'Na Darkraie ber Fighting, na Cresselii Ghost a Dark. Konkrétní countery najdeš v záložce Raidy.'],
-  ['Mega raid', 'a', 'do 24. 11.', 'Mega Banette', 'Ghost typ – slabý na Dark a Ghost útoky. Dobrá šance na Mega energii.'],
-  ['Shadow raid', 'a', 'celý listopad', 'Shadow Tornadus', 'Incarnate forma, může být i shiny. Na létajícího bosse ber Electric, Ice nebo Rock útočníky.'],
-  ['Max Battles', 's', '16.–23. 11.', 'Dynamax Trails', 'Víc aktivních Power Spotů a Max Battles. V sobotu 11–14 Eternamax Eternatus pro candy.'],
-  ['Community Day', 's', 'so 21. 11.', 'Pawniard', '14:00–17:00, evoluce na Kingambit s Kowtow Cleave do 21:00.'],
-  ['GO Battle League', 's', '18.–25. 11.', 'Great, Ultra, Master: Mega Edition', 'Plus 2026 GO LAIC Cup. Výhry dávají 4× Stardust.'],
-  ['Brzy', 'd', 'so 28. 11.', 'Clefable Super Mega Raid Day', '14:00–17:00. Debut Mega Clefable a její Moonblast+. Šetři si raid passy.'],
-  ['Konec sezóny', 'd', 'út 1. 12.', 'Twilight Trails končí', 'Dotáhni sezónní výzkumy a GBL odměny.']
-];
-var TAGC = { a: 'var(--accent)', s: 'var(--sky)', d: '#5D606B' };
-$('events').innerHTML = EVENTS.map(function (e) {
-  return '<article class="card ev"><div class="top"><span class="tag" style="color:' + TAGC[e[1]] + '">' + esc(e[0]) + '</span><span class="note" style="font-size:13px">' + esc(e[2]) + '</span></div><h3>' + esc(e[3]) + '</h3><p style="color:var(--muted);font-size:15px">' + esc(e[4]) + '</p></article>';
-}).join('');
+/* ---------- UDALOSTI ---------- */
+var EV = null, evCat = 'all';
+var CAT = { event: ['Event', '#D7352A'], cd: ['Community Day', '#2F6FD6'], raid: ['Raidy', '#6D3FC4'], max: ['Max Battles', '#B0245C'],
+  gbl: ['GO Battle League', '#17181C'], spotlight: ['Spotlight Hour', '#A3520A'], partner: ['Partner', '#0F6E66'] };
+var DOW = ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so'];
+function pd2(n) { return (n < 10 ? '0' : '') + n; }
+function evDate(iso) { var d = new Date(iso); return { d: d, day: DOW[d.getDay()] + ' ' + d.getDate() + '. ' + (d.getMonth() + 1) + '.', time: d.getHours() + ':' + pd2(d.getMinutes()), y: d.getFullYear() }; }
+function evRange(e) {
+  var a = evDate(e.start), b = evDate(e.end);
+  if (e.tba) return a.day + (e.end.slice(0, 10) !== e.start.slice(0, 10) ? ' – ' + b.day : '') + ' ' + a.y;
+  var sameDay = e.start.slice(0, 10) === e.end.slice(0, 10);
+  if (sameDay) return a.day + ' · ' + a.time + '–' + b.time;
+  var long = (b.d - a.d) > 40 * 864e5;
+  return a.day + (long ? ' ' + a.y : ' ' + a.time) + ' – ' + b.day + (long ? ' ' + b.y : ' ' + b.time);
+}
+function evStatus(e, now) {
+  var s = new Date(e.start), en = new Date(e.end);
+  function span(ms) { var h = Math.round(ms / 36e5); if (h < 1) return 'méně než hodinu'; if (h < 48) return h + ' h'; return Math.round(h / 24) + ' dní'; }
+  if (now >= en) return { k: 'past', t: 'Skončilo' };
+  if (now >= s) return { k: 'now', t: 'Běží · končí za ' + span(en - now) };
+  return { k: 'soon', t: 'Začíná za ' + span(s - now) };
+}
+function evCard(e, now) {
+  var c = CAT[e.cat] || CAT.event, st2 = evStatus(e, now);
+  var stStyle = st2.k === 'now' ? 'background:var(--lcd);color:var(--lcd-hi)' : 'background:var(--surface2);color:var(--text2)';
+  return '<a class="card ev evlink" href="#udalost-' + esc(e.id) + '"><div class="top"><span class="tag" style="background:' + c[1] + '">' + esc(c[0]) + '</span>' +
+    (e.tba ? '' : '<span class="evst" style="' + stStyle + '">' + esc(st2.t) + '</span>') + '</div>' +
+    '<h3>' + esc(e.title) + '</h3><span class="when">' + esc(evRange(e)) + '</span><p style="color:var(--muted);font-size:15px">' + esc(e.summary) + '</p>' +
+    '<span class="more-l">Detail <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></a>';
+}
+function codeRow(c) {
+  return '<div class="coderow"><code>' + esc(c[0]) + '</code><span class="cr-what">' + esc(c[1]) + '<small>' + esc(c[2]) + '</small></span>' +
+    '<button type="button" class="pill copy" data-code="' + esc(c[0]) + '">Kopírovat</button></div>';
+}
+function renderEvents() {
+  if (!EV) return;
+  var now = new Date(), list = EV.events.filter(function (e) { return evCat === 'all' || e.cat === evCat; });
+  var nowL = [], soon = [], later = [], partners = [];
+  list.forEach(function (e) {
+    var st2 = evStatus(e, now);
+    if (st2.k === 'past') return;
+    if (e.cat === 'partner') { partners.push(e); return; }
+    if (e.tba) later.push(e); else if (st2.k === 'now') nowL.push(e); else soon.push(e);
+  });
+  nowL.sort(function (a, b) { return new Date(a.end) - new Date(b.end); });
+  soon.sort(function (a, b) { return new Date(a.start) - new Date(b.start); });
+  later.sort(function (a, b) { return new Date(a.start) - new Date(b.start); });
+  function fill(id, arr, empty) { $(id).innerHTML = arr.length ? arr.map(function (e) { return evCard(e, now); }).join('') : '<p class="note">' + empty + '</p>'; }
+  fill('evNow', nowL, 'Teď nic z vybrané kategorie neběží.');
+  fill('evSoon', soon, 'Nic dalšího zatím není oznámené.');
+  fill('evLater', later, 'Zatím nic.');
+  $('evNowCount').textContent = nowL.length + (nowL.length === 1 ? ' událost' : nowL.length < 5 ? ' události' : ' událostí');
+  $('evPartners').innerHTML = (evCat === 'all' || evCat === 'partner') ? EV.events.filter(function (e) { return e.cat === 'partner' && evStatus(e, now).k !== 'past'; }).map(function (e) { return evCard(e, now); }).join('') : '';
+  $('evCodes').innerHTML = EV.codes.map(codeRow).join('');
+  $('evWeekly').innerHTML = EV.weekly.map(function (w) { return '<article class="card ev"><span class="tag" style="background:#17181C;align-self:flex-start">' + esc(w[0]) + '</span><h3>' + esc(w[1]) + '</h3><p style="color:var(--muted);font-size:15px">' + esc(w[2]) + '</p></article>'; }).join('');
+  // hero = nejbližší hlavní akce
+  var feat = EV.events.filter(function (e) { return e.featured && evStatus(e, now).k !== 'past'; }).sort(function (a, b) { return new Date(a.start) - new Date(b.start); })[0];
+  if (feat) {
+    var st3 = evStatus(feat, now);
+    $('evHero').innerHTML = '<span class="badge">' + (st3.k === 'now' ? 'Právě běží' : 'Hlavní akce') + '</span><h2>' + esc(feat.title) + '</h2>' +
+      '<p style="font-size:18px;font-weight:600;color:var(--lcd-hi)">' + esc(evRange(feat)) + '</p><p style="color:var(--lcd-text)">' + esc(feat.summary) + '</p>' +
+      '<div class="tip"><span>' + esc(st3.t) + '</span></div><a class="btn primary" style="align-self:flex-start;box-shadow:none;border-color:#000" href="#udalost-' + esc(feat.id) + '">Co v eventu je</a>';
+  }
+  group($('evCats'), [['all', 'Vše'], ['event', 'Eventy'], ['cd', 'Community Day'], ['raid', 'Raidy'], ['max', 'Max Battles'], ['gbl', 'GBL'], ['spotlight', 'Spotlight'], ['partner', 'Partneři']].map(function (x) { return { k: x[0], label: x[1] }; }),
+    function (i) { return i.k === evCat; }, function (i) { evCat = i.k; renderEvents(); }, 'pill');
+}
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('button.copy'); if (!b) return;
+  var code = b.getAttribute('data-code');
+  function ok() { b.textContent = 'Zkopírováno'; setTimeout(function () { b.textContent = 'Kopírovat'; }, 1600); }
+  try { navigator.clipboard.writeText(code).then(ok, function () { b.textContent = code; }); } catch (err) { b.textContent = code; }
+});
+function monChips(arr) { return '<div class="mons">' + arr.map(function (m) { return '<span class="mon">' + esc(m[0]) + (m[1] ? ' <b title="může být shiny">✦</b>' : '') + '</span>'; }).join('') + '</div>'; }
+function openEventDetail(id) {
+  if (!EV) return;
+  var e = null; EV.events.forEach(function (x) { if (x.id === id) e = x; });
+  if (!e) return;
+  var c = CAT[e.cat] || CAT.event, now = new Date(), st2 = evStatus(e, now);
+  $('pdHd').style.background = c[1]; $('pdHd').style.color = '#fff';
+  $('pdDex').textContent = c[0];
+  $('pdName').textContent = e.title;
+  $('pdMeta').innerHTML = '<span class="tchip" style="background:#fff">' + esc(evRange(e)) + '</span>' + (e.tba ? '' : '<span class="tchip" style="background:' + (st2.k === 'now' ? '#9EDB4E' : '#fff') + '">' + esc(st2.t) + '</span>');
+  var html = '<div class="card wide"><p style="font-size:17px">' + esc(e.summary) + '</p></div>';
+  e.sections.forEach(function (sec) {
+    var b = '';
+    if (sec.list) b += '<ul class="evlist">' + sec.list.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
+    if (sec.mons) b += monChips(sec.mons);
+    if (sec.groups) b += sec.groups.map(function (g) { return '<span class="label">' + esc(g[0]) + '</span>' + monChips(g[1]); }).join('');
+    if (sec.tasks) b += '<div class="mscroll"><table class="mtab tasks"><thead><tr><th>Úkol</th><th>Odměna</th></tr></thead><tbody>' + sec.tasks.map(function (t) { return '<tr><td>' + esc(t[0]) + '</td><td>' + esc(t[1] || '–') + '</td></tr>'; }).join('') + '</tbody></table></div>';
+    if (sec.research) b += sec.research.map(function (r) { return '<div class="step"><span class="label">' + esc(r.t) + '</span><table class="mtab tasks"><tbody>' + r.tasks.map(function (t) { return '<tr><td>' + esc(t[0]) + '</td><td>' + esc(t[1] || '–') + '</td></tr>'; }).join('') + '</tbody></table><p class="note"><strong>Odměna za krok:</strong> ' + esc(r.r) + '</p></div>'; }).join('');
+    if (sec.codes) b += sec.codes.map(codeRow).join('');
+    if (sec.link) b += '<a class="btn ghost" style="align-self:flex-start" href="#' + esc(sec.link[0]) + '">' + esc(sec.link[1]) + '</a>';
+    if (sec.note) b += '<p class="note">' + esc(sec.note) + '</p>';
+    var wide = sec.mons && sec.mons.length > 8 || sec.tasks || sec.research || sec.groups;
+    html += '<div class="card' + (wide ? ' wide' : '') + '"><h3>' + esc(sec.h) + '</h3>' + b + '</div>';
+  });
+  html += '<p class="note wide">Zdroj: <a href="' + esc(e.src) + '">' + esc(e.src.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]) + '</a> · ✦ = může být shiny</p>';
+  $('pdBody').innerHTML = html;
+  var d = $('pd');
+  if (!d.open) { try { d.showModal(); } catch (err) { d.setAttribute('open', ''); } }
+  d.scrollTop = 0;
+}
 
 /* ---------- RAIDY ---------- */
 var BOSSES = {
@@ -602,7 +710,7 @@ function openDetail(league, id) {
   for (var i = 0; i < rows.length; i++) if (rows[i].id === id) { idx = i; break; }
   if (idx < 0) return;
   var r = rows[idx], c1 = TC[r.ty[0]], c2 = TC[r.ty[1] || r.ty[0]];
-  $('pdHd').style.background = 'linear-gradient(120deg,' + c1 + ' 0 55%,' + c2 + ' 55% 100%)';
+  $('pdHd').style.background = 'linear-gradient(120deg,' + c1 + ' 0 55%,' + c2 + ' 55% 100%)'; $('pdHd').style.color = '';
   $('pdDex').textContent = '#' + String(r.dex).padStart(4, '0');
   $('pdName').textContent = r.n;
   $('pdMeta').innerHTML = r.ty.map(tchip).join('') + kindBadge(r.k) + '<span class="tchip" style="background:#fff">' + LG[league] + ' · #' + (idx + 1) + ' · skóre ' + fmt(r.s, 1) + '</span>';
@@ -650,7 +758,7 @@ function openDetail(league, id) {
   d.scrollTop = 0;
 }
 function closeDetail() { var d = $('pd'); if (d.open) d.close(); }
-function closeTo() { location.hash = curPage || 'tento-tyden'; }
+function closeTo() { location.hash = curPage || 'udalosti'; }
 $('pdClose').addEventListener('click', closeTo);
 $('pd').addEventListener('cancel', function (e) { e.preventDefault(); closeTo(); });
 $('pd').addEventListener('click', function (e) { if (e.target === this) closeTo(); });
@@ -691,7 +799,7 @@ function openPveDetail(ctx, id) {
   var boss = ctx === 'dmg' ? null : ctx, dtypes = boss ? [BOSSES[boss].t] : null, tdef = boss ? (BOSSDEF[boss] + 15) * 0.79 : 160;
   var types = mon[4], c1 = TC[types[0]], c2 = TC[types[1] || types[0]], elite = {};
   mon[10].forEach(function (m) { elite[m] = 1; });
-  $('pdHd').style.background = 'linear-gradient(120deg,' + c1 + ' 0 55%,' + c2 + ' 55% 100%)';
+  $('pdHd').style.background = 'linear-gradient(120deg,' + c1 + ' 0 55%,' + c2 + ' 55% 100%)'; $('pdHd').style.color = '';
   $('pdDex').textContent = '#' + String(mon[2]).padStart(4, '0');
   $('pdName').textContent = mon[1];
   $('pdMeta').innerHTML = types.map(tchip).join('') + kindBadge(mon[3]) + '<span class="tchip" style="background:#fff">' + (boss ? 'Raid proti: ' + BOSSES[boss].name : 'Neutrální cíl') + (mon[11] ? ' · Mega úroveň ' + ['', 'Base', 'High', 'Max', 'Super Max'][st.mlv] : '') + '</span>';
@@ -766,10 +874,13 @@ $('resetTodos').addEventListener('click', function () { done = {}; store('todos-
 
 /* ---------- INIT ---------- */
 renderRaid(); renderMlv(); renderDmControls(); renderPvpControls(); renderTodos(); route();
+setInterval(function () { if (EV && curPage === 'udalosti') renderEvents(); }, 60000);
 fetch('data/counters.json').then(function (r) { return r.json(); }).then(function (d) { CO = d; renderRaid(); })
   .catch(function () { $('counters').innerHTML = '<p style="padding:24px" class="note">Data se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
 fetch('data/pvp.json').then(function (r) { return r.json(); }).then(function (d) { PVP = d; renderPvp(); if (pendingDetail) openDetail(pendingDetail[0], pendingDetail[1]); })
   .catch(function () { $('pvpSummary').textContent = 'Žebříček se nepodařilo načíst. Zkus stránku obnovit.'; });
+fetch('data/events.json').then(function (r) { return r.json(); }).then(function (d) { EV = d; renderEvents(); if (pendingEv) openEventDetail(pendingEv); })
+  .catch(function () { $('evNow').innerHTML = '<p class="note">Události se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
 fetch('data/pve.json').then(function (r) { return r.json(); }).then(function (d) { PVE = d; d.mons.forEach(function (m) { PVEIDX[m[0]] = m; }); if (pendingPve) openPveDetail(pendingPve[0], pendingPve[1]); });
 fetch('data/dm.json').then(function (r) { return r.json(); }).then(function (d) { DM = d; renderDm(); })
   .catch(function () { $('dmSummary').textContent = 'Data se nepodařilo načíst. Zkus stránku obnovit.'; });

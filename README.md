@@ -38,3 +38,9 @@ Detail Pokémona má vlastní adresu `#pvp-<liga>-<speciesId>`, např. `#pvp-gre
 `build_data.py` zapíše i `docs/data/pve.json` (movepooly, base staty, PvE hodnoty útoků a tabulka typů).
 Movesety v detailu počítá prohlížeč stejným vzorcem jako `dps.py`, takže reagují na Mega úroveň.
 Adresy: `#dmg-<speciesId>` (neutrální cíl) a `#raid-<boss>-<speciesId>` (proti bossovi).
+
+## Události
+
+`cd src && python3 events.py` zapíše `docs/data/events.json`: všechny eventy (s bonusy, shiny, úkoly a odměnami),
+promokódy, partnerské akce a týdenní rytmus. Stránka sama třídí na Právě běží / Brzy / Do budoucna podle aktuálního času.
+Detail eventu má adresu `#udalost-<id>`. Časy jsou místní, GBL a Global Challenge přepočtené na SEČ.
