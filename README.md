@@ -9,6 +9,14 @@ Tahák na Pokémon GO: co se tento týden děje, raid countery na aktuální bos
 - `docs/data/dm.json` – Damage meter (jeden Pokémon na řádek), `docs/data/counters.json` – countery na aktuální 5★ bosse.
 - `src/` – výpočet DPS/TDO (`dps.py`), staty Mega+ útoků (`plus.py`) a skript, který zapíše data (`build_data.py`).
 
+## Automatická aktualizace
+
+GitHub Actions (`.github/workflows/update.yml`) každý den v 5:17 SEČ spustí `src/fetch.sh` (game master, PvPoke žebříčky,
+ScrapedDuck = data z Leek Duck), přepočítá všechna data a změny nahraje. `src/auto.py` přitom doplní raid bosse a Max Monday bosse,
+kteří v ručním seznamu chybí, ukončí ty, kteří už v raidech nejsou, a přidá nové eventy jen s názvem, časem a odkazem
+(položky s `"auto": 1`). České popisy eventů, tipy a ruční seznamy v `bosses.py` a `events.py` doplňuje jednou týdně Claude.
+Ručně jde běh spustit na GitHubu v záložce Actions → Denní aktualizace dat → Run workflow.
+
 ## Aktualizace dat
 
 1. Stáhni herní data do `src/gm/`:
