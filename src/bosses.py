@@ -20,7 +20,7 @@ RAIDS = [
   ('3', 'marowak_alolan', *NOW), ('3', 'liepard', *NOW), ('3', 'golurk', *NOW),
   ('3', 'espeon', '2026-11-24T10:00', '2026-11-30T20:00', 'Espeon (sun scarf)'), ('3', 'umbreon', '2026-11-24T10:00', '2026-11-30T20:00', 'Umbreon (moon scarf)'),
   ('s3', 'prinplup', *NOW, 'Shadow Prinplup'), ('s3', 'piloswine', *NOW, 'Shadow Piloswine'), ('s3', 'poliwhirl', *NOW, 'Shadow Poliwhirl'),
-  ('1', 'meowth_alolan', *NOW), ('1', 'misdreavus', *NOW), ('1', 'yamask', *NOW), ('1', 'sandygast', *NOW),
+  ('1', 'meowth_alolan', *NOW), ('1', 'misdreavus', *NOW), ('1', 'yamask_galarian', *NOW, 'Yamask (Galarian)'), ('1', 'sandygast', *NOW),
   ('1', 'pikachu', '2026-11-24T10:00', '2026-11-30T20:00', 'Pikachu (sun crown)'), ('1', 'pikachu', '2026-11-24T10:00', '2026-11-30T20:00', 'Pikachu (moon crown)'),
   ('s1', 'larvitar', *NOW, 'Shadow Larvitar'), ('s1', 'mudkip', *NOW, 'Shadow Mudkip'), ('s1', 'makuhita', *NOW, 'Shadow Makuhita'), ('s1', 'cranidos', *NOW, 'Shadow Cranidos'),
 ]
@@ -62,5 +62,11 @@ for part in TIERS.split('|'):
 for sid, g in sorted(dmax.items()):
     if g: mb.append([sid, 'Gigantamax ' + IDS[sid][1], 'gmax'])
 mb.sort(key=lambda x: x[1])
-json.dump({'raids': raids, 'max': mx, 'maxbosses': mb, 'dmax': [[k, v] for k, v in sorted(dmax.items())]}, open('../docs/data/bosses.json', 'w'), ensure_ascii=False, separators=(',', ':'))
+# Legendární, mýtičtí a Ultra Beasti (pro vyhledávač raid bosse: počítají se jako 5★)
+try:
+    PVP = json.load(open('gm/pvpoke.json'))
+    leg = sorted({p['speciesId'] for p in PVP['pokemon'] if set(p.get('tags', [])) & {'legendary', 'mythical', 'ultrabeast'} and p['speciesId'] in IDS})
+except Exception as e:
+    print('leg skip', e); leg = []
+json.dump({'raids': raids, 'max': mx, 'maxbosses': mb, 'leg': leg, 'dmax': [[k, v] for k, v in sorted(dmax.items())]}, open('../docs/data/bosses.json', 'w'), ensure_ascii=False, separators=(',', ':'))
 print(len(raids), 'raid bosses,', len(mx), 'max,', len(mb), 'max bosses,', len(dmax), 'dynamax attackers (', sum(dmax.values()), 'G-Max )')
