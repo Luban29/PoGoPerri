@@ -31,7 +31,6 @@ neplní. Stránka `#questy`.
    - `pvpoke.json` z `https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/gamemaster.json` (Pokémoni a movepooly)
 2. Nové Mega+ útoky doplň do `src/plus.py`, nové bosse do `bosses` v `src/build_data.py` a do `BOSSES` v `docs/index.html`.
 3. `cd src && python3 build_data.py` zapíše `dm.json` a `counters.json`; zkopíruj je do `docs/data/`.
-4. Týdenní obsah (Tento týden, Co dělat, PvP) je přímo v `docs/index.html` (`EVENTS`, `TODOS`, `LEAGUES`).
 
 ## Výpočet
 

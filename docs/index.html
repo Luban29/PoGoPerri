@@ -183,20 +183,7 @@ input::placeholder{color:#7C7F88;font-weight:500}
 .pv .bar{flex:none}.pv .bar>i{background:var(--sky)}
 
 /* úkoly */
-.todo-wrap{display:flex;flex-wrap:wrap;gap:32px}
-.todo-l{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:14px}
-.todos{flex:2 1 520px;min-width:0;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
-.todo{width:100%;min-height:60px;display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:2.5px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:3px 3px 0 var(--line);transition:transform .08s,box-shadow .08s}
-.todo:hover{background:#FAFBF6}
-.todo:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
 .box{flex:none;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;border:2.5px solid var(--line);background:var(--surface)}
-.todo[aria-pressed="true"]{background:var(--surface2);box-shadow:1px 1px 0 var(--line);transform:translate(2px,2px)}
-.todo[aria-pressed="true"] .box{background:var(--accent)}
-.todo[aria-pressed="true"] .box svg{stroke:#fff}
-.todo[aria-pressed="true"] .t{color:var(--dim);text-decoration:line-through}
-.todo .t{font-weight:800;font-size:16px}
-.todo .h{font-size:14px;color:var(--dim)}
-.counter-big{font-family:var(--pixel);font-size:48px;line-height:1;color:var(--lcd-hi);background:var(--lcd);border:2.5px solid var(--line);border-radius:10px;padding:10px 16px;align-self:flex-start}
 
 
 /* PvP seznam */
@@ -272,8 +259,7 @@ a.evlink:hover{color:var(--text);background:#FFFBEF;transform:translate(-1px,-1p
 .pd-body > .note.wide{grid-column:1/-1}
 footer{background:var(--line);color:#C9CBD3}
 footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px}
-@media (prefers-reduced-motion:reduce){.btn,.todo{transition:none}}
-</style>
+@media (prefers-reduced-motion:reduce){.btn,</style>
 </head>
 <body>
 <header>
@@ -289,7 +275,6 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
       <a class="tab" href="#damage-meter">Damage meter</a>
       <a class="tab" href="#pvp">PvP</a>
       <a class="tab" href="#questy">Questy</a>
-      <a class="tab" href="#co-delat">Co dělat</a>
     </div>
   </nav>
 </header>
@@ -304,7 +289,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
       <h1 id="h-udalosti">Co se děje<br>v <em>Pokémon GO?</em></h1>
       <p class="hero-p">Všechny eventy, raidy, Max Battles, GBL a promokódy na jednom místě. Klikni na event a uvidíš bonusy, shiny, úkoly i odměny.</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
-        <a class="btn primary" href="#co-delat">Plán na týden</a>
+        <a class="btn primary" href="#questy">Questy</a>
         <a class="btn ghost" href="#kody">Promokódy</a>
       </div>
     </div>
@@ -518,22 +503,6 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   <div id="qOut" style="display:flex;flex-direction:column;gap:28px"></div>
 </section>
 
-<section class="page" id="p-co-delat" aria-labelledby="h-todo">
-  <div class="todo-wrap">
-    <div class="todo-l">
-      <h2 class="h2" id="h-todo">Co dělat tento týden</h2>
-      <p style="color:var(--muted);font-size:17px">Odškrtávej, co máš hotovo. Nejdůležitější věci jsou nahoře. Stránka si to pamatuje v tomhle prohlížeči.</p>
-      <div class="card" style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
-        <span style="font-size:14px;color:var(--dim)">Hotovo</span>
-        <span class="counter-big" id="doneCount">0 / 0</span>
-        <div class="bar" style="flex:none;height:14px"><i id="doneBar" style="width:0"></i></div>
-        <button type="button" class="pill" id="resetTodos" style="align-self:flex-start;margin-top:8px">Vymazat odškrtnutí</button>
-      </div>
-    </div>
-    <ul class="todos" id="todos"></ul>
-  </div>
-</section>
-
 </main>
 
 <footer>
@@ -548,7 +517,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 'use strict';
 var TYPES = ['normal','fighting','flying','poison','ground','rock','bug','ghost','steel','fire','water','grass','electric','psychic','ice','dragon','dark','fairy'];
 var TC = { normal:'#C9C3A8', fighting:'#E0603A', flying:'#9DB7F5', poison:'#B46CD6', ground:'#D9A55B', rock:'#BFA75A', bug:'#A8C23A', ghost:'#9A86D9', steel:'#B8C2CC', fire:'#FF8A3D', water:'#4FA3F7', grass:'#6CC96C', electric:'#FFD23F', psychic:'#FF6FA3', ice:'#7FDBEA', dragon:'#7C6CF0', dark:'#8C7A6B', fairy:'#F5A3D3' };
-var PAGES = ['udalosti','raidy','max-battles','damage-meter','pvp','questy','co-delat'];
+var PAGES = ['udalosti','raidy','max-battles','damage-meter','pvp','questy'];
 function $(id) { return document.getElementById(id); }
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
 function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
@@ -569,7 +538,7 @@ function route() {
   var m2 = /^dmg-(.+)$/.exec(h), m3 = /^raid-([a-z0-9_]+)-(.+)$/.exec(h);
   if (m2) { pd = ['dmg', m2[1]]; h = 'damage-meter'; }
   if (m3) { pd = [m3[1], m3[2]]; h = 'raidy'; if (PVE) ensureBoss(m3[1]); if (curBoss !== m3[1]) { curBoss = m3[1]; if (BS && PVE) renderRaid(); } }
-  if (h === 'tento-tyden') h = 'udalosti';
+  if (h === 'tento-tyden' || h === 'co-delat') h = 'udalosti';
   var m4 = /^udalost-(.+)$/.exec(h), evd = null;
   if (m4) { evd = m4[1]; h = 'udalosti'; }
   if (PAGES.indexOf(h) === -1) h = 'udalosti';
@@ -1298,31 +1267,8 @@ function openPveDetail(ctx, id) {
   d.scrollTop = 0;
 }
 
-/* ---------- CO DELAT ---------- */
-var TODOS = [
-  ['cd', 'Odehraj Pawniard Community Day', 'So 21. 11., 14–17. Hledej dobré IV pro PvP i raidy.'],
-  ['evo', 'Vyvinout Bisharp → Kingambit', 'Nejpozději do 21:00 v sobotu, jinak nedostaneš Kowtow Cleave.'],
-  ['darkrai', 'Dej aspoň pár raidů na Darkraie', 'Do 24. 11. Postav tým Fighting / Fairy útočníků.'],
-  ['gbl', 'Odehraj 5 setů GBL', 'Do 25. 11. jsou 4× Stardust za výhry.'],
-  ['eter', 'Eternamax Eternatus v sobotu ráno', '11–14 na Power Spotech, candy na jednoho z top útočníků.'],
-  ['passy', 'Šetři raid passy na 28. 11.', 'Clefable Super Mega Raid Day, 14–17.'],
-  ['gifts', 'Pošli dárky kamarádům', 'Každý den – friendship = bonusy v raidech.']
-];
-var done = store('todos-2026-w47') || {};
-function renderTodos() {
-  var n = 0;
-  $('todos').innerHTML = TODOS.map(function (t, i) {
-    var on = !!done[t[0]]; if (on) n++;
-    return '<li><button type="button" class="todo" data-i="' + i + '" aria-pressed="' + on + '"><span class="box" aria-hidden="true">' + (on ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15162A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>' : '') + '</span><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="t">' + esc(t[1]) + '</span><span class="h">' + esc(t[2]) + '</span></span></button></li>';
-  }).join('');
-  $('doneCount').textContent = n + ' / ' + TODOS.length;
-  $('doneBar').style.width = Math.round(n / TODOS.length * 100) + '%';
-}
-$('todos').addEventListener('click', function (e) { var b = e.target.closest('button[data-i]'); if (!b) return; var k = TODOS[+b.getAttribute('data-i')][0]; done[k] = !done[k]; store('todos-2026-w47', done); renderTodos(); });
-$('resetTodos').addEventListener('click', function () { done = {}; store('todos-2026-w47', done); renderTodos(); });
-
 /* ---------- INIT ---------- */
-renderRaid(); renderMlv(); renderDmControls(); renderPvpControls(); renderTodos(); route();
+renderRaid(); renderMlv(); renderDmControls(); renderPvpControls(); route();
 setInterval(function () { if (EV && curPage === 'udalosti') renderEvents(); }, 60000);
 var NC = { cache: 'no-cache' };
 fetch('data/bosses.json', NC).then(function (r) { return r.json(); }).then(function (d) { BS = d; BS.maxbosses = BS.maxbosses || []; d.raids.forEach(function (b) { RB[bossKey(b)] = b; }); afterData(); })
