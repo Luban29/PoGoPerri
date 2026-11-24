@@ -1,4 +1,4 @@
-# PoGo Kompas
+# PoGo Perri
 
 Tahák na Pokémon GO: co se tento týden děje, raid countery na aktuální bosse, Damage meter s DPS všech Pokémonů
 (včetně Shadow, Mega/Primal a Mega+ útoků) a PvP žebříček.
