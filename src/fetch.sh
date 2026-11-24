@@ -11,4 +11,6 @@ for cp in 1500 2500 10000; do
 done
 curl -fsSL -o gm/sd_events.json $GH/bigfoott/ScrapedDuck/data/events.min.json
 curl -fsSL -o gm/sd_raids.json  $GH/bigfoott/ScrapedDuck/data/raids.min.json
+curl -fsSL -o gm/sd_research.json $GH/bigfoott/ScrapedDuck/data/research.min.json
+curl -fsSL -o gm/shiny.json $GH/Rplus/Pokemon-shiny/master/assets/pms.json
 echo fetched

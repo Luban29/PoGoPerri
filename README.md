@@ -17,6 +17,13 @@ kteří v ručním seznamu chybí, ukončí ty, kteří už v raidech nejsou, a 
 (položky s `"auto": 1`). České popisy eventů, tipy a ruční seznamy v `bosses.py` a `events.py` doplňuje jednou týdně Claude.
 Ručně jde běh spustit na GitHubu v záložce Actions → Denní aktualizace dat → Run workflow.
 
+## Questy
+
+`src/auto.py` zapíše i `docs/data/quests.json` z ScrapedDuck `research.min.json` (Field Research z Leek Duck): úkoly bez typu jsou eventové
+(přiřadí se k eventu z `events.json`, když jeho text obsahuje aspoň polovinu odměn; zbytky skončených eventů se vynechají), ostatní sezónní
+podle kategorie. U odměn je CP pro 100 % IV na levelu 15. Shiny podle `Rplus/Pokemon-shiny` (`gm/shiny.json`), protože ScrapedDuck ho u úkolů
+neplní. Stránka `#questy`.
+
 ## Aktualizace dat
 
 1. Stáhni herní data do `src/gm/`:

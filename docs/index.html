@@ -48,7 +48,7 @@ header .tabs{box-shadow:3px 3px 0 #7A1A13}
 .tab[aria-current="page"],.tab[aria-pressed="true"],.tab[aria-selected="true"]{background:var(--line);color:#fff}
 .season{font-family:var(--pixel);font-size:12.5px;color:var(--lcd-text);background:var(--lcd);border:2px solid var(--line);padding:4px 9px;border-radius:7px;white-space:nowrap}
 header .tabs{margin-left:auto}
-@media (max-width:1240px){.season{display:none}}
+@media (max-width:1360px){.season{display:none}}
 @media (max-width:720px){.season,.leds{display:none}.nav{padding:10px 16px}.tabs{width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}.tabs::-webkit-scrollbar{display:none}.tab{white-space:nowrap;padding:0 12px}.wrap{padding:0 16px}}
 
 main{padding-bottom:80px}
@@ -118,6 +118,23 @@ a.tr.link:hover{background:#FFF3D6;color:var(--text)}
 .mv span{display:flex;align-items:center;gap:8px}
 .score{display:flex;align-items:center;gap:10px}
 .score b{min-width:44px;text-align:right;font-family:var(--pixel);font-weight:500;font-size:17px;font-variant-numeric:tabular-nums}
+
+/* questy */
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;align-items:start}
+@media (max-width:420px){.qgrid{grid-template-columns:minmax(0,1fr)}}
+.qcard{padding:0;overflow:hidden}
+.qhd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;background:var(--line);color:#fff;padding:12px 18px}
+.qhd h3{font-size:19px;text-transform:uppercase}
+.qhd a,.qhd span{color:#fff;font-size:13px;font-weight:700}
+.qt{padding:12px 18px;border-top:1.5px solid var(--grid);display:flex;flex-direction:column;gap:8px}
+.qt:first-of-type{border-top:0}
+.qt b{font-size:15px}
+.qr{display:flex;flex-wrap:wrap;gap:6px}
+.qr a{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:2px 4px 2px 10px;border:2px solid var(--line);border-radius:999px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:700;text-decoration:none}
+.qr a:hover{background:#FFF3D6}
+.qr a.sh{background:#FFF0B8}
+.qr small{font-family:var(--pixel);font-size:12.5px;font-weight:500;background:var(--line);color:#fff;border-radius:999px;padding:2px 8px;white-space:nowrap}
+mark{background:#FFE066;color:inherit;border-radius:3px}
 
 /* raid boss */
 .weak{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--ink);padding:8px 14px;border-radius:10px;border:2px solid var(--line)}
@@ -265,6 +282,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
       <a class="tab" href="#max-battles">Max Battles</a>
       <a class="tab" href="#damage-meter">Damage meter</a>
       <a class="tab" href="#pvp">PvP</a>
+      <a class="tab" href="#questy">Questy</a>
       <a class="tab" href="#co-delat">Co dělat</a>
     </div>
   </nav>
@@ -464,6 +482,29 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 </dialog>
 
 <!-- CO DELAT -->
+<section class="page" id="p-questy" aria-labelledby="h-questy">
+  <div>
+    <p class="eyebrow" id="qStamp">Field Research</p>
+    <h2 class="h2" id="h-questy" style="margin-top:12px">Questy</h2>
+    <p class="lead" style="margin-top:10px">Úkoly z PokéStopů a co za ně můžeš chytit. CP je pro <b>100 % IV</b>: questové encountery jsou vždy na levelu 15, takže když Pokémon na obrazovce chycení ukáže přesně tohle CP, je to hundo. ✦ = může být shiny. Úkoly jsou anglicky, stejně jako ve hře.</p>
+  </div>
+  <div class="card" style="display:flex;flex-wrap:wrap;gap:16px 24px;align-items:end">
+    <div class="ctl" style="flex:1 1 260px">
+      <label class="label" for="qQ">Najdi Pokémona nebo úkol</label>
+      <input id="qQ" type="search" placeholder="např. Dratini, Larvitar, raid…" autocomplete="off">
+    </div>
+    <div class="ctl">
+      <span class="label">Zobrazit</span>
+      <div class="pills" role="group" aria-label="Druh questů" id="qKind"></div>
+    </div>
+    <div class="ctl">
+      <span class="label">Filtr</span>
+      <div class="pills"><button type="button" class="pill" id="qShiny" aria-pressed="false">Jen shiny ✦</button></div>
+    </div>
+  </div>
+  <div id="qOut" style="display:flex;flex-direction:column;gap:28px"></div>
+</section>
+
 <section class="page" id="p-co-delat" aria-labelledby="h-todo">
   <div class="todo-wrap">
     <div class="todo-l">
@@ -494,7 +535,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
 'use strict';
 var TYPES = ['normal','fighting','flying','poison','ground','rock','bug','ghost','steel','fire','water','grass','electric','psychic','ice','dragon','dark','fairy'];
 var TC = { normal:'#C9C3A8', fighting:'#E0603A', flying:'#9DB7F5', poison:'#B46CD6', ground:'#D9A55B', rock:'#BFA75A', bug:'#A8C23A', ghost:'#9A86D9', steel:'#B8C2CC', fire:'#FF8A3D', water:'#4FA3F7', grass:'#6CC96C', electric:'#FFD23F', psychic:'#FF6FA3', ice:'#7FDBEA', dragon:'#7C6CF0', dark:'#8C7A6B', fairy:'#F5A3D3' };
-var PAGES = ['udalosti','raidy','max-battles','damage-meter','pvp','co-delat'];
+var PAGES = ['udalosti','raidy','max-battles','damage-meter','pvp','questy','co-delat'];
 function $(id) { return document.getElementById(id); }
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
 function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
@@ -543,6 +584,43 @@ function group(el, items, isOn, onPick, cls) {
   }).join('');
   el.onclick = function (e) { var b = e.target.closest('button[data-i]'); if (b) onPick(items[+b.getAttribute('data-i')]); };
 }
+
+/* ---------- QUESTY ---------- */
+var QS = null, qKind = 'all', qShiny = false;
+function qFold(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function renderQuests() {
+  if (!QS) return;
+  group($('qKind'), [{ k: 'all', label: 'Vše' }, { k: 'ev', label: 'Eventové' }, { k: 'se', label: 'Sezónní' }], function (i) { return i.k === qKind; }, function (i) { qKind = i.k; renderQuests(); }, 'pill');
+  $('qShiny').setAttribute('aria-pressed', qShiny ? 'true' : 'false');
+  var q = qFold($('qQ').value.trim()), n = 0;
+  function hl(t) { var f = qFold(t), i = q ? f.indexOf(q) : -1; return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + q.length)) + '</mark>' + esc(t.slice(i + q.length)); }
+  function tasksHtml(tasks) {
+    return tasks.filter(function (t) {
+      if (qShiny && !t.r.some(function (r) { return r[2]; })) return false;
+      if (!q) return true;
+      return qFold(t.t).indexOf(q) >= 0 || t.r.some(function (r) { return qFold(r[0]).indexOf(q) >= 0; });
+    }).map(function (t) {
+      n++;
+      return '<div class="qt"><b>' + hl(t.t) + '</b><div class="qr">' + t.r.map(function (r) {
+        var href = r[3] && PVEIDX[r[3]] ? '#dmg-' + r[3] : '#questy';
+        return '<a href="' + href + '"' + (r[2] ? ' class="sh"' : '') + ' title="' + esc(r[0]) + (r[1] ? ': 100 % IV = ' + r[1] + ' CP' : '') + '">' + hl(r[0]) + (r[2] ? ' ✦' : '') + (r[1] ? '<small>' + r[1] + ' CP</small>' : '') + '</a>';
+      }).join('') + '</div></div>';
+    }).join('');
+  }
+  function block(title, sub, groups) {
+    var cards = groups.map(function (g) { var h = tasksHtml(g.tasks); return h ? '<div class="card qcard"><div class="qhd"><h3>' + esc(g.title) + '</h3>' + (g.extra || '') + '</div>' + h + '</div>' : ''; }).join('');
+    return cards ? '<div style="display:flex;flex-direction:column;gap:14px"><div class="row"><h2 class="h2" style="font-size:clamp(24px,3vw,32px)">' + title + '</h2><span class="note">' + sub + '</span></div><div class="qgrid">' + cards + '</div></div>' : '';
+  }
+  var out = '';
+  if (qKind !== 'se') out += block('Eventové questy', 'jen během eventu', QS.event.map(function (g) {
+    return { title: g.ev, tasks: g.tasks, extra: g.id ? '<a href="#udalost-' + esc(g.id) + '">do ' + fmtShort(g.end) + ' · detail eventu</a>' : '<span>právě v PokéStopech</span>' };
+  }));
+  if (qKind !== 'ev') out += block('Sezónní questy', 'platí celou sezónu', QS.season.map(function (c) { return { title: c.cat, tasks: c.tasks }; }));
+  $('qOut').innerHTML = out || '<p class="card">Nic takového teď v questech není. Zkus jiné jméno nebo vypni filtr.</p>';
+  $('qStamp').textContent = 'Field Research · ' + n + ' úkolů';
+}
+$('qQ').addEventListener('input', renderQuests);
+$('qShiny').addEventListener('click', function () { qShiny = !qShiny; renderQuests(); });
 
 /* ---------- UDALOSTI ---------- */
 var EV = null, evCat = 'all';
@@ -1174,9 +1252,11 @@ fetch('data/bosses.json', NC).then(function (r) { return r.json(); }).then(funct
 function afterData() { if (!BS || !PVE) return; renderRaid(); renderMax(); if (pendingPve && (pendingPve[0] === 'dmg' || RB[pendingPve[0]])) openPveDetail(pendingPve[0], pendingPve[1]); }
 fetch('data/pvp.json', NC).then(function (r) { return r.json(); }).then(function (d) { PVP = d; renderPvp(); if (pendingDetail) openDetail(pendingDetail[0], pendingDetail[1]); })
   .catch(function () { $('pvpSummary').textContent = 'Žebříček se nepodařilo načíst. Zkus stránku obnovit.'; });
+fetch('data/quests.json', NC).then(function (r) { return r.json(); }).then(function (d) { QS = d; renderQuests(); })
+  .catch(function () { $('qOut').innerHTML = '<p class="note">Questy se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
 fetch('data/events.json', NC).then(function (r) { return r.json(); }).then(function (d) { EV = d; renderEvents(); if (pendingEv) openEventDetail(pendingEv); })
   .catch(function () { $('evNow').innerHTML = '<p class="note">Události se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
-fetch('data/pve.json', NC).then(function (r) { return r.json(); }).then(function (d) { PVE = d; d.mons.forEach(function (m) { PVEIDX[m[0]] = m; }); if (pendingPve && pendingPve[0] === 'dmg') openPveDetail(pendingPve[0], pendingPve[1]); afterData(); });
+fetch('data/pve.json', NC).then(function (r) { return r.json(); }).then(function (d) { PVE = d; d.mons.forEach(function (m) { PVEIDX[m[0]] = m; }); renderQuests(); if (pendingPve && pendingPve[0] === 'dmg') openPveDetail(pendingPve[0], pendingPve[1]); afterData(); });
 fetch('data/dm.json', NC).then(function (r) { return r.json(); }).then(function (d) { DM = d; renderDm(); })
   .catch(function () { $('dmSummary').textContent = 'Data se nepodařilo načíst. Zkus stránku obnovit.'; });
 })();

@@ -106,3 +106,47 @@ for e in ev:
 if added: EV['updated'] = NOW.strftime('%Y-%m-%d')
 json.dump(EV, open('../docs/data/events.json', 'w'), ensure_ascii=False, separators=(',', ':'))
 print('\n'.join(log) or 'beze změn')
+
+# ---------- Questy (Field Research) -> docs/data/quests.json ----------
+# Úkoly bez typu jsou eventové, ostatní sezónní. Eventový úkol se přiřadí k eventu z events.json, v jehož textu je některá
+# z odměn; když sedí jen na skončené eventy, je to zbytek po eventu a vynechá se. CP = 100 % IV na levelu 15 (odměna z úkolu).
+rs = load('gm/sd_research.json')
+if rs:
+    CATQ = [('catch', 'Chytání'), ('throw', 'Házení'), ('battle', 'Souboje a raidy'), ('explore', 'Průzkum a vajíčka'),
+            ('training', 'Trénink a evoluce'), ('buddy', 'Buddy a přátelé'), ('rocket', 'Team GO Rocket'), ('sponsored', 'Sponzorované'), ('ar', 'AR')]
+    # Shiny podle Rplus/Pokemon-shiny (ScrapedDuck má canBeShiny u úkolů prázdné); klíč = název ikony z Leek Duck, např. pm27.fALOLA
+    SH = set(); FORM = {'_61': 'fALOLA', '_31': 'fGALARIAN', '_51': 'fGALARIAN'}
+    for x in load('gm/shiny.json') or []:
+        if not (x.get('released_date') or x.get('shiny_released')): continue
+        iso = x.get('isotope') or x.get('type')
+        if x.get('aa_fn'): SH.add(x['aa_fn'])
+        elif not iso: SH.add('pm%d' % x['dex'])
+        elif iso in FORM: SH.add('pm%d.%s' % (x['dex'], FORM[iso]))
+    def shiny(w):
+        k = re.sub(r'\.icon\.png$', '', (w.get('image') or '').rsplit('/', 1)[-1])
+        return 1 if w.get('canBeShiny') or k in SH else 0
+    def task(x):
+        return {'t': re.sub(r'<[^>]+>', '', x['text']).strip(),
+                'r': [[w['name'], (w.get('combatPower') or {}).get('max'), shiny(w), find(w['name'].split(' wearing')[0]) or ''] for w in x['rewards']]}
+    evtext = [(e, fold(json.dumps(e, ensure_ascii=False))) for e in EV['events'] if e['cat'] not in ('partner',)]
+    groups, other = {}, []
+    for x in rs:
+        if x.get('type'): continue
+        names = [fold(w['name'].split(' wearing')[0]) for w in x['rewards']]
+        hits = [e for e, txt in evtext if 2 * sum(1 for n in names if n and re.search(r'\b' + re.escape(n) + r'\b', txt)) >= len(names)]
+        live = [e for e in hits if local(e['end']) > NOW]
+        if hits and not live: continue
+        if live:
+            e = sorted(live, key=lambda e: local(e['start']))[-1]
+            groups.setdefault(e['id'], {'ev': e['title'], 'id': e['id'], 'end': e['end'], 'tasks': []})['tasks'].append(task(x))
+        else: other.append(task(x))
+    ev_out = list(groups.values())
+    if other: ev_out.append({'ev': 'Další eventové úkoly', 'id': '', 'end': '', 'tasks': other})
+    season = [{'cat': name, 'tasks': [task(x) for x in rs if x.get('type') == k]} for k, name in CATQ]
+    season = [c for c in season if c['tasks']]
+    known = {k for k, _ in CATQ}
+    extra = [task(x) for x in rs if x.get('type') and x['type'] not in known]
+    if extra: season.append({'cat': 'Ostatní', 'tasks': extra})
+    json.dump({'updated': NOW.strftime('%Y-%m-%d'), 'event': ev_out, 'season': season},
+              open('../docs/data/quests.json', 'w'), ensure_ascii=False, separators=(',', ':'))
+    print('questy:', sum(len(g['tasks']) for g in ev_out), 'eventových,', sum(len(c['tasks']) for c in season), 'sezónních')
