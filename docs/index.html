@@ -389,6 +389,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
     <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:14px">
       <div class="boss-hd"><h3 id="maxName"></h3><span id="maxType" style="display:flex;gap:6px;flex-wrap:wrap"></span></div>
       <p style="font-weight:800" id="maxWhen"></p>
+      <div class="hundo" id="maxHundo"></div>
       <p style="color:var(--muted)" id="maxText"></p>
     </article>
     <article class="card" style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:12px">
@@ -901,6 +902,9 @@ function renderMax() {
   $('maxType').innerHTML = types.map(tchip).join('');
   $('maxWhen').textContent = feat ? (feat.t + ' · ' + (new Date(feat.a) <= now ? 'teď, do ' + fmtShort(feat.b) : (fmtShort(feat.a) === fmtShort(feat.b) ? fmtShort(feat.a) + ' ' + new Date(feat.a).getHours() + ':00–' + new Date(feat.b).getHours() + ':00' : fmtShort(feat.a) + ' – ' + fmtShort(feat.b)))) : MT[mb[2]][1] + ' Max Battle';
   $('maxText').textContent = feat ? feat.note : 'Countery pro tohoto bosse, když ho najdeš na Power Spotu ve svém okolí.';
+  var hm = catchMon(id);
+  $('maxHundo').innerHTML = curMaxTier === 'eter' ? '<span>Eternamax Eternatus se nedá chytit</span>'
+    : (hm ? '<span>100 % IV <b>' + cpAt(hm, 0.5974) + ' CP</b></span><span>s weather boostem <b>' + cpAt(hm, 0.667934) + ' CP</b></span>' : '');
   var bossMoveTypes = {}; boss[8].concat(boss[9]).forEach(function (mid) { var m = PVE.moves[mid]; if (m) bossMoveTypes[m[1]] = 1; });
   var bmt = Object.keys(bossMoveTypes);
   var tc = typeChart(types); $('maxWeak').innerHTML = tc[0];
