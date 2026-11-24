@@ -114,20 +114,9 @@ rs = load('gm/sd_research.json')
 if rs:
     CATQ = [('catch', 'Chytání'), ('throw', 'Házení'), ('battle', 'Souboje a raidy'), ('explore', 'Průzkum a vajíčka'),
             ('training', 'Trénink a evoluce'), ('buddy', 'Buddy a přátelé'), ('rocket', 'Team GO Rocket'), ('sponsored', 'Sponzorované'), ('ar', 'AR')]
-    # Shiny podle Rplus/Pokemon-shiny (ScrapedDuck má canBeShiny u úkolů prázdné); klíč = název ikony z Leek Duck, např. pm27.fALOLA
-    SH = set(); FORM = {'_61': 'fALOLA', '_31': 'fGALARIAN', '_51': 'fGALARIAN'}
-    for x in load('gm/shiny.json') or []:
-        if not (x.get('released_date') or x.get('shiny_released')): continue
-        iso = x.get('isotope') or x.get('type')
-        if x.get('aa_fn'): SH.add(x['aa_fn'])
-        elif not iso: SH.add('pm%d' % x['dex'])
-        elif iso in FORM: SH.add('pm%d.%s' % (x['dex'], FORM[iso]))
-    def shiny(w):
-        k = re.sub(r'\.icon\.png$', '', (w.get('image') or '').rsplit('/', 1)[-1])
-        return 1 if w.get('canBeShiny') or k in SH else 0
     def task(x):
         return {'t': re.sub(r'<[^>]+>', '', x['text']).strip(),
-                'r': [[w['name'], (w.get('combatPower') or {}).get('max'), shiny(w), find(w['name'].split(' wearing')[0]) or ''] for w in x['rewards']]}
+                'r': [[w['name'], (w.get('combatPower') or {}).get('max'), 0, find(w['name'].split(' wearing')[0]) or ''] for w in x['rewards']]}
     evtext = [(e, fold(json.dumps(e, ensure_ascii=False))) for e in EV['events'] if e['cat'] not in ('partner',)]
     groups, other = {}, []
     for x in rs:

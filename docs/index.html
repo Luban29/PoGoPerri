@@ -138,7 +138,6 @@ a.tr.link:hover{background:#FFF3D6;color:var(--text)}
 .qr{display:flex;flex-wrap:wrap;gap:6px}
 .qr a{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:2px 4px 2px 10px;border:2px solid var(--line);border-radius:999px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:700;text-decoration:none}
 .qr a:hover{background:#FFF3D6}
-.qr a.sh{background:#FFF0B8}
 .qr small{font-family:var(--pixel);font-size:12.5px;font-weight:500;background:var(--line);color:#fff;border-radius:999px;padding:2px 8px;white-space:nowrap}
 mark{background:#FFE066;color:inherit;border-radius:3px}
 
@@ -287,7 +286,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
     <div class="hero-l">
       <p class="eyebrow" id="evStamp">Aktualizováno 20. 11. 2026</p>
       <h1 id="h-udalosti">Co se děje<br>v <em>Pokémon GO?</em></h1>
-      <p class="hero-p">Všechny eventy, raidy, Max Battles, GBL a promokódy na jednom místě. Klikni na event a uvidíš bonusy, shiny, úkoly i odměny.</p>
+      <p class="hero-p">Všechny eventy, raidy, Max Battles, GBL a promokódy na jednom místě. Klikni na event a uvidíš bonusy, Pokémony, úkoly i odměny.</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
         <a class="btn primary" href="#questy">Questy</a>
         <a class="btn ghost" href="#kody">Promokódy</a>
@@ -484,7 +483,7 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
   <div>
     <p class="eyebrow" id="qStamp">Field Research</p>
     <h2 class="h2" id="h-questy" style="margin-top:12px">Questy</h2>
-    <p class="lead" style="margin-top:10px">Úkoly z PokéStopů a co za ně můžeš chytit. CP je pro <b>100 % IV</b>: questové encountery jsou vždy na levelu 15, takže když Pokémon na obrazovce chycení ukáže přesně tohle CP, je to hundo. ✦ = může být shiny. Úkoly jsou anglicky, stejně jako ve hře.</p>
+    <p class="lead" style="margin-top:10px">Úkoly z PokéStopů a co za ně můžeš chytit. CP je pro <b>100 % IV</b>: questové encountery jsou vždy na levelu 15, takže když Pokémon na obrazovce chycení ukáže přesně tohle CP, je to hundo. Úkoly jsou anglicky, stejně jako ve hře.</p>
   </div>
   <div class="card" style="display:flex;flex-wrap:wrap;gap:16px 24px;align-items:end">
     <div class="ctl" style="flex:1 1 260px">
@@ -494,10 +493,6 @@ footer .wrap{padding:28px 24px;display:flex;flex-wrap:wrap;justify-content:space
     <div class="ctl">
       <span class="label">Zobrazit</span>
       <div class="pills" role="group" aria-label="Druh questů" id="qKind"></div>
-    </div>
-    <div class="ctl">
-      <span class="label">Filtr</span>
-      <div class="pills"><button type="button" class="pill" id="qShiny" aria-pressed="false">Jen shiny ✦</button></div>
     </div>
   </div>
   <div id="qOut" style="display:flex;flex-direction:column;gap:28px"></div>
@@ -568,24 +563,22 @@ function group(el, items, isOn, onPick, cls) {
 }
 
 /* ---------- QUESTY ---------- */
-var QS = null, qKind = 'all', qShiny = false;
+var QS = null, qKind = 'all';
 function qFold(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
 function renderQuests() {
   if (!QS) return;
   group($('qKind'), [{ k: 'all', label: 'Vše' }, { k: 'ev', label: 'Eventové' }, { k: 'se', label: 'Sezónní' }], function (i) { return i.k === qKind; }, function (i) { qKind = i.k; renderQuests(); }, 'pill');
-  $('qShiny').setAttribute('aria-pressed', qShiny ? 'true' : 'false');
   var q = qFold($('qQ').value.trim()), n = 0;
   function hl(t) { var f = qFold(t), i = q ? f.indexOf(q) : -1; return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + q.length)) + '</mark>' + esc(t.slice(i + q.length)); }
   function tasksHtml(tasks) {
     return tasks.filter(function (t) {
-      if (qShiny && !t.r.some(function (r) { return r[2]; })) return false;
       if (!q) return true;
       return qFold(t.t).indexOf(q) >= 0 || t.r.some(function (r) { return qFold(r[0]).indexOf(q) >= 0; });
     }).map(function (t) {
       n++;
       return '<div class="qt"><b>' + hl(t.t) + '</b><div class="qr">' + t.r.map(function (r) {
         var href = r[3] && PVEIDX[r[3]] ? '#dmg-' + r[3] : '#questy';
-        return '<a href="' + href + '"' + (r[2] ? ' class="sh"' : '') + ' title="' + esc(r[0]) + (r[1] ? ': 100 % IV = ' + r[1] + ' CP' : '') + '">' + hl(r[0]) + (r[2] ? ' ✦' : '') + (r[1] ? '<small>' + r[1] + ' CP</small>' : '') + '</a>';
+        return '<a href="' + href + '"' + ' title="' + esc(r[0]) + (r[1] ? ': 100 % IV = ' + r[1] + ' CP' : '') + '">' + hl(r[0]) + (r[1] ? '<small>' + r[1] + ' CP</small>' : '') + '</a>';
       }).join('') + '</div></div>';
     }).join('');
   }
@@ -602,7 +595,6 @@ function renderQuests() {
   $('qStamp').textContent = 'Field Research · ' + n + ' úkolů';
 }
 $('qQ').addEventListener('input', renderQuests);
-$('qShiny').addEventListener('click', function () { qShiny = !qShiny; renderQuests(); });
 
 /* ---------- UDALOSTI ---------- */
 var EV = null, evCat = 'all';
@@ -676,7 +668,7 @@ document.addEventListener('click', function (e) {
   function ok() { b.textContent = 'Zkopírováno'; setTimeout(function () { b.textContent = 'Kopírovat'; }, 1600); }
   try { navigator.clipboard.writeText(code).then(ok, function () { b.textContent = code; }); } catch (err) { b.textContent = code; }
 });
-function monChips(arr) { return '<div class="mons">' + arr.map(function (m) { return '<span class="mon">' + esc(m[0]) + (m[1] ? ' <b title="může být shiny">✦</b>' : '') + '</span>'; }).join('') + '</div>'; }
+function monChips(arr) { return '<div class="mons">' + arr.map(function (m) { return '<span class="mon">' + esc(m[0]) + '</span>'; }).join('') + '</div>'; }
 function openEventDetail(id) {
   if (!EV) return;
   var e = null; EV.events.forEach(function (x) { if (x.id === id) e = x; });
@@ -700,7 +692,7 @@ function openEventDetail(id) {
     var wide = sec.mons && sec.mons.length > 8 || sec.tasks || sec.research || sec.groups;
     html += '<div class="card' + (wide ? ' wide' : '') + '"><h3>' + esc(sec.h) + '</h3>' + b + '</div>';
   });
-  html += '<p class="note wide">Zdroj: <a href="' + esc(e.src) + '">' + esc(e.src.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]) + '</a> · ✦ = může být shiny</p>';
+  html += '<p class="note wide">Zdroj: <a href="' + esc(e.src) + '">' + esc(e.src.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]) + '</a></p>';
   $('pdBody').innerHTML = html;
   var d = $('pd');
   if (!d.open) { try { d.showModal(); } catch (err) { d.setAttribute('open', ''); } }

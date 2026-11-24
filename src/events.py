@@ -22,7 +22,7 @@ ev(id="dynamax-trails", cat="event", title="Dynamax Trails", start="2026-11-16T1
        "Chycení eventového Pokémona ve volné přírodě nebo po Max Battle má šanci dát 10 Max Particles (počítá se i po dosažení denního limitu 800). Neplatí pro Explorer Gadget a GO Plus+.",
        "Úspěšné chycení Pokémona z Max Battle má šanci na Special Background.",
        "Remote Raid limit 30 místo 10: 20. 11. 22:00 – 22. 11. 3:00 (SEČ)."]),
-     dict(h="Ve volné přírodě a v Max Battles (všichni můžou být shiny)", mons=[[m, 1] for m in SPAWNS_DYNAMAX],
+     dict(h="Ve volné přírodě a v Max Battles", mons=[[m, 1] for m in SPAWNS_DYNAMAX],
           note="Max Battles: všichni dosud vydaní Dynamax Pokémoni kromě legendárních a mýtických."),
      dict(h="Spotlight Hour · čt 19. 11. 18–19", mons=[["Grookey", 1], ["Scorbunny", 1], ["Sobble", 1]], note="Bonus: 2× Catch Candy."),
      dict(h="Field Research", tasks=[
@@ -51,13 +51,12 @@ ev(id="eternatus", cat="max", title="Eternamax Eternatus", start="2026-11-21T11:
    ], src="https://leekduck.com/events/eternamax-eternatus-max-battles-2026/")
 
 ev(id="pawniard-cd", cat="cd", title="Pawniard Community Day", start="2026-11-21T14:00", end="2026-11-21T17:00", featured=1,
-   summary="Shiny Pawniard, 1/4 vzdálenost vajíček a Kingambit s exkluzivním Kowtow Cleave.",
+   summary="Pawniard, 1/4 vzdálenost vajíček a Kingambit s exkluzivním Kowtow Cleave.",
    sections=[
-     dict(h="Shiny", mons=[["Pawniard", 1], ["Bisharp", 1], ["Kingambit", 1]], note="Zvýšená šance na shiny Pawniarda, shiny se vyvine do shiny Bisharpa i Kingambita."),
      dict(h="Bonusy (14–17, s * až do 21:00)", list=["Víc Pawniardů ve volné přírodě", "1/4 vzdálenost u vajíček vložených během eventu",
        "Incense na 3 hodiny (kromě Daily Adventure)", "Lure Module na 1 hodinu*", "2× Catch Candy",
        "2× šance na Candy XL za chycení (od levelu 31)", "1 Special Trade navíc, max 2 za den*", "Trade o 50 % levněji*",
-       "Lure: Pawniard se u Lure Module objevuje velmi často, i se zvýšenou šancí na shiny*"]),
+       "Lure: Pawniard se u Lure Module objevuje velmi často*"]),
      dict(h="Featured útok", list=["Vyvine-li se Bisharp během eventu nebo do 4 hodin po něm, Kingambit dostane Kowtow Cleave (Dark): raidy 85, PvP 75.",
        "14–21: stačí porazit 1 Dark/Steel raid bosse s Bisharpem jako buddy (jen buddy Bisharp)."]),
      dict(h="Field Research", tasks=[["Chyť 3 Pawniardy", "Pawniard, 5× Great Ball, 2× Ultra Ball, 500 Stardust"],
@@ -128,13 +127,12 @@ ev(id="max-mondays", cat="max", title="Max Mondays", start="2026-11-23T06:00", e
 
 # ---------------- BRZY ----------------
 ev(id="twilight-wishes", cat="event", title="Twilight Wishes", start="2026-11-24T10:00", end="2026-11-30T20:00", featured=1,
-   summary="Finále sezóny: Espeon a Umbreon v šálách, Pikachu v korunkách, vyšší šance na shiny Staryu a Elgyem.",
+   summary="Finále sezóny: Espeon a Umbreon v šálách a Pikachu v korunkách.",
    sections=[
-     dict(h="Bonusy", list=["Vyšší šance na shiny Staryu a shiny Elgyem.",
-       "GO Pass Rank 1: vyšší šance na Lucky Trade a Lucky Friends.",
+     dict(h="Bonusy", list=["GO Pass Rank 1: vyšší šance na Lucky Trade a Lucky Friends.",
        "GO Pass Rank 10: 2× Stardust za chycení (s Deluxe 3×)."]),
      dict(h="Ve volné přírodě", mons=[["Clefairy", 0], ["Staryu", 1], ["Elgyem", 1], ["Rockruff", 1], ["Espeon (sun scarf)", 1], ["Umbreon (moon scarf)", 1]],
-          note="Rockruff je vzácný. Espeon, Umbreon i Rockruff můžou být shiny."),
+          note="Rockruff je vzácný."),
      dict(h="Raidy", groups=[["1★", [["Pikachu (sun crown)", 0], ["Pikachu (moon crown)", 0]]],
                             ["3★", [["Espeon (sun scarf)", 1], ["Umbreon (moon scarf)", 1]]],
                             ["Mega", [["Mega Beedrill", 1], ["Mega Houndoom", 1], ["Mega Sableye", 1], ["Mega Manectric", 1]]]]),
@@ -153,13 +151,13 @@ ev(id="gbl-2", cat="gbl", title="GBL: Master League a Mega Catch Cup: Great Leag
    src="https://leekduck.com/events/gbl-twilight-trails_master-league_mega-catch-cup-great-league-edition/")
 
 ev(id="deoxys", cat="raid", title="5★ raidy: Deoxys (všechny formy)", start="2026-11-25T06:00", end="2026-12-01T22:00",
-   summary="Normal, Attack, Defense a Speed Deoxys, všechny můžou být shiny. Raid Hour st 25. 11. 18–19.",
+   summary="Normal, Attack, Defense a Speed Deoxys. Raid Hour st 25. 11. 18–19.",
    sections=[dict(h="Bossové", mons=[["Deoxys (Normal)", 1], ["Deoxys (Attack)", 1], ["Deoxys (Defense)", 1], ["Deoxys (Speed)", 1]]),
              dict(h="Raid Hour", list=["Středa 25. 11. 18:00–19:00"])],
    src="https://leekduck.com/events/deoxys-normal-defense-attack-speed-formes-in-5-star-raid-battles-november-2026/")
 
 ev(id="mega-metagross", cat="raid", title="Mega Metagross v Mega raidech", start="2026-11-25T06:00", end="2026-12-01T22:00",
-   summary="Shiny Metagross možný.", sections=[dict(h="Boss", mons=[["Mega Metagross", 1]])],
+   summary="Mega Metagross v Mega raidech.", sections=[dict(h="Boss", mons=[["Mega Metagross", 1]])],
    src="https://leekduck.com/events/mega-metagross-in-mega-raids-november-2026/")
 
 ev(id="spotlight-noibat", cat="spotlight", title="Spotlight Hour: Noibat", start="2026-11-26T18:00", end="2026-11-26T19:00",
@@ -169,7 +167,7 @@ ev(id="spotlight-noibat", cat="spotlight", title="Spotlight Hour: Noibat", start
 ev(id="clefable-smrd", cat="raid", title="Clefable Super Mega Raid Day", start="2026-11-28T14:00", end="2026-11-28T17:00", featured=1,
    summary="Debut Mega Clefable a jejího Moonblast+, poprvé Super Max úroveň. Až 6 raid passů zdarma.",
    sections=[
-     dict(h="Boss", mons=[["Mega Clefable", 1]], note="Zvýšená šance na shiny Clefable. Clefable z těchto raidů má odemčenou Mega úroveň 1."),
+     dict(h="Boss", mons=[["Mega Clefable", 1]], note="Clefable z těchto raidů má odemčenou Mega úroveň 1."),
      dict(h="Bonusy zdarma", list=["Až 6 raid passů zdarma z Photo Disců u Gymů.", "Remote Raid limit 20: pá 27. 11. 2:00 – ne 29. 11. 5:00 (SEČ)."]),
      dict(h="Ticket (4,99 USD)", list=["Až 14 raid passů z Gymů", "Vyšší šance na Rare Candy XL z raidů", "+5 000 XP a +5 000 Stardust za Super Mega raid",
        "Platí 14–17, jde darovat kamarádům od Great Friends. Ve Web Storu Ultra Ticket Box se stejnou cenou a Premium Battle Passem navíc."]),

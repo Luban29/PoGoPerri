@@ -21,8 +21,8 @@ Ručně jde běh spustit na GitHubu v záložce Actions → Denní aktualizace d
 
 `src/auto.py` zapíše i `docs/data/quests.json` z ScrapedDuck `research.min.json` (Field Research z Leek Duck): úkoly bez typu jsou eventové
 (přiřadí se k eventu z `events.json`, když jeho text obsahuje aspoň polovinu odměn; zbytky skončených eventů se vynechají), ostatní sezónní
-podle kategorie. U odměn je CP pro 100 % IV na levelu 15. Shiny podle `Rplus/Pokemon-shiny` (`gm/shiny.json`), protože ScrapedDuck ho u úkolů
-neplní. Stránka `#questy`.
+podle kategorie. U odměn je CP pro 100 % IV na levelu 15.
+Shiny se na webu záměrně neuvádí. Stránka `#questy`.
 
 ## Aktualizace dat
 
@@ -55,7 +55,7 @@ Adresy: `#dmg-<speciesId>` (neutrální cíl) a `#raid-<boss>-<speciesId>` (prot
 
 ## Události
 
-`cd src && python3 events.py` zapíše `docs/data/events.json`: všechny eventy (s bonusy, shiny, úkoly a odměnami),
+`cd src && python3 events.py` zapíše `docs/data/events.json`: všechny eventy (s bonusy, Pokémony, úkoly a odměnami),
 promokódy, partnerské akce a týdenní rytmus. Stránka sama třídí na Právě běží / Brzy / Do budoucna podle aktuálního času.
 Detail eventu má adresu `#udalost-<id>`. Časy jsou místní, GBL a Global Challenge přepočtené na SEČ.
 
