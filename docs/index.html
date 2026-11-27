@@ -125,6 +125,15 @@ a.tr.link:hover{background:#FFF3D6;color:var(--text)}
 .hundo b{font-family:var(--pixel);font-size:18px;font-weight:500;color:#E6F6D2}
 @media (max-width:720px){#coHead{scroll-margin-top:150px}}
 
+/* countery v detailu eventu */
+.cotab{display:flex;flex-direction:column;border:2px solid var(--line);border-radius:10px;overflow:hidden}
+.corow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 12px;border-top:1.5px solid var(--grid);background:var(--surface2)}
+.corow:first-child{border-top:0}
+.corow b{font-size:15px}
+.corow small{display:block;font-size:13px;color:var(--muted);font-weight:600}
+.corow .num{font-family:var(--pixel);font-size:17px;text-align:right}
+.corow .num small{font-family:inherit;font-size:11px}
+
 /* questy */
 .qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;align-items:start}
 @media (max-width:420px){.qgrid{grid-template-columns:minmax(0,1fr)}}
@@ -669,7 +678,41 @@ document.addEventListener('click', function (e) {
   try { navigator.clipboard.writeText(code).then(ok, function () { b.textContent = code; }); } catch (err) { b.textContent = code; }
 });
 function monChips(arr) { return '<div class="mons">' + arr.map(function (m) { return '<span class="mon">' + esc(m[0]) + '</span>'; }).join('') + '</div>'; }
+var evCoSel = 0, lastEv = null;
+function evBossInfo(sp) {
+  var mon = PVEIDX[sp[2]]; if (!mon) return null;
+  return { kind: sp[0], t: sp[1], id: sp[2], mon: mon, n: sp[3] || (sp[1].charAt(0) === 's' ? 'Shadow ' : '') + mon[1], types: sp[4] || mon[4], note: sp[5] || '' };
+}
+function evCounters(e) {
+  if (!PVE || !BS) return '<div class="card wide" id="evCo"><h3>Nejlepší countery</h3><p class="note">Načítám…</p></div>';
+  var list = e.bosses.map(evBossInfo).filter(Boolean); if (!list.length) return '';
+  if (evCoSel >= list.length) evCoSel = 0;
+  var B = list[evCoSel], h = '<div class="card wide" id="evCo"><h3>Nejlepší countery' + (list.length === 1 ? ': ' + esc(B.n) : '') + '</h3>';
+  if (list.length > 1) h += '<div class="pills">' + list.map(function (x, i) { return '<button type="button" class="pill" data-evco="' + i + '" aria-pressed="' + (i === evCoSel) + '">' + esc(x.n) + '</button>'; }).join('') + '</div>';
+  h += '<div style="display:flex;gap:6px;flex-wrap:wrap">' + B.types.map(tchip).join('') + '</div>';
+  var link = '';
+  if (B.kind === 'raid') {
+    var top = raidTop(B.mon, B.t, B.types, false, 6), noM = raidTop(B.mon, B.t, B.types, true, 3);
+    h += '<div class="cotab">' + top.map(function (x, i) {
+      return '<div class="corow"><span class="rank">' + (i + 1) + '</span><span><b>' + esc(x.m[1]) + '</b>' + kindBadge(x.m[3]) + '<small>' + esc(x.r.F.n) + ' / ' + esc(x.r.C.n) + '</small></span><span class="num">' + fmt(x.r.r.dps, 1) + '<small>DPS</small></span></div>';
+    }).join('') + '</div>';
+    h += '<p class="note"><b>Bez Megy:</b> ' + noM.map(function (x) { return esc(x.m[1]) + ' (' + esc(x.r.F.n) + ' / ' + esc(x.r.C.n) + ')'; }).join(', ') + '</p>';
+    if (!B.note) link = '<button type="button" class="btn ghost" style="align-self:flex-start" data-goraid="' + esc(B.t) + '|' + esc(B.id) + '">Všechny countery a detail →</button>';
+  } else {
+    var TT = MT[B.t] || MT['3'], R = maxCalc(B.mon, B.types, TT, maxBmt(B.mon));
+    h += '<span class="label">Útočníci (Max fáze)</span><div class="cotab">' + R.atk.slice(0, 5).map(function (x, i) {
+      return '<div class="corow"><span class="rank">' + (i + 1) + '</span><span><b>' + (x.b.g ? 'Gigantamax ' : (x.b.fixed ? '' : 'Dynamax ')) + esc(x.m[1]) + '</b><small>' + (x.b.fixed ? esc(x.b.F[0]) : esc(x.b.F[0]) + ' → ' + (x.b.g ? 'G-Max útok' : 'Max ' + cap(x.b.F[1]))) + '</small></span><span class="num">' + x.b.dmg + '<small>síla</small></span></div>';
+    }).join('') + '</div>';
+    var g = R.gain.slice().sort(function (a, b) { return (Math.round(b.b.cps * 10) - Math.round(a.b.cps * 10)) || (b.bulk - a.bulk); }).slice(0, 3);
+    h += '<p class="note"><b>Nejrychleji nabíjí:</b> ' + g.map(function (x) { return (x.g ? 'Gigantamax ' : (FIXED[x.m[0]] ? '' : 'Dynamax ')) + esc(x.m[1]) + ' (' + esc(x.b.F[0]) + (x.b.C ? ' / ' + esc(x.b.C[0]) : '') + ')'; }).join(', ') +
+      '. <b>Tanky:</b> ' + R.tank.slice(0, 3).map(function (x) { return (x.g ? 'Gigantamax ' : (FIXED[x.m[0]] ? '' : 'Dynamax ')) + esc(x.m[1]); }).join(', ') + '.</p>';
+    link = '<button type="button" class="btn ghost" style="align-self:flex-start" data-gomax="' + esc(B.id) + '|' + (B.t === 'gmax' ? 1 : 0) + '">Celá Max Battles tabulka →</button>';
+  }
+  if (B.note) h += '<p class="note">' + esc(B.note) + '</p>';
+  return h + link + '</div>';
+}
 function openEventDetail(id) {
+  if (id !== lastEv) evCoSel = 0; lastEv = id;
   if (!EV) return;
   var e = null; EV.events.forEach(function (x) { if (x.id === id) e = x; });
   if (!e) return;
@@ -679,6 +722,7 @@ function openEventDetail(id) {
   $('pdName').textContent = e.title;
   $('pdMeta').innerHTML = '<span class="tchip" style="background:#fff">' + esc(evRange(e)) + '</span>' + (e.tba ? '' : '<span class="tchip" style="background:' + (st2.k === 'now' ? '#9EDB4E' : '#fff') + '">' + esc(st2.t) + '</span>');
   var html = '<div class="card wide"><p style="font-size:17px">' + esc(e.summary) + '</p></div>';
+  if (e.bosses) html += evCounters(e);
   e.sections.forEach(function (sec) {
     var b = '';
     if (sec.list) b += '<ul class="evlist">' + sec.list.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
@@ -732,6 +776,16 @@ function bestVs(mon, tdef, dtypes, seOnly) {
   }); });
   return best;
 }
+function raidTop(mon, t, types, noMega, n) {
+  var tdef = (mon[6] + 15) * TIER[t][3], out = [];
+  PVE.mons.forEach(function (m) {
+    if (noMega && (m[3] === 'mega' || m[3] === 'primal')) return;
+    var r = bestVs(m, tdef, types, true); if (r) out.push({ m: m, r: r });
+  });
+  if (!out.length) PVE.mons.forEach(function (m) { var r = bestVs(m, tdef, types, false); if (r) out.push({ m: m, r: r }); });
+  out.sort(function (a, c) { return c.r.r.score - a.r.r.score; });
+  return out.slice(0, n);
+}
 function renderRaid() {
   group($('coTabs'), [{ k: 'all', label: 'Vše' }, { k: 'nomega', label: 'Bez Mega' }], function (i) { return i.k === st.co; }, function (i) { st.co = i.k; renderRaid(); });
   if (!BS || !PVE) { $('counters').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
@@ -756,16 +810,7 @@ function renderRaid() {
   var nw = b.custom ? false : new Date(b.a) <= now;
   $('bossText').textContent = (b.custom ? 'Teď není v rotaci, počítáno jako ' + tier[1] + '.' : (nw ? 'V raidech do ' + fmtShort(b.b) : 'V raidech od ' + fmtShort(b.a) + ' do ' + fmtShort(b.b)) + '.') + (b.t.charAt(0) === 's' ? ' Shadow boss má víc HP a silnější útoky, chycený Pokémon je Shadow.' : '') + (b.t === 'mega' ? ' Po výhře chytáš běžnou formu a dostaneš Mega Energy.' : '');
   var tc = typeChart(types); $('bossWeak').innerHTML = tc[0]; $('bossResist').innerHTML = tc[1];
-  var tdef = (mon[6] + 15) * tier[3], out = [];
-  PVE.mons.forEach(function (m) {
-    var kd = m[3];
-    if (st.co === 'nomega' && (kd === 'mega' || kd === 'primal')) return;
-    var r = bestVs(m, tdef, types, true) || null;
-    if (r) out.push({ m: m, r: r });
-  });
-  if (!out.length) PVE.mons.forEach(function (m) { var r = bestVs(m, tdef, types, false); if (r) out.push({ m: m, r: r }); });
-  out.sort(function (a, c) { return c.r.r.score - a.r.r.score; });
-  out = out.slice(0, 12);
+  var out = raidTop(mon, b.t, types, st.co === 'nomega', 12);
   var max = out.length ? out[0].r.r.score : 1;
   $('counters').innerHTML = '<div class="tr head"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">DPS</span><span class="num">TDO</span><span>Skóre</span></div>' +
     out.map(function (x, i) {
@@ -850,32 +895,7 @@ function maxPick(list, n) {
 }
 function maxEmpty(arr) { return arr.length ? '' : '<p style="padding:20px 22px" class="note">Nikdo nenalezen. Tenhle Pokémon možná nemá Dynamax formu.</p>'; }
 var FIXED = { zacian_crowned_sword: ['steel', 350, 'Behemoth Blade'], zamazenta_crowned_shield: ['steel', 350, 'Behemoth Bash'], eternatus: ['dragon', 450, 'Dynamax Cannon'] };
-function renderMax() {
-  if (!BS || !PVE) { $('maxAtkTable').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
-  var now = new Date(), feats = BS.max.filter(function (b) { return new Date(b.b) > now; });
-  if (!curMax) curMax = feats.length ? 'f:' + feats[0].id : 'b:0';
-  $('maxPicker').innerHTML = feats.map(function (b) {
-    var k = 'f:' + b.id;
-    return '<button type="button" class="pill" data-max="' + k + '" aria-pressed="' + (k === curMax) + '">' + esc(b.n) + ' <small class="soon">' + (new Date(b.a) <= now ? 'teď' : 'od ' + fmtShort(b.a)) + '</small></button>';
-  }).join('');
-  var feat = null, mb = null, id;
-  feats.forEach(function (b) { if ('f:' + b.id === curMax) feat = b; });
-  if (feat) id = feat.id; else { mb = BS.maxbosses[+curMax.slice(2)]; id = mb[0]; }
-  var boss = PVEIDX[id]; if (!boss) return;
-  var types = boss[4];
-  curMaxTier = feat ? featTier(feat) : mb[2];
-  var TT = MT[curMaxTier];
-  $('maxName').textContent = feat ? feat.n : mb[1];
-  $('maxType').innerHTML = types.map(tchip).join('');
-  $('maxWhen').textContent = feat ? (feat.t + ' · ' + (new Date(feat.a) <= now ? 'teď, do ' + fmtShort(feat.b) : (fmtShort(feat.a) === fmtShort(feat.b) ? fmtShort(feat.a) + ' ' + new Date(feat.a).getHours() + ':00–' + new Date(feat.b).getHours() + ':00' : fmtShort(feat.a) + ' – ' + fmtShort(feat.b)))) : MT[mb[2]][1] + ' Max Battle';
-  $('maxText').textContent = feat ? feat.note : 'Countery pro tohoto bosse, když ho najdeš na Power Spotu ve svém okolí.';
-  var hm = catchMon(id);
-  $('maxHundo').innerHTML = curMaxTier === 'eter' ? '<span>Eternamax Eternatus se nedá chytit</span>'
-    : (hm ? '<span>100 % IV <b>' + cpAt(hm, 0.5974) + ' CP</b></span><span>s weather boostem <b>' + cpAt(hm, 0.667934) + ' CP</b></span>' : '');
-  var bossMoveTypes = {}; boss[8].concat(boss[9]).forEach(function (mid) { var m = PVE.moves[mid]; if (m) bossMoveTypes[m[1]] = 1; });
-  var bmt = Object.keys(bossMoveTypes);
-  var tc = typeChart(types); $('maxWeak').innerHTML = tc[0];
-  $('maxAtk').innerHTML = bmt.map(function (t) { return '<span class="weak" style="background:' + TC[t] + '">' + cap(t) + '</span>'; }).join('');
+function maxCalc(boss, types, TT, bmt) {
   var D = (boss[6] + 15) * TT[3], atk = [], tank = [];
   BS.dmax.forEach(function (d) {
     var m = PVEIDX[d[0]]; if (!m) return;
@@ -915,6 +935,37 @@ function renderMax() {
     if (best) gain.push({ m: m, g: d[1], b: best, bulk: bulk });
   });
   gain.sort(function (a, b) { return (Math.round(b.b.cps * 10) - Math.round(a.b.cps * 10)) || (b.bulk - a.bulk); });
+  atk.sort(function (a, b) { return b.b.dmg - a.b.dmg; }); tank.sort(function (a, b) { return b.s - a.s; });
+  return { atk: atk, tank: tank, gain: gain };
+}
+function maxBmt(boss) { var o = {}; boss[8].concat(boss[9]).forEach(function (mid) { var m = PVE.moves[mid]; if (m) o[m[1]] = 1; }); return Object.keys(o); }
+function renderMax() {
+  if (!BS || !PVE) { $('maxAtkTable').innerHTML = '<p style="padding:24px" class="note">Načítám…</p>'; return; }
+  var now = new Date(), feats = BS.max.filter(function (b) { return new Date(b.b) > now; });
+  if (!curMax) curMax = feats.length ? 'f:' + feats[0].id : 'b:0';
+  $('maxPicker').innerHTML = feats.map(function (b) {
+    var k = 'f:' + b.id;
+    return '<button type="button" class="pill" data-max="' + k + '" aria-pressed="' + (k === curMax) + '">' + esc(b.n) + ' <small class="soon">' + (new Date(b.a) <= now ? 'teď' : 'od ' + fmtShort(b.a)) + '</small></button>';
+  }).join('');
+  var feat = null, mb = null, id;
+  feats.forEach(function (b) { if ('f:' + b.id === curMax) feat = b; });
+  if (feat) id = feat.id; else { mb = BS.maxbosses[+curMax.slice(2)]; id = mb[0]; }
+  var boss = PVEIDX[id]; if (!boss) return;
+  var types = boss[4];
+  curMaxTier = feat ? featTier(feat) : mb[2];
+  var TT = MT[curMaxTier];
+  $('maxName').textContent = feat ? feat.n : mb[1];
+  $('maxType').innerHTML = types.map(tchip).join('');
+  $('maxWhen').textContent = feat ? (feat.t + ' · ' + (new Date(feat.a) <= now ? 'teď, do ' + fmtShort(feat.b) : (fmtShort(feat.a) === fmtShort(feat.b) ? fmtShort(feat.a) + ' ' + new Date(feat.a).getHours() + ':00–' + new Date(feat.b).getHours() + ':00' : fmtShort(feat.a) + ' – ' + fmtShort(feat.b)))) : MT[mb[2]][1] + ' Max Battle';
+  $('maxText').textContent = feat ? feat.note : 'Countery pro tohoto bosse, když ho najdeš na Power Spotu ve svém okolí.';
+  var hm = catchMon(id);
+  $('maxHundo').innerHTML = curMaxTier === 'eter' ? '<span>Eternamax Eternatus se nedá chytit</span>'
+    : (hm ? '<span>100 % IV <b>' + cpAt(hm, 0.5974) + ' CP</b></span><span>s weather boostem <b>' + cpAt(hm, 0.667934) + ' CP</b></span>' : '');
+  var bossMoveTypes = {}; boss[8].concat(boss[9]).forEach(function (mid) { var m = PVE.moves[mid]; if (m) bossMoveTypes[m[1]] = 1; });
+  var bmt = Object.keys(bossMoveTypes);
+  var tc = typeChart(types); $('maxWeak').innerHTML = tc[0];
+  $('maxAtk').innerHTML = bmt.map(function (t) { return '<span class="weak" style="background:' + TC[t] + '">' + cap(t) + '</span>'; }).join('');
+  var R = maxCalc(boss, types, TT, bmt), atk = R.atk, tank = R.tank, gain = R.gain;
   var gm = 0; gain.forEach(function (x) { if (x.bulk > gm) gm = x.bulk; });
   $('maxGainTable').innerHTML = '<div class="tr head mx"><span>#</span><span>Pokémon</span><span>Moveset</span><span class="num">Nabití/s</span><span>Výdrž</span></div>' +
     maxPick(gain, 12).map(function (p) { var x = p[0], i = p[1];
@@ -947,6 +998,24 @@ function renderMax() {
     }).join('') + maxEmpty(maxPick(tank, 10));
   Array.prototype.forEach.call($('maxPicker').querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-max') === curMax); });
 }
+$('pdBody').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-evco]');
+  if (b) { evCoSel = +b.getAttribute('data-evco'); var y = $('pd').scrollTop; openEventDetail(lastEv); $('pd').scrollTop = y; return; }
+  b = e.target.closest('[data-goraid]');
+  if (b) {
+    var p = b.getAttribute('data-goraid').split('|'), now = new Date();
+    var live = BS.raids.filter(function (x) { return x.t === p[0] && x.id === p[1] && new Date(x.b) > now; })[0];
+    curBoss = live ? bossKey(live) : 'c' + p[0] + '_' + p[1]; ensureBoss(curBoss);
+    $('pd').close(); location.hash = 'raidy'; renderRaid(); goCounters(); return;
+  }
+  b = e.target.closest('[data-gomax]');
+  if (b) {
+    var q = b.getAttribute('data-gomax').split('|'), g = q[1] === '1', now2 = new Date();
+    var f = BS.max.filter(function (x) { return x.id === q[0] && new Date(x.b) > now2 && /^Gigantamax /.test(x.n) === g; })[0];
+    if (f) curMax = 'f:' + f.id; else { var ix = -1; BS.maxbosses.forEach(function (m, i) { if (m[0] === q[0] && (m[2] === 'gmax') === g && ix < 0) ix = i; }); if (ix >= 0) curMax = 'b:' + ix; }
+    $('pd').close(); location.hash = 'max-battles'; renderMax(); return;
+  }
+});
 $('maxPicker').addEventListener('click', function (e) { var b = e.target.closest('button[data-max]'); if (b) { curMax = b.getAttribute('data-max'); renderMax(); } });
 function fold(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
 function lev(a, b) {
@@ -1271,7 +1340,7 @@ setInterval(function () { if (EV && curPage === 'udalosti') renderEvents(); }, 6
 var NC = { cache: 'no-cache' };
 fetch('data/bosses.json', NC).then(function (r) { return r.json(); }).then(function (d) { BS = d; BS.maxbosses = BS.maxbosses || []; d.raids.forEach(function (b) { RB[bossKey(b)] = b; }); afterData(); })
   .catch(function () { $('counters').innerHTML = '<p style="padding:24px" class="note">Data se nepodařilo načíst. Zkus stránku obnovit.</p>'; });
-function afterData() { if (!BS || !PVE) return; if (pendingPve) ensureBoss(pendingPve[0]); renderRaid(); renderMax(); if (pendingPve && (pendingPve[0] === 'dmg' || RB[pendingPve[0]])) openPveDetail(pendingPve[0], pendingPve[1]); }
+function afterData() { if (!BS || !PVE) return; if ($('evCo') && lastEv) openEventDetail(lastEv); if (pendingPve) ensureBoss(pendingPve[0]); renderRaid(); renderMax(); if (pendingPve && (pendingPve[0] === 'dmg' || RB[pendingPve[0]])) openPveDetail(pendingPve[0], pendingPve[1]); }
 fetch('data/pvp.json', NC).then(function (r) { return r.json(); }).then(function (d) { PVP = d; renderPvp(); if (pendingDetail) openDetail(pendingDetail[0], pendingDetail[1]); })
   .catch(function () { $('pvpSummary').textContent = 'Žebříček se nepodařilo načíst. Zkus stránku obnovit.'; });
 fetch('data/quests.json', NC).then(function (r) { return r.json(); }).then(function (d) { QS = d; renderQuests(); })

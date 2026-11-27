@@ -41,14 +41,14 @@ ev(id="dynamax-trails", cat="event", title="Dynamax Trails", start="2026-11-16T1
    ],
    src="https://leekduck.com/events/dynamax-trails-2026/")
 
-ev(id="darkrai-cresselia", cat="raid", title="5★ raidy: Darkrai a Cresselia", start="2026-11-09T06:00", end="2026-11-25T06:00",
+ev(id="darkrai-cresselia", bosses=[["raid","5","darkrai"],["raid","5","cresselia"]], cat="raid", title="5★ raidy: Darkrai a Cresselia", start="2026-11-09T06:00", end="2026-11-25T06:00",
    summary="Legendární raidy, countery najdeš v záložce Raidy.",
    sections=[dict(h="Bossové", mons=[["Darkrai", 1], ["Cresselia", 1]]),
              dict(h="Tipy", list=["Darkrai je slabý na Fighting, Bug a Fairy.", "Cresselia je slabá na Bug, Ghost a Dark.", "Raid Hour byla ve středu 18. 11. 18–19."]),
              dict(h="Countery", link=["raidy", "Otevřít countery v záložce Raidy"])],
    src="https://pokemongohub.net/post/event/pokemon-go-november-2026-events/")
 
-ev(id="mega-banette", cat="raid", title="Mega Banette v Mega raidech", start="2026-11-16T06:00", end="2026-11-24T22:00",
+ev(id="mega-banette", bosses=[["raid","mega","banette_mega"]], cat="raid", title="Mega Banette v Mega raidech", start="2026-11-16T06:00", end="2026-11-24T22:00",
    summary="Ghost Mega boss, slabý na Dark a Ghost útoky.", sections=[dict(h="Boss", mons=[["Mega Banette", 1]])],
    src="https://pokemongohub.net/post/event/this-week-in-pokemon-go-november-16-22-dynamax-trails-eternatus-pawniard-community-day/")
 
@@ -119,13 +119,13 @@ ev(id="gbl-2", cat="gbl", title="GBL: Master League a Mega Catch Cup: Great Leag
              dict(h="Bonus", list=["4× Stardust za výhry (ne za konec setu)."])],
    src="https://leekduck.com/events/gbl-twilight-trails_master-league_mega-catch-cup-great-league-edition/")
 
-ev(id="deoxys", cat="raid", title="5★ raidy: Deoxys (všechny formy)", start="2026-11-25T06:00", end="2026-12-01T22:00",
+ev(id="deoxys", bosses=[["raid","5","deoxys"],["raid","5","deoxys_attack"],["raid","5","deoxys_defense"],["raid","5","deoxys_speed"]], cat="raid", title="5★ raidy: Deoxys (všechny formy)", start="2026-11-25T06:00", end="2026-12-01T22:00",
    summary="Normal, Attack, Defense a Speed Deoxys. Raid Hour st 25. 11. 18–19.",
    sections=[dict(h="Bossové", mons=[["Deoxys (Normal)", 1], ["Deoxys (Attack)", 1], ["Deoxys (Defense)", 1], ["Deoxys (Speed)", 1]]),
              dict(h="Raid Hour", list=["Středa 25. 11. 18:00–19:00"])],
    src="https://leekduck.com/events/deoxys-normal-defense-attack-speed-formes-in-5-star-raid-battles-november-2026/")
 
-ev(id="mega-metagross", cat="raid", title="Mega Metagross v Mega raidech", start="2026-11-25T06:00", end="2026-12-01T22:00",
+ev(id="mega-metagross", bosses=[["raid","mega","metagross_mega"]], cat="raid", title="Mega Metagross v Mega raidech", start="2026-11-25T06:00", end="2026-12-01T22:00",
    summary="Mega Metagross v Mega raidech.", sections=[dict(h="Boss", mons=[["Mega Metagross", 1]])],
    src="https://leekduck.com/events/mega-metagross-in-mega-raids-november-2026/")
 
@@ -133,7 +133,7 @@ ev(id="spotlight-noibat", cat="spotlight", title="Spotlight Hour: Noibat", start
    summary="Noibat ve velkém, bonus 2× Catch Candy.", sections=[dict(h="Pokémon", mons=[["Noibat", 1]], note="Bonus: 2× Catch Candy.")],
    src="https://pokemongohub.net/post/event/pokemon-go-november-2026-events/")
 
-ev(id="clefable-smrd", cat="raid", title="Clefable Super Mega Raid Day", start="2026-11-28T14:00", end="2026-11-28T17:00", featured=1,
+ev(id="clefable-smrd", bosses=[["raid","mega","clefable","Mega Clefable",["fairy","flying"],"Mega Clefable zatím není v herních datech, countery jsou spočítané na typy Fairy/Flying a statistiky běžného Clefable. Pořadí se po jejím přidání skoro nezmění."]], cat="raid", title="Clefable Super Mega Raid Day", start="2026-11-28T14:00", end="2026-11-28T17:00", featured=1,
    summary="Debut Mega Clefable a jejího Moonblast+, poprvé Super Max úroveň. Až 6 raid passů zdarma.",
    sections=[
      dict(h="Boss", mons=[["Mega Clefable", 1]], note="Clefable z těchto raidů má odemčenou Mega úroveň 1."),
@@ -181,16 +181,16 @@ ev(id="tropical-paradise", cat="event", title="Tropical Paradise", start="2026-1
        "Deluxe 4,99 USD (s +6 ranky 6,99 USD). Odměny vyzvedni do st 9. 12. 20:00."]),
    ], src="https://pokemongohub.net/post/event/pokemon-go-tropical-paradise-2026/")
 
-ev(id="regidrago-dec", cat="raid", title="5★ raidy: Regidrago", start="2026-12-02T06:00", end="2026-12-08T22:00",
+ev(id="regidrago-dec", bosses=[["raid","5","regidrago"]], cat="raid", title="5★ raidy: Regidrago", start="2026-12-02T06:00", end="2026-12-08T22:00",
    summary="Regidrago v 5★ raidech, Raid Hour st 2. 12. 18–19.",
    sections=[dict(h="Boss", mons=[["Regidrago", 0]]), dict(h="Raid Hour", list=["Středa 2. 12. 18:00–19:00"])],
    src="https://leekduck.com/events/regidrago-in-5-star-raid-battles-december-2026/")
 
-ev(id="mega-slowbro", cat="raid", title="Mega Slowbro v Mega raidech", start="2026-12-02T06:00", end="2026-12-08T22:00",
+ev(id="mega-slowbro", bosses=[["raid","mega","slowbro_mega"]], cat="raid", title="Mega Slowbro v Mega raidech", start="2026-12-02T06:00", end="2026-12-08T22:00",
    summary="Mega Slowbro, od Tropical Paradise může na Super Max s Chilling Water+.", sections=[dict(h="Boss", mons=[["Mega Slowbro", 0]])],
    src="https://leekduck.com/events/mega-slowbro-in-mega-raids-december-2026/")
 
-ev(id="shadow-dialga", cat="raid", title="Shadow Dialga ve Shadow raidech", start="2026-12-02T06:00", end="2027-01-05T22:00",
+ev(id="shadow-dialga", bosses=[["raid","s5","dialga","Shadow Dialga"]], cat="raid", title="Shadow Dialga ve Shadow raidech", start="2026-12-02T06:00", end="2027-01-05T22:00",
    summary="Shadow Dialga ve Shadow raidech přes celý prosinec.", sections=[dict(h="Boss", mons=[["Shadow Dialga", 0]], note="Shadow raid: zuřícího bosse zklidníš Purified Gems.")],
    src="https://leekduck.com/events/shadow-dialga-in-shadow-raids-december-2026/")
 
@@ -209,7 +209,7 @@ ev(id="spotlight-wimpod", cat="spotlight", title="Spotlight Hour: Wimpod", start
    summary="Wimpod ve velkém, bonus 2× Transfer Candy.", sections=[dict(h="Pokémon", mons=[["Wimpod", 0]], note="Bonus: 2× Transfer Candy.")],
    src="https://leekduck.com/events/pokemonspotlighthour2026-12-03/")
 
-ev(id="inteleon-mbd", cat="max", title="Gigantamax Inteleon Max Battle Day", start="2026-12-05T14:00", end="2026-12-05T17:00", featured=1,
+ev(id="inteleon-mbd", bosses=[["max","gmax","inteleon","Gigantamax Inteleon"]], cat="max", title="Gigantamax Inteleon Max Battle Day", start="2026-12-05T14:00", end="2026-12-05T17:00", featured=1,
    summary="Debut Gigantamax Inteleona v 6★ Max Battles, všechny Power Spoty s Gigantamaxem.",
    sections=[
      dict(h="Boss", mons=[["Gigantamax Inteleon", 0]], note="Water. Countery najdeš v záložce Max Battles (vyhledej „gmax inteleon“)."),
@@ -221,7 +221,7 @@ ev(id="inteleon-mbd", cat="max", title="Gigantamax Inteleon Max Battle Day", sta
        "V herním shopu do 17:00, jde darovat kamarádům od Great Friends. Ve Web Storu Ultra Ticket Box s 800 Max Particles navíc."]),
    ], src="https://pocketmonsters.net/news/9762")
 
-ev(id="champions-celebration", cat="event", title="Pokémon Champions Celebration", start="2026-12-08T10:00", end="2026-12-14T20:00", featured=1,
+ev(id="champions-celebration", bosses=[["raid","5","latias"],["raid","5","latios"],["raid","5","heatran"],["raid","5","cobalion"],["raid","5","terrakion"],["raid","5","virizion"],["raid","5","regieleki"],["raid","5","regidrago"]], cat="event", title="Pokémon Champions Celebration", start="2026-12-08T10:00", end="2026-12-14T20:00", featured=1,
    summary="Týden pro hráče Pokémon Champions: 8 legend v 5★ raidech se speciálním pozadím, Rare Candy z Field Research.",
    sections=[
      dict(h="Bonusy", list=["Vyšší šance na Kecleona u PokéStopů.", "GO Pass Rank 1: 7× GO Transporter Energy za hodinu (přesun do Pokémon HOME).",
@@ -235,7 +235,7 @@ ev(id="champions-celebration", cat="event", title="Pokémon Champions Celebratio
      dict(h="GO Pass", list=["Deluxe 4,99 USD (s +6 ranky 6,99 USD): Elite Charged TM, Rare Candy XL a další. Odměny vyzvedni do st 16. 12. 20:00."]),
    ], src="https://www.dittobase.com/pokemon-go/events/pokemon-champions-celebration-event-2026")
 
-ev(id="mega-gengar", cat="raid", title="Mega Gengar v Mega raidech", start="2026-12-09T06:00", end="2026-12-15T22:00",
+ev(id="mega-gengar", bosses=[["raid","mega","gengar_mega"]], cat="raid", title="Mega Gengar v Mega raidech", start="2026-12-09T06:00", end="2026-12-15T22:00",
    summary="Mega Gengar v Mega raidech.", sections=[dict(h="Boss", mons=[["Mega Gengar", 0]])],
    src="https://leekduck.com/events/mega-gengar-in-mega-raids-december-2026/")
 
@@ -260,12 +260,12 @@ ev(id="december-cd", cat="cd", title="Prosincový Community Day", start="2026-12
        "Trade o 50 % levněji"]),
    ], src="https://leekduck.com/events/december-communityday2026/")
 
-ev(id="ho-oh-dec", cat="raid", title="5★ raidy: Ho-Oh", start="2026-12-16T06:00", end="2026-12-22T22:00",
+ev(id="ho-oh-dec", bosses=[["raid","5","ho_oh"]], cat="raid", title="5★ raidy: Ho-Oh", start="2026-12-16T06:00", end="2026-12-22T22:00",
    summary="Ho-Oh v 5★ raidech, Raid Hour st 16. 12. 18–19.",
    sections=[dict(h="Boss", mons=[["Ho-Oh", 0]]), dict(h="Raid Hour", list=["Středa 16. 12. 18:00–19:00"])],
    src="https://leekduck.com/events/ho-oh-in-5-star-raid-battles-december-2026/")
 
-ev(id="mega-skarmory", cat="raid", title="Mega Skarmory v Mega raidech", start="2026-12-16T06:00", end="2026-12-22T22:00",
+ev(id="mega-skarmory", bosses=[["raid","mega","skarmory_mega"]], cat="raid", title="Mega Skarmory v Mega raidech", start="2026-12-16T06:00", end="2026-12-22T22:00",
    summary="Mega Skarmory v Mega raidech.", sections=[dict(h="Boss", mons=[["Mega Skarmory", 0]])],
    src="https://leekduck.com/events/mega-skarmory-in-mega-raids-december-2026/")
 

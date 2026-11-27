@@ -17,6 +17,13 @@ kteří v ručním seznamu chybí, ukončí ty, kteří už v raidech nejsou, a 
 (položky s `"auto": 1`). České popisy eventů, tipy a ruční seznamy v `bosses.py` a `events.py` doplňuje jednou týdně Claude.
 Ručně jde běh spustit na GitHubu v záložce Actions → Denní aktualizace dat → Run workflow.
 
+## Countery v detailu eventu
+
+Raid a Max eventy v `src/events.py` mají pole `bosses`: `[druh, tier, id, jméno?, typy?, poznámka?]`, např. `["raid","mega","slowbro_mega"]`
+nebo `["max","gmax","inteleon","Gigantamax Inteleon"]`. Detail eventu pak hned pod shrnutím ukáže top countery (stejný výpočet jako
+záložky Raidy a Max Battles) a tlačítko na celou tabulku. Když boss ještě není v herních datech, dej id podobného Pokémona,
+jeho typy a poznámku (viz Mega Clefable).
+
 ## Questy
 
 `src/auto.py` zapíše i `docs/data/quests.json` z ScrapedDuck `research.min.json` (Field Research z Leek Duck): úkoly bez typu jsou eventové
