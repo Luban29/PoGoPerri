@@ -1,6 +1,6 @@
 # Události pro záložku "Události" -> docs/data/events.json
 # Časy jsou místní (jak je udává hra), u GO Battle League a Global Challenge přepočtené z PT/PST na SEČ.
-# Zdroje: Leek Duck, pokemongo.com, Pokémon GO Hub, Dittobase (stav k 20. 11. 2026).
+# Zdroje: Leek Duck, pokemongo.com, Pokémon GO Hub, Dittobase (stav k 27. 11. 2026).
 import json
 
 SPAWNS_DYNAMAX = ["Bulbasaur", "Charmander", "Squirtle", "Caterpie", "Pikachu", "Growlithe", "Abra", "Machop", "Gastly", "Krabby",
@@ -40,37 +40,6 @@ ev(id="dynamax-trails", cat="event", title="Dynamax Trails", start="2026-11-16T1
        "Body sbírej do 23. 11. 20:00, odměny vyzvedni do 25. 11. 20:00."]),
    ],
    src="https://leekduck.com/events/dynamax-trails-2026/")
-
-ev(id="eternatus", cat="max", title="Eternamax Eternatus", start="2026-11-21T11:00", end="2026-11-21T14:00",
-   summary="Eternamax Eternatus obsadí většinu Power Spotů. Nejde chytit, ale dává hromadu Eternatus Candy a XL.",
-   sections=[
-     dict(h="Bonusy během okna", list=["Power Spoty se obnovují častěji.", "Limit Max Particles 2 400.", "8× Max Particles z Power Spotů.",
-       "Remote Raid limit 30 (20. 11. 22:00 – 22. 11. 3:00 SEČ)."]),
-     dict(h="Jak na Eternatuse", list=["Samotného Eternatuse dostaneš z GO Pass: Dynamax Trails.",
-       "Eternamax v Max Battles chytit nejde, odměnou jsou Eternatus Candy a Candy XL na powerup."]),
-   ], src="https://leekduck.com/events/eternamax-eternatus-max-battles-2026/")
-
-ev(id="pawniard-cd", cat="cd", title="Pawniard Community Day", start="2026-11-21T14:00", end="2026-11-21T17:00", featured=1,
-   summary="Pawniard, 1/4 vzdálenost vajíček a Kingambit s exkluzivním Kowtow Cleave.",
-   sections=[
-     dict(h="Bonusy (14–17, s * až do 21:00)", list=["Víc Pawniardů ve volné přírodě", "1/4 vzdálenost u vajíček vložených během eventu",
-       "Incense na 3 hodiny (kromě Daily Adventure)", "Lure Module na 1 hodinu*", "2× Catch Candy",
-       "2× šance na Candy XL za chycení (od levelu 31)", "1 Special Trade navíc, max 2 za den*", "Trade o 50 % levněji*",
-       "Lure: Pawniard se u Lure Module objevuje velmi často*"]),
-     dict(h="Featured útok", list=["Vyvine-li se Bisharp během eventu nebo do 4 hodin po něm, Kingambit dostane Kowtow Cleave (Dark): raidy 85, PvP 75.",
-       "14–21: stačí porazit 1 Dark/Steel raid bosse s Bisharpem jako buddy (jen buddy Bisharp)."]),
-     dict(h="Field Research", tasks=[["Chyť 3 Pawniardy", "Pawniard, 5× Great Ball, 2× Ultra Ball, 500 Stardust"],
-       ["Chyť 5 Pokémonů v Party", "Pawniard se Special Background"], ["Chyť 50 Pokémonů", "Pawniard se Special Background"]]),
-     dict(h="Placený Special Research (1,99 USD)", research=[
-       dict(t="Krok 1/3", tasks=[["Chyť 3, 5 a 10 Pawniardů", ""], ["7 Nice Throws", "20× Ultra Ball"], ["5 Great Throws", "Incubator"], ["5 Curveball Throws", "Incense"]],
-            r="Pawniard, 50 Pawniard Candy, 5 Pawniard Candy XL"),
-       dict(t="Krok 2/3", tasks=[["Chyť 3 a 5 Pawniardů, 10 Bisharpů", ""], ["Použij 3 Berries", "20× Ultra Ball"], ["Použij 5 Berries", "Charged TM"], ["Použij 7 Berries", "3× Silver Pinap"]],
-            r="Pawniard, 7 500 Stardust, 3× Rare Candy"),
-       dict(t="Krok 3/3", tasks=[["Chyť 3 a 5 Pawniardů, 10 Bisharpů", ""], ["Roztoč 3 PokéStopy", "20× Ultra Ball"], ["Roztoč 5 PokéStopů", "Rocket Radar"], ["Projdi 1 km", "Premium Battle Pass"]],
-            r="Pawniard, 10 000 XP, Rare Candy XL")],
-       note="Jde darovat kamarádům od Great Friends. Ve Web Storu je Ultra Ticket Box za 1,99 USD s ticketem a 5 Ultra Balls."),
-     dict(h="Komunitní setkání", list=["Check-in na akci Community Ambassadora odemkne Timed Research s Pawniardy se Special Background a prémiovými itemy."]),
-   ], src="https://leekduck.com/events/november-communityday2026/")
 
 ev(id="darkrai-cresselia", cat="raid", title="5★ raidy: Darkrai a Cresselia", start="2026-11-09T06:00", end="2026-11-25T06:00",
    summary="Legendární raidy, countery najdeš v záložce Raidy.",
@@ -182,12 +151,134 @@ ev(id="season-end", cat="event", title="Konec sezóny Twilight Trails", start="2
    sections=[dict(h="Co nestihnout zmeškat", list=["Konec GBL sezóny a odměn za rank.", "Shadow Tornadus, Deoxys a Mega Metagross končí 1. 12. 22:00."])],
    src="https://pokemongohub.net/post/event/pokemon-go-november-2026-events/")
 
+# ---------------- PROSINEC (oznámeno 24.–25. 11.) ----------------
+ev(id="daydream-destinations", cat="event", title="Nová sezóna: Daydream Destinations", start="2026-12-01T10:00", end="2027-03-01T10:00",
+   summary="Sezóna do 1. 3. 2027: debut Mega Froslass a Mega Drampa, noví Dynamax Pokémoni a GO Tour: Alola v únoru.",
+   sections=[
+     dict(h="Sezónní GO Pass bonusy", list=["Rank 1: víc XP za zvýšení Friendship levelu a 2× Friendship bonus k damage v raidech.",
+       "Rank 25: vyšší limity pro Photo Discy z PokéStopů a Gymů a pro dárky.", "Rank 50: 2× delší Daily Adventure Incense.",
+       "Rank 75: víc XP a Stardust za líhnutí vajíček."]),
+     dict(h="Debuty", list=["Pyukumuku (Tropical Paradise, 1.–7. 12.)", "Dvě nové formy Minior (Minior Showers: Geminids, 11.–16. 12.)",
+       "Mega Froslass a Mega Drampa na vlastních Raid Days (data zatím neoznámena)",
+       "Dynamax Alolan Sandshrew, Dynamax Slowpoke a Dynamax Corphish v Max Battles", "Gigantamax Inteleon (5. 12.), Gigantamax Toxtricity (datum zatím neoznámeno)"]),
+     dict(h="Vajíčka", list=["2 km: Vulpix, Swablu, Yamper. Další vzdálenosti zatím nemáme ověřené."]),
+     dict(h="Termíny", list=["Community Day: 12.–13. 12., 2. 1. (Classic), 16. 1., 6. 2.", "GO Tour: Alola – Global: 27.–28. 2. 2027",
+       "GO Battle League: nová sezóna od 1. 12. 22:00 (SEČ), Mega ligy a cupy Holiday, Fighting, Jungle, Love a GO EUIC Cup."]),
+     dict(h="Research Breakthrough", list=["Nová sada odměn za 7 razítek z Field Research. Pokémoni zatím nejsou oznámení."]),
+   ], src="https://www.dexerto.com/pokemon/pokemon-go-daydream-destinations-season-guide-dates-events-raids-more-3431574/")
+
+ev(id="tropical-paradise", cat="event", title="Tropical Paradise", start="2026-12-01T10:00", end="2026-12-07T20:00", featured=1,
+   summary="Debut Pyukumuku ve 3★ raidech a Mega Slowbro poprvé na Super Max s novým Chilling Water+.",
+   sections=[
+     dict(h="Debut a nové útoky", list=["Pyukumuku: 3★ raidy a GO Pass. Umí nový rychlý útok Soak (síla 6 v raidech i PvP).",
+       "Mega Slowbro může poprvé na Super Max úroveň: nejdřív Mega level 3, pak Slowbro Mega Energy.",
+       "Chilling Water+ (nový nabitý útok Mega Slowbra): raidy 160, PvP 45 a jistě sníží útok soupeře. Síla roste s Mega úrovní."]),
+     dict(h="Ve volné přírodě", mons=[["Slowpoke", 0], ["Shellder", 0], ["Wingull", 0], ["Slakoth", 0], ["Snorlax", 0]], note="Snorlax je vzácný."),
+     dict(h="Navíc od pá 4. 12. 10:00", mons=[["Hoppip", 0], ["Lotad", 0], ["Shroomish", 0], ["Exeggutor (Alolan)", 0]], note="Alolan Exeggutor je vzácný."),
+     dict(h="Raidy", groups=[["1★", [["Diglett (Alolan)", 0], ["Frillish", 0], ["Sandygast", 0]]], ["3★", [["Pyukumuku", 0]]]]),
+     dict(h="Field Research", list=["Encountery s Psyduckem, Tentacoolem a Shellderem, u některých úkolů Slowbro Mega Energy."]),
+     dict(h="GO Pass", list=["Rank 10: 2× XP z raidů.", "Rank 20: 5× Mega Energy za chození s Slowpokem, Slowbrem nebo Slowkingem jako buddy (po Mega evoluci Slowbra).",
+       "Deluxe 4,99 USD (s +6 ranky 6,99 USD). Odměny vyzvedni do st 9. 12. 20:00."]),
+   ], src="https://pokemongohub.net/post/event/pokemon-go-tropical-paradise-2026/")
+
+ev(id="regidrago-dec", cat="raid", title="5★ raidy: Regidrago", start="2026-12-02T06:00", end="2026-12-08T22:00",
+   summary="Regidrago v 5★ raidech, Raid Hour st 2. 12. 18–19.",
+   sections=[dict(h="Boss", mons=[["Regidrago", 0]]), dict(h="Raid Hour", list=["Středa 2. 12. 18:00–19:00"])],
+   src="https://leekduck.com/events/regidrago-in-5-star-raid-battles-december-2026/")
+
+ev(id="mega-slowbro", cat="raid", title="Mega Slowbro v Mega raidech", start="2026-12-02T06:00", end="2026-12-08T22:00",
+   summary="Mega Slowbro, od Tropical Paradise může na Super Max s Chilling Water+.", sections=[dict(h="Boss", mons=[["Mega Slowbro", 0]])],
+   src="https://leekduck.com/events/mega-slowbro-in-mega-raids-december-2026/")
+
+ev(id="shadow-dialga", cat="raid", title="Shadow Dialga ve Shadow raidech", start="2026-12-02T06:00", end="2027-01-05T22:00",
+   summary="Shadow Dialga ve Shadow raidech přes celý prosinec.", sections=[dict(h="Boss", mons=[["Shadow Dialga", 0]], note="Shadow raid: zuřícího bosse zklidníš Purified Gems.")],
+   src="https://leekduck.com/events/shadow-dialga-in-shadow-raids-december-2026/")
+
+ev(id="gbl-dd-1", cat="gbl", title="GBL: Great, Ultra a Master League: Mega Edition", start="2026-12-01T22:00", end="2026-12-08T22:00",
+   summary="Start GBL sezóny Daydream Destinations, reset ranku.",
+   sections=[dict(h="Ligy", list=["Great League: Mega Edition", "Ultra League: Mega Edition", "Master League: Mega Edition"]),
+             dict(h="Pozor", list=["Nová sezóna začíná út 1. 12. 22:00 (SEČ), rank se resetuje. Odměny za Twilight Trails si vyzvedni předtím."])],
+   src="https://pokemongohub.net/post/guide/gbl-daydream-destinations-update/")
+
+ev(id="gbl-dd-2", cat="gbl", title="GBL: Great League: Mega Edition a Mountain Cup", start="2026-12-08T22:00", end="2026-12-15T22:00",
+   summary="Great League: Mega Edition a Mountain Cup: Great League Edition.",
+   sections=[dict(h="Ligy", list=["Great League: Mega Edition", "Mountain Cup: Great League Edition (pravidla cupu zatím nemáme ověřená)"])],
+   src="https://pokemongohub.net/post/guide/gbl-daydream-destinations-update/")
+
+ev(id="spotlight-wimpod", cat="spotlight", title="Spotlight Hour: Wimpod", start="2026-12-03T18:00", end="2026-12-03T19:00",
+   summary="Wimpod ve velkém, bonus 2× Transfer Candy.", sections=[dict(h="Pokémon", mons=[["Wimpod", 0]], note="Bonus: 2× Transfer Candy.")],
+   src="https://leekduck.com/events/pokemonspotlighthour2026-12-03/")
+
+ev(id="inteleon-mbd", cat="max", title="Gigantamax Inteleon Max Battle Day", start="2026-12-05T14:00", end="2026-12-05T17:00", featured=1,
+   summary="Debut Gigantamax Inteleona v 6★ Max Battles, všechny Power Spoty s Gigantamaxem.",
+   sections=[
+     dict(h="Boss", mons=[["Gigantamax Inteleon", 0]], note="Water. Countery najdeš v záložce Max Battles (vyhledej „gmax inteleon“)."),
+     dict(h="Bonusy 14–17", list=["Limit Max Particles 1 600", "Všechny Power Spoty hostí Gigantamax Battles, obnovují se častěji a je jich víc",
+       "8× Max Particles z Power Spotů", "Až 3 Special Trades za den"]),
+     dict(h="Bonusy 0–17", list=["2× Max Particles z prozkoumávání", "1/4 vzdálenost pro Max Particles (nejdřív vyber všechny v menu Nearby)"]),
+     dict(h="Remote raidy", list=["Limit 20 místo 10: pá 4. 12. 1:00 – so 5. 12. 5:00 (SEČ)."]),
+     dict(h="Ticket (4,99 USD)", list=["Timed Research: 1 Max Mushroom, 25 000 XP, 6 400 Max Particles", "2× XP z Max Battles 14–17",
+       "V herním shopu do 17:00, jde darovat kamarádům od Great Friends. Ve Web Storu Ultra Ticket Box s 800 Max Particles navíc."]),
+   ], src="https://pocketmonsters.net/news/9762")
+
+ev(id="champions-celebration", cat="event", title="Pokémon Champions Celebration", start="2026-12-08T10:00", end="2026-12-14T20:00", featured=1,
+   summary="Týden pro hráče Pokémon Champions: 8 legend v 5★ raidech se speciálním pozadím, Rare Candy z Field Research.",
+   sections=[
+     dict(h="Bonusy", list=["Vyšší šance na Kecleona u PokéStopů.", "GO Pass Rank 1: 7× GO Transporter Energy za hodinu (přesun do Pokémon HOME).",
+       "Rank 10: 2× Catch Candy (nesčítá se s Community Day).", "Rank 20: +3 000 XP za raid, s Deluxe až 2 raid passy denně z Gymů.",
+       "Pošli Pokémona přes HOME do Pokémon Champions a dostaneš dárek do Champions mailboxu."]),
+     dict(h="Ve volné přírodě", mons=[["Charmander", 0], ["Starly", 0], ["Grookey", 0], ["Absol", 0], ["Gible", 0]], note="Seznam není úplný, další Pokémoni zatím neoznámeni."),
+     dict(h="Raidy", groups=[["1★", [["Bagon", 0], ["Litten", 0], ["Frigibax", 0]]], ["3★", [["Raichu", 0], ["Garchomp", 0], ["Rillaboom", 0]]],
+       ["5★ (9.–15. 12.)", [["Latias", 0], ["Latios", 0], ["Heatran", 0], ["Cobalion", 0], ["Terrakion", 0], ["Virizion", 0], ["Regieleki", 0], ["Regidrago", 0]]]]),
+     dict(h="5★ raidy", list=["Legendy se střídají podle rozpisu, který zatím není oznámený. Speciální pozadí jen během eventu."]),
+     dict(h="Field Research", list=["Eventové úkoly s Rare Candy jako odměnou."]),
+     dict(h="GO Pass", list=["Deluxe 4,99 USD (s +6 ranky 6,99 USD): Elite Charged TM, Rare Candy XL a další. Odměny vyzvedni do st 16. 12. 20:00."]),
+   ], src="https://www.dittobase.com/pokemon-go/events/pokemon-champions-celebration-event-2026")
+
+ev(id="mega-gengar", cat="raid", title="Mega Gengar v Mega raidech", start="2026-12-09T06:00", end="2026-12-15T22:00",
+   summary="Mega Gengar v Mega raidech.", sections=[dict(h="Boss", mons=[["Mega Gengar", 0]])],
+   src="https://leekduck.com/events/mega-gengar-in-mega-raids-december-2026/")
+
+ev(id="spotlight-starly", cat="spotlight", title="Spotlight Hour: Starly", start="2026-12-10T18:00", end="2026-12-10T19:00",
+   summary="Starly ve velkém, bonus 2× Catch Stardust.", sections=[dict(h="Pokémon", mons=[["Starly", 0]], note="Bonus: 2× Catch Stardust.")],
+   src="https://leekduck.com/events/pokemonspotlighthour2026-12-10/")
+
+ev(id="minior-geminids", cat="event", title="Minior Showers: Geminids", start="2026-12-11T17:00", end="2026-12-16T23:59",
+   summary="Meteorický roj s Miniorem, debutují dvě nové formy Minior.",
+   sections=[dict(h="Co víme", list=["Dvě nové formy Minior. Další bonusy zatím nemáme ověřené."])],
+   src="https://leekduck.com/events/minior-showers-geminids-2026/")
+
+ev(id="december-cd", cat="cd", title="Prosincový Community Day", start="2026-12-12T14:00", end="2026-12-13T17:00", featured=1,
+   summary="Dva dny s Pokémony ze všech letošních Community Days, 14–17 v sobotu i v neděli.",
+   sections=[
+     dict(h="Featured Pokémoni", mons=[["Vulpix", 0], ["Vulpix (Alolan)", 0], ["Grookey", 0], ["Scorbunny", 0], ["Lechonk", 0], ["Tinkatink", 0], ["Piplup", 0],
+       ["Zorua", 0], ["Pawniard", 0], ["Sobble", 0], ["Nickit", 0], ["Frigibax", 0], ["Gible", 0], ["Deino", 0]],
+       note="Rozdělení po dnech a exkluzivní útoky zatím nemáme ověřené."),
+     dict(h="Bonusy 14–17", list=["Víc featured Pokémonů ve volné přírodě", "2× XP a 2× Stardust za chycení", "2× Catch Candy",
+       "2× šance na Candy XL za chycení (od levelu 31)", "1/2 vzdálenost u vajíček vložených během eventu"]),
+     dict(h="Bonusy so 9:00 – ne 21:00", list=["Incense na 3 hodiny (kromě Daily Adventure)", "Lure Module na 1 hodinu", "Až 2 Special Trades za den",
+       "Trade o 50 % levněji"]),
+   ], src="https://leekduck.com/events/december-communityday2026/")
+
+ev(id="ho-oh-dec", cat="raid", title="5★ raidy: Ho-Oh", start="2026-12-16T06:00", end="2026-12-22T22:00",
+   summary="Ho-Oh v 5★ raidech, Raid Hour st 16. 12. 18–19.",
+   sections=[dict(h="Boss", mons=[["Ho-Oh", 0]]), dict(h="Raid Hour", list=["Středa 16. 12. 18:00–19:00"])],
+   src="https://leekduck.com/events/ho-oh-in-5-star-raid-battles-december-2026/")
+
+ev(id="mega-skarmory", cat="raid", title="Mega Skarmory v Mega raidech", start="2026-12-16T06:00", end="2026-12-22T22:00",
+   summary="Mega Skarmory v Mega raidech.", sections=[dict(h="Boss", mons=[["Mega Skarmory", 0]])],
+   src="https://leekduck.com/events/mega-skarmory-in-mega-raids-december-2026/")
+
+ev(id="spotlight-bergmite", cat="spotlight", title="Spotlight Hour: Bergmite", start="2026-12-17T18:00", end="2026-12-17T19:00",
+   summary="Bergmite ve velkém, bonus 2× Evolution XP.", sections=[dict(h="Pokémon", mons=[["Bergmite", 0]], note="Bonus: 2× Evolution XP.")],
+   src="https://leekduck.com/events/pokemonspotlighthour2026-12-17/")
+
 # ---------------- DO BUDOUCNA (zatím jen datum) ----------------
-for i, (d, t) in enumerate([("2026-12-05", "Max Battle Day"), ("2026-12-12", "Community Day (2 dny, 12.–13. 12.)"), ("2026-12-19", "Raid Day"),
+for i, (d, t) in enumerate([("2026-12-19", "Raid Day"),
                             ("2026-12-26", "Hatch Day"), ("2027-01-02", "Community Day Classic"), ("2027-01-09", "Super Mega Raid Day"),
                             ("2027-01-16", "Community Day"), ("2027-01-23", "Max Battle Day"), ("2027-01-30", "Super Mega Raid Day"),
                             ("2027-02-06", "Community Day"), ("2027-02-13", "Raid Day")]):
-    end = "2026-12-13T23:59" if d == "2026-12-12" else d + "T23:59"
+    end = d + "T23:59"
     ev(id="tba-%d" % i, cat={"Max": "max", "Com": "cd", "Rai": "raid", "Sup": "raid", "Hat": "event"}[t[:3]], title=t, start=d + "T00:00", end=end, tba=1,
        summary="Datum je potvrzené, Pokémoni a bonusy zatím ne.",
        sections=[dict(h="Co víme", list=["Datum oznámil tým Pokémon GO. Featured Pokémoni, bonusy a časy zatím oznámené nejsou."])],
@@ -206,7 +297,7 @@ WEEKLY = [["Úterý", "Showcase Tuesday", "Až 20 kategorií PokéStop Showcase,
           ["Pátek", "Friendship Friday", "2 Special Trades, vyšší šance na Lucky Trade, trade až o 10 % levněji, 2 Candy XL (lvl 31+). Jen osobní trade."],
           ["Neděle", "Scenic Sunday", "Víc Pokémonů i na Routes, kratší vzdálenost na Buddy Candy, Mateo až 3× denně."]]
 
-json.dump({"updated": "2026-11-20", "events": E, "codes": CODES, "weekly": WEEKLY,
+json.dump({"updated": "2026-11-27", "events": E, "codes": CODES, "weekly": WEEKLY,
            "redeem": "https://store.pokemongo.com/offer-redemption"},
           open("../docs/data/events.json", "w"), ensure_ascii=False, separators=(",", ":"))
 print(len(E), "events")

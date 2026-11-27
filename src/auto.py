@@ -32,6 +32,8 @@ def find(name):
     if m: cands.append('%s (%s)' % (m.group(2), m.group(1)))
     m = re.match(r'(.+) \((.+?)( Forme| Form| Style)?\)$', n)
     if m: cands += ['%s (%s)' % (m.group(1), m.group(2)), m.group(1)]
+    base = re.sub(r' wearing .*$', '', n)
+    cands += [base, base.split(' ')[-1]]  # kostýmy: "Espeon wearing a sun scarf", "Sun Crown Pikachu"
     for c in cands:
         if fold(c) in BYNAME: return BYNAME[fold(c)][0]
     return None

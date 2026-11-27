@@ -5,7 +5,7 @@
 import json, re
 pve = json.load(open('../docs/data/pve.json')); IDS = {m[0]: m for m in pve['mons']}
 
-NOW = ('2026-11-16T06:00', '2026-11-24T22:00')
+NOW = ('2026-11-16T06:00', '2026-12-01T22:00')  # sezónní rotace do konce Twilight Trails
 NEXT = ('2026-11-24T10:00', '2026-12-01T22:00')
 RAIDS = [
   # tier, id, from, to, label (optional)
@@ -23,12 +23,30 @@ RAIDS = [
   ('1', 'meowth_alolan', *NOW), ('1', 'misdreavus', *NOW), ('1', 'yamask_galarian', *NOW, 'Yamask (Galarian)'), ('1', 'sandygast', *NOW),
   ('1', 'pikachu', '2026-11-24T10:00', '2026-11-30T20:00', 'Pikachu (sun crown)'), ('1', 'pikachu', '2026-11-24T10:00', '2026-11-30T20:00', 'Pikachu (moon crown)'),
   ('s1', 'larvitar', *NOW, 'Shadow Larvitar'), ('s1', 'mudkip', *NOW, 'Shadow Mudkip'), ('s1', 'makuhita', *NOW, 'Shadow Makuhita'), ('s1', 'cranidos', *NOW, 'Shadow Cranidos'),
+  # prosinec 2026 (Tropical Paradise 1.–7. 12., Champions Celebration 8.–14. 12.); Pyukumuku (3★) zatím není v herních datech
+  ('1', 'diglett_alolan', '2026-12-01T10:00', '2026-12-07T20:00'), ('1', 'frillish', '2026-12-01T10:00', '2026-12-07T20:00'), ('1', 'sandygast', '2026-12-01T10:00', '2026-12-07T20:00'),
+  ('5', 'regidrago', '2026-12-02T06:00', '2026-12-08T22:00'), ('mega', 'slowbro_mega', '2026-12-02T06:00', '2026-12-08T22:00'),
+  ('s5', 'dialga', '2026-12-02T06:00', '2027-01-05T22:00', 'Shadow Dialga'),
+  ('1', 'bagon', '2026-12-08T10:00', '2026-12-14T20:00'), ('1', 'litten', '2026-12-08T10:00', '2026-12-14T20:00'), ('1', 'frigibax', '2026-12-08T10:00', '2026-12-14T20:00'),
+  ('3', 'raichu', '2026-12-08T10:00', '2026-12-14T20:00'), ('3', 'garchomp', '2026-12-08T10:00', '2026-12-14T20:00'), ('3', 'rillaboom', '2026-12-08T10:00', '2026-12-14T20:00'),
+  ('5', 'latias', '2026-12-09T06:00', '2026-12-15T22:00'),
+  ('5', 'latios', '2026-12-09T06:00', '2026-12-15T22:00'),
+  ('5', 'heatran', '2026-12-09T06:00', '2026-12-15T22:00'),
+  ('5', 'cobalion', '2026-12-09T06:00', '2026-12-15T22:00'),
+  ('5', 'terrakion', '2026-12-09T06:00', '2026-12-15T22:00'),
+  ('5', 'virizion', '2026-12-09T06:00', '2026-12-15T22:00'),
+  ('5', 'regieleki', '2026-12-09T06:00', '2026-12-15T22:00'),
+  ('mega', 'gengar_mega', '2026-12-09T06:00', '2026-12-15T22:00'),
+  ('5', 'ho_oh', '2026-12-16T06:00', '2026-12-22T22:00'), ('mega', 'skarmory_mega', '2026-12-16T06:00', '2026-12-22T22:00'),
 ]
 MAX = [
   # tier label, id, from, to, name, note
   ('6★ Eternamax', 'eternatus', '2026-11-21T11:00', '2026-11-21T14:00', 'Eternamax Eternatus', 'Nejde chytit, odměnou jsou Eternatus Candy a XL. Countery počítané podle typů Eternatuse (Poison/Dragon).'),
   ('1★ · Max Monday', 'espurr', '2026-11-23T06:00', '2026-11-29T21:00', 'Dynamax Espurr', 'Týdenní Max Battles 23.–29. 11.'),
   ('3★', 'cryogonal', '2026-11-30T06:00', '2026-12-06T21:00', 'Dynamax Cryogonal', 'Týdenní Max Battles 30. 11. – 6. 12.'),
+  ('6★ Gigantamax', 'inteleon', '2026-12-05T14:00', '2026-12-05T17:00', 'Gigantamax Inteleon', 'Max Battle Day: debut Gigantamax Inteleona, všechny Power Spoty s Gigantamaxem, 8× Max Particles z Power Spotů, ticket 4,99 USD.'),
+  ('3★ · Max Monday', 'deino', '2026-12-07T06:00', '2026-12-13T21:00', 'Dynamax Deino', 'Týdenní Max Battles 7.–13. 12.'),
+  ('2★ · Max Monday', 'eevee', '2026-12-14T06:00', '2026-12-20T21:00', 'Dynamax Eevee', 'Týdenní Max Battles 14.–20. 12.'),
 ]
 DMAX_NAMES = """Dynamax Bulbasaur, Dynamax Ivysaur, Dynamax Venusaur, Gigantamax Venusaur, Dynamax Charmander, Dynamax Charmeleon, Dynamax Charizard, Gigantamax Charizard, Dynamax Squirtle, Dynamax Wartortle, Dynamax Blastoise, Gigantamax Blastoise, Dynamax Caterpie, Dynamax Metapod, Dynamax Butterfree, Gigantamax Butterfree, Gigantamax Meowth, Dynamax Growlithe, Dynamax Arcanine, Dynamax Abra, Dynamax Kadabra, Dynamax Alakazam, Dynamax Machop, Dynamax Machoke, Dynamax Machamp, Gigantamax Machamp, Dynamax Gastly, Dynamax Haunter, Dynamax Gengar, Gigantamax Gengar, Dynamax Krabby, Dynamax Kingler, Gigantamax Kingler, Dynamax Hitmonlee, Dynamax Hitmonchan, Dynamax Rhyhorn, Dynamax Rhydon, Dynamax Chansey, Dynamax Electabuzz, Dynamax Magikarp, Dynamax Gyarados, Dynamax Lapras, Gigantamax Lapras, Dynamax Eevee, Dynamax Vaporeon, Dynamax Jolteon, Dynamax Flareon, Dynamax Omanyte, Dynamax Omastar, Dynamax Kabuto, Dynamax Kabutops, Gigantamax Snorlax, Dynamax Articuno, Dynamax Zapdos, Dynamax Moltres, Dynamax Hoothoot, Dynamax Noctowl, Dynamax Espeon, Dynamax Umbreon, Dynamax Shuckle, Dynamax Sneasel, Dynamax Hitmontop, Dynamax Blissey, Dynamax Raikou, Dynamax Entei, Dynamax Suicune, Dynamax Lugia, Dynamax Ho-Oh, Dynamax Ralts, Dynamax Kirlia, Dynamax Gardevoir, Dynamax Sableye, Dynamax Wailmer, Dynamax Wailord, Dynamax Trapinch, Dynamax Vibrava, Dynamax Flygon, Dynamax Feebas, Dynamax Milotic, Dynamax Spheal, Dynamax Sealeo, Dynamax Walrein, Dynamax Beldum, Dynamax Metang, Dynamax Metagross, Dynamax Regirock, Dynamax Regice, Dynamax Registeel, Dynamax Latias, Dynamax Latios, Dynamax Weavile, Dynamax Rhyperior, Dynamax Electivire, Dynamax Leafeon, Dynamax Glaceon, Dynamax Gallade, Dynamax Uxie, Dynamax Mesprit, Dynamax Azelf, Dynamax Dialga, Dynamax Palkia, Dynamax Pidove, Dynamax Tranquill, Dynamax Unfezant, Dynamax Roggenrola, Dynamax Boldore, Dynamax Gigalith, Dynamax Woobat, Dynamax Swoobat, Dynamax Drilbur, Dynamax Excadrill, Dynamax Darumaka, Dynamax Darmanitan, Dynamax Trubbish, Dynamax Garbodor, Gigantamax Garbodor, Dynamax Cryogonal, Dynamax Deino, Dynamax Zweilous, Dynamax Hydreigon, Dynamax Inkay, Dynamax Malamar, Dynamax Sylveon, Dynamax Bounsweet, Dynamax Steenee, Dynamax Tsareena, Dynamax Passimian, Dynamax Drampa, Dynamax Meltan, Dynamax Melmetal, Gigantamax Melmetal, Dynamax Grookey, Dynamax Thwackey, Dynamax Rillaboom, Gigantamax Rillaboom, Dynamax Scorbunny, Dynamax Raboot, Dynamax Cinderace, Gigantamax Cinderace, Dynamax Sobble, Dynamax Drizzile, Dynamax Inteleon, Gigantamax Inteleon, Dynamax Skwovet, Dynamax Greedent, Dynamax Rookidee, Dynamax Corvisquire, Dynamax Corviknight, Dynamax Wooloo, Dynamax Dubwool, Dynamax Toxtricity (Amped Form), Dynamax Toxtricity (Low Key Form), Gigantamax Toxtricity, Dynamax Sizzlipede, Dynamax Centiskorch, Dynamax Hatenna, Dynamax Hattrem, Dynamax Hatterene, Gigantamax Grimmsnarl, Dynamax Falinks, Dynamax Duraludon, Gigantamax Duraludon, Dynamax Kubfu, Dynamax Urshifu (Rapid Strike Style), Dynamax Urshifu (Single Strike Style), Dynamax Regidrago, Dynamax Pikachu, Gigantamax Pikachu, Dynamax Raichu, Dynamax Magmar, Dynamax Magmortar, Dynamax Combee, Dynamax Vespiquen, Dynamax Cottonee, Dynamax Whimsicott, Dynamax Zacian (Crowned Sword), Dynamax Zamazenta (Crowned Shield), Dynamax Eternatus"""
 FIX = {'ho-oh': 'ho_oh', 'toxtricity (amped form)': 'toxtricity', 'toxtricity (low key form)': 'toxtricity', 'toxtricity': 'toxtricity',
