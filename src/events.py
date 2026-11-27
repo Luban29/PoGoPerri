@@ -1,6 +1,7 @@
 # Události pro záložku "Události" -> docs/data/events.json
 # Časy jsou místní (jak je udává hra), u GO Battle League a Global Challenge přepočtené z PT/PST na SEČ.
 # Zdroje: Leek Duck, pokemongo.com, Pokémon GO Hub, Dittobase (stav k 27. 11. 2026).
+# Eventy od 15. 12. dál podle ScrapedDuck (data z Leek Duck): názvy, časy, bossové a bonusy Spotlight Hours; ostatní detaily zatím neoznámeny.
 import json
 
 SPAWNS_DYNAMAX = ["Bulbasaur", "Charmander", "Squirtle", "Caterpie", "Pikachu", "Growlithe", "Abra", "Machop", "Gastly", "Krabby",
@@ -88,10 +89,13 @@ ev(id="crocs", cat="partner", title="Crocs × Pokémon", start="2026-11-16T00:00
        ["POKEMONGOxCROCSxMELODY", "Jigglypuff Classic Platform Clog (oficiálně ke koupi Crocs)", "do 31. 12. 2027"]])],
    src="https://pokemongo.com/news/pokemon-crocs-2026")
 
-ev(id="max-mondays", cat="max", title="Max Mondays", start="2026-11-23T06:00", end="2026-11-30T21:00",
+ev(id="max-mondays", bosses=[["max","3","cryogonal","Dynamax Cryogonal"],["max","3","deino","Dynamax Deino"],["max","2","eevee","Dynamax Eevee"],["max","3","sandshrew_alolan","Dynamax Alolan Sandshrew",None,"Tier Alolan Sandshrewa zatím nemáme ověřený, countery jsou počítané jako na 3★."],["max","1","magikarp","Dynamax Magikarp"]], cat="max", title="Max Mondays", start="2026-11-23T06:00", end="2026-12-28T21:00",
    summary="Každé pondělí 6–21: víc Power Spotů a 1 Rare Candy XL za každou osobní Max Battle.",
-   sections=[dict(h="Termíny", list=["Po 23. 11. 6:00–21:00", "Po 30. 11. 6:00–21:00"]),
-     dict(h="Max Battles během týdne", list=["23.–29. 11.: Dynamax Espurr", "30. 11. – 6. 12.: Dynamax Cryogonal"])],
+   sections=[dict(h="Termíny", list=["Po 23. 11., 30. 11., 7. 12., 14. 12., 21. 12. a 28. 12., vždy 6:00–21:00"]),
+     dict(h="Max Battles během týdne", list=["23.–29. 11.: Dynamax Espurr", "30. 11. – 6. 12.: Dynamax Cryogonal",
+       "7.–13. 12.: Dynamax Deino", "14.–20. 12.: Dynamax Eevee", "21.–27. 12.: Dynamax Alolan Sandshrew (debut)",
+       "28. 12. – 3. 1.: Dynamax Magikarp"]),
+     dict(h="Countery", link=["max-battles", "Otevřít countery v záložce Max Battles"])],
    src="https://pokemongohub.net/post/event/pokemon-go-november-2026-events/")
 
 # ---------------- BRZY ----------------
@@ -105,6 +109,9 @@ ev(id="twilight-wishes", cat="event", title="Twilight Wishes", start="2026-11-24
      dict(h="Raidy", groups=[["1★", [["Pikachu (sun crown)", 0], ["Pikachu (moon crown)", 0]]],
                             ["3★", [["Espeon (sun scarf)", 1], ["Umbreon (moon scarf)", 1]]],
                             ["Mega", [["Mega Beedrill", 1], ["Mega Houndoom", 1], ["Mega Sableye", 1], ["Mega Manectric", 1]]]]),
+     dict(h="Field Research úkoly", tasks=[["Projdi 1 km", "Staryu nebo Elgyem"], ["Vylíhni vajíčko", "Maschiff"],
+       ["Použij Lure Module u PokéStopu", "Applin"], ["Použij Incense", "Bramblin"],
+       ["Vyhraj raid", "Gengar (Spooky Festival kostým) nebo Drifblim (Halloween Mischief kostým)"]]),
      dict(h="Field Research", list=["Odměny: Mega Energy a eventoví Pokémoni včetně Staryu a Elgyem.",
        "24. 11. 10:00 – 26. 11. 10:00: navíc Applin a Maschiff.",
        "26. 11. 10:00 – 30. 11. 20:00: navíc Gengar (Spooky Festival kostým), Drifblim (Halloween Mischief kostým) a Bramblin."]),
@@ -230,7 +237,8 @@ ev(id="champions-celebration", bosses=[["raid","5","latias"],["raid","5","latios
      dict(h="Ve volné přírodě", mons=[["Charmander", 0], ["Starly", 0], ["Grookey", 0], ["Absol", 0], ["Gible", 0]], note="Seznam není úplný, další Pokémoni zatím neoznámeni."),
      dict(h="Raidy", groups=[["1★", [["Bagon", 0], ["Litten", 0], ["Frigibax", 0]]], ["3★", [["Raichu", 0], ["Garchomp", 0], ["Rillaboom", 0]]],
        ["5★ (9.–15. 12.)", [["Latias", 0], ["Latios", 0], ["Heatran", 0], ["Cobalion", 0], ["Terrakion", 0], ["Virizion", 0], ["Regieleki", 0], ["Regidrago", 0]]]]),
-     dict(h="5★ raidy", list=["Legendy se střídají podle rozpisu, který zatím není oznámený. Speciální pozadí jen během eventu."]),
+     dict(h="5★ raidy", list=["Legendy se střídají podle rozpisu, který zatím není oznámený. Speciální pozadí jen během eventu.",
+       "Raid Hour st 9. 12. 18:00–19:00, boss zatím neoznámen."]),
      dict(h="Field Research", list=["Eventové úkoly s Rare Candy jako odměnou."]),
      dict(h="GO Pass", list=["Deluxe 4,99 USD (s +6 ranky 6,99 USD): Elite Charged TM, Rare Candy XL a další. Odměny vyzvedni do st 16. 12. 20:00."]),
    ], src="https://www.dittobase.com/pokemon-go/events/pokemon-champions-celebration-event-2026")
@@ -273,9 +281,85 @@ ev(id="spotlight-bergmite", cat="spotlight", title="Spotlight Hour: Bergmite", s
    summary="Bergmite ve velkém, bonus 2× Evolution XP.", sections=[dict(h="Pokémon", mons=[["Bergmite", 0]], note="Bonus: 2× Evolution XP.")],
    src="https://leekduck.com/events/pokemonspotlighthour2026-12-17/")
 
+ev(id="gbl-dd-3", cat="gbl", title="GBL: Ultra League: Mega Edition a Holiday Cup", start="2026-12-15T22:00", end="2026-12-22T22:00",
+   summary="Ultra League: Mega Edition a Holiday Cup: Great League Edition.",
+   sections=[dict(h="Ligy", list=["Ultra League: Mega Edition (max 2 500 CP, Mega Pokémoni povoleni)",
+       "Holiday Cup: Great League Edition (max 1 500 CP, povolené typy zatím nemáme ověřené)"]),
+     dict(h="Žebříčky", link=["pvp", "Otevřít PvP žebříček"])],
+   src="https://leekduck.com/events/gbl-daydream-destinations_ultra-league-mega-edition_holiday-cup-great-league-edition/")
+
+ev(id="choose-your-path-dec", cat="event", title="Choose Your Path: Daydream Destinations", start="2026-12-15T10:00", end="2026-12-21T20:00",
+   summary="Týden s volbou cesty v sezóně Daydream Destinations. Podrobnosti zatím neoznámeny.",
+   sections=[dict(h="Co víme", list=["Termín út 15. 12. 10:00 – po 21. 12. 20:00.",
+       "Bonusy, Pokémoni a úkoly zatím neoznámeno. Další kola: 12. 1., 26. 1. a 16. 2. 2027."])],
+   src="https://leekduck.com/events/choose-your-path-daydream-destinations-2026-12-15/")
+
+ev(id="raid-day-dec", cat="raid", title="Raid Day", start="2026-12-19T14:00", end="2026-12-19T17:00",
+   summary="Prosincový Raid Day 14–17. Boss a bonusy zatím neoznámeny.",
+   sections=[dict(h="Co víme", list=["Sobota 19. 12. 14:00–17:00.", "Boss, bonusy a případný ticket zatím neoznámeno."])],
+   src="https://leekduck.com/events/raid-day-december-2026/")
+
+ev(id="winter-holiday", cat="event", title="Winter Holiday 2026", start="2026-12-22T10:00", end="2026-12-28T20:00", featured=1,
+   summary="Vánoční event. Pokémoni, bonusy a úkoly zatím neoznámeny.",
+   sections=[dict(h="Co víme", list=["Út 22. 12. 10:00 – po 28. 12. 20:00.", "Bonusy, Pokémoni ve volné přírodě, raidy a Field Research zatím neoznámeno.",
+       "Ve stejném týdnu: Lugia v 5★ raidech, Mega Glalie, Spotlight Hour s Delibirdem (24. 12.) a Hatch Day (26. 12.)."])],
+   src="https://leekduck.com/events/winter-holiday-2026/")
+
+ev(id="gbl-dd-4", cat="gbl", title="GBL: Master League: Mega Edition a Holiday Cup", start="2026-12-22T22:00", end="2026-12-29T22:00",
+   summary="Master League: Mega Edition a Holiday Cup: Great League Edition.",
+   sections=[dict(h="Ligy", list=["Master League: Mega Edition (bez limitu CP, Mega Pokémoni povoleni)",
+       "Holiday Cup: Great League Edition (max 1 500 CP, povolené typy zatím nemáme ověřené)"]),
+     dict(h="Žebříčky", link=["pvp", "Otevřít PvP žebříček"])],
+   src="https://leekduck.com/events/gbl-daydream-destinations_master-league-mega-edition_holiday-cup-great-league-edition/")
+
+ev(id="lugia-dec", bosses=[["raid","5","lugia"]], cat="raid", title="5★ raidy: Lugia", start="2026-12-23T06:00", end="2026-12-29T22:00",
+   summary="Lugia v 5★ raidech, Raid Hour st 23. 12. 18–19.",
+   sections=[dict(h="Boss", mons=[["Lugia", 0]]), dict(h="Tipy", list=["Lugia (Psychic/Flying) je slabá na Electric, Rock, Ice, Ghost a Dark."]),
+     dict(h="Raid Hour", list=["Středa 23. 12. 18:00–19:00"]), dict(h="Countery", link=["raidy", "Otevřít countery v záložce Raidy"])],
+   src="https://leekduck.com/events/lugia-in-5-star-raid-battles-december-2026/")
+
+ev(id="mega-glalie", bosses=[["raid","mega","glalie_mega"]], cat="raid", title="Mega Glalie v Mega raidech", start="2026-12-23T06:00", end="2026-12-29T22:00",
+   summary="Ice Mega boss, slabý na Fire, Fighting, Rock a Steel.", sections=[dict(h="Boss", mons=[["Mega Glalie", 0]])],
+   src="https://leekduck.com/events/mega-glalie-in-mega-raids-december-2026/")
+
+ev(id="spotlight-delibird", cat="spotlight", title="Spotlight Hour: Delibird", start="2026-12-24T18:00", end="2026-12-24T19:00",
+   summary="Delibird ve velkém, bonus 2× Catch XP.", sections=[dict(h="Pokémon", mons=[["Delibird", 0]], note="Bonus: 2× Catch XP.")],
+   src="https://leekduck.com/events/pokemonspotlighthour2026-12-24/")
+
+ev(id="hatch-day-dec", cat="event", title="Hatch Day", start="2026-12-26T11:00", end="2026-12-26T17:00",
+   summary="Den líhnutí vajíček 11–17. Pokémoni a bonusy zatím neoznámeny.",
+   sections=[dict(h="Co víme", list=["Sobota 26. 12. 11:00–17:00.", "Pokémoni ve vajíčkách, bonusy a případný ticket zatím neoznámeno."])],
+   src="https://leekduck.com/events/hatch-day-december-2026/")
+
+ev(id="new-years-2027", cat="event", title="Nový rok 2027", start="2026-12-29T10:00", end="2027-01-04T20:00",
+   summary="Novoroční event. Podrobnosti zatím neoznámeny.",
+   sections=[dict(h="Co víme", list=["Út 29. 12. 10:00 – po 4. 1. 20:00.", "Bonusy, Pokémoni a úkoly zatím neoznámeno."])],
+   src="https://leekduck.com/events/new-years-2027/")
+
+ev(id="gbl-dd-5", cat="gbl", title="GBL: Great, Ultra a Master League: Mega Edition", start="2026-12-29T22:00", end="2027-01-05T22:00",
+   summary="Všechny tři Mega Edition ligy najednou.",
+   sections=[dict(h="Ligy", list=["Great League: Mega Edition", "Ultra League: Mega Edition", "Master League: Mega Edition"]),
+     dict(h="Žebříčky", link=["pvp", "Otevřít PvP žebříček"])],
+   src="https://leekduck.com/events/gbl-daydream-destinations_great-league-mega-edition_ultra-league-mega-edition_master-league-mega-edition-split-2/")
+
+ev(id="therian-trio", bosses=[["raid","5","tornadus_therian","Tornadus (Therian)"],["raid","5","thundurus_therian","Thundurus (Therian)"],["raid","5","landorus_therian","Landorus (Therian)"]], cat="raid", title="5★ raidy: Tornadus, Thundurus a Landorus (Therian)", start="2026-12-30T06:00", end="2027-01-05T22:00",
+   summary="Forces of Nature v Therian formě, Raid Hour st 30. 12. 18–19.",
+   sections=[dict(h="Bossové", mons=[["Tornadus (Therian)", 0], ["Thundurus (Therian)", 0], ["Landorus (Therian)", 0]]),
+     dict(h="Tipy", list=["Tornadus: slabý na Electric, Ice, Rock.", "Thundurus (Electric/Flying): slabý na Ice a Rock.",
+       "Landorus (Ground/Flying): Ice dává dvojnásobně super effective."]),
+     dict(h="Raid Hour", list=["Středa 30. 12. 18:00–19:00"]), dict(h="Countery", link=["raidy", "Otevřít countery v záložce Raidy"])],
+   src="https://leekduck.com/events/tornadus-thundurus-landorus-therian-formes-in-5-star-raid-battles-december-2026/")
+
+ev(id="mega-falinks", bosses=[["raid","mega","falinks_mega"]], cat="raid", title="Mega Falinks v Mega raidech", start="2026-12-30T06:00", end="2027-01-05T22:00",
+   summary="Fighting Mega boss, slabý na Flying, Psychic a Fairy.", sections=[dict(h="Boss", mons=[["Mega Falinks", 0]])],
+   src="https://leekduck.com/events/mega-falinks-in-mega-raids-december-2026/")
+
+ev(id="spotlight-plusle-minun", cat="spotlight", title="Spotlight Hour: Plusle a Minun", start="2026-12-31T18:00", end="2026-12-31T19:00",
+   summary="Plusle a Minun ve velkém, bonus 2× Catch Candy.", sections=[dict(h="Pokémoni", mons=[["Plusle", 0], ["Minun", 0]], note="Bonus: 2× Catch Candy.")],
+   src="https://leekduck.com/events/pokemonspotlighthour2026-12-31/")
+
 # ---------------- DO BUDOUCNA (zatím jen datum) ----------------
-for i, (d, t) in enumerate([("2026-12-19", "Raid Day"),
-                            ("2026-12-26", "Hatch Day"), ("2027-01-02", "Community Day Classic"), ("2027-01-09", "Super Mega Raid Day"),
+for i, (d, t) in enumerate([("2027-01-02", "Community Day Classic"), ("2027-01-09", "Super Mega Raid Day"),
                             ("2027-01-16", "Community Day"), ("2027-01-23", "Max Battle Day"), ("2027-01-30", "Super Mega Raid Day"),
                             ("2027-02-06", "Community Day"), ("2027-02-13", "Raid Day")]):
     end = d + "T23:59"

@@ -124,11 +124,12 @@ if rs:
     for x in rs:
         if x.get('type'): continue
         names = [fold(w['name'].split(' wearing')[0]) for w in x['rewards']]
-        hits = [e for e, txt in evtext if 2 * sum(1 for n in names if n and re.search(r'\b' + re.escape(n) + r'\b', txt)) >= len(names)]
+        score = {e['id']: sum(1 for n in names if n and re.search(r'\b' + re.escape(n) + r'\b', txt)) for e, txt in evtext}
+        hits = [e for e, txt in evtext if 2 * score[e['id']] >= len(names)]
         live = [e for e in hits if local(e['end']) > NOW]
         if hits and not live: continue
-        if live:
-            e = sorted(live, key=lambda e: local(e['start']))[-1]
+        if live:  # nejvíc shodných odměn, při shodě nejnovější event
+            e = sorted(live, key=lambda e: (score[e['id']], local(e['start'])))[-1]
             groups.setdefault(e['id'], {'ev': e['title'], 'id': e['id'], 'end': e['end'], 'tasks': []})['tasks'].append(task(x))
         else: other.append(task(x))
     ev_out = list(groups.values())
